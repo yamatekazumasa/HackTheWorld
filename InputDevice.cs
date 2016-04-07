@@ -1,13 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
+using
+    InoueLab;
+using System.Drawing;
 
 namespace HackTheWorld
 {
-    public static class InputDevice
+    public class InputDevice  
     {
+
+
+
+
         /// <summary>
         /// 押されたキー。
         /// </summary>
         public static List<Keys> PressedKeys; 
+ 
     }
 }

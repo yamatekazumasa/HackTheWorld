@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
+using InoueLab;
 
 namespace HackTheWorld
 {
@@ -25,6 +26,40 @@ namespace HackTheWorld
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             ThreadSeparate(ref _drawThread, MainProcess);
         }
+
+        bool Dragging=false;
+    
+        List<Point> _MouseLocations = new List<Point>();
+        public Point[] MouseLovations = new Point[0];
+        /// <summary>
+        /// マウスの左が押させた場合Draggngをtrueにする
+        /// マウスの座標をMouselocationsに保存する
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
+            Cursor.Current = Cursors.Hand;
+            Dragging = true;
+            _MouseLocations.Add(e.Location);
+        }
+        /// <summary>
+        /// ドラッグが終了した際Draggingをfalseに戻す
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            Cursor.Current = Cursors.Default;
+            Dragging = false;
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
+        }
+        
 
         private void MainProcess()
         {
@@ -49,7 +84,7 @@ namespace HackTheWorld
 
                 // プレイヤーとステージをアップデート
                 Scene.Current.Update();
-
+ //               if (Dragging) GraphicsContext.DrawEllipse(Pens.Aqua, 0, 0,10,10);
                 // 画面の更新
                 InterThreadRefresh(Refresh);
 
