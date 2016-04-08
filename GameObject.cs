@@ -129,6 +129,16 @@ namespace HackTheWorld
         }
 
         /// <summary>
+        /// オブジェクトタイプを指定する。
+        /// </summary>
+        /// <param name="type">オブジェクトタイプ。</param>
+        /// <returns></returns>
+        public void SetObjectType(ObjectType type)
+        {
+            this._objectType = type;
+        }
+
+        /// <summary>
         /// 中央の座標を取得する。
         /// </summary>
         /// <returns></returns>
@@ -250,13 +260,29 @@ namespace HackTheWorld
         /// <summary>
         /// 初期化用。
         /// </summary>
-        public void Initialize()
+        //public void Initialize()
+        //{
+        //    this._isAlive = true;
+        //    this.SetSize(30, 30);
+        //}
+        public void Initialize(ObjectType type)
         {
             this._isAlive = true;
-            this.SetSize(30, 30);
+            this.SetSize(100, 100);
+            this.SetObjectType(type);
         }
 
         #region GameObject専用
+        /// <summary>
+        /// 押されたキー(上下左右)により1フレーム分動く。
+        /// </summary>
+        public void MovebyKeys(int speed)
+        {
+            if (Input.Left.Pressed) this._position += new Vector(-speed, 0);
+            if (Input.Right.Pressed) this._position += new Vector(+speed, 0);
+            if (Input.Up.Pressed) this._position += new Vector(0, -speed);
+            if (Input.Down.Pressed) this._position += new Vector(0, +speed);
+        }
 
         /// <summary>
         /// 設定された速度で1フレーム分動く。
@@ -354,6 +380,16 @@ namespace HackTheWorld
                 GraphicsContext.FillRectangle(Brushes.Red, GetMinX(), GetMinY(), GetWidth(), GetHeight());
             }
         }
-
+        /// <summary>
+        /// 自分が持っている座標に画像を自分が持っている大きさで描画する。
+        /// </summary>
+        /// <param name="g">このグラフィックスコンテクストにオブジェクトを描画する。</param>
+        public virtual void Draw(Image img)
+        {
+            if (this._isAlive)
+            {
+                GraphicsContext.DrawImage(img, GetMinX(), GetMinY(), GetWidth(), GetHeight());
+            }
+        }
     }
 }
