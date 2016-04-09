@@ -6,7 +6,7 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class GameScene : Scene
+    class MasatoScene1 : Scene
     {
         Image _img;
         public override void Cleanup()
@@ -15,17 +15,11 @@ namespace HackTheWorld
 
         public override void Startup()
         {
-            _img = Image.FromFile(@"image\masato.jpg");
+            _img = Image.FromFile(@"image\masato1.jpg");
         }
 
         public override void Update()
         {
-//<<<<<<< HEAD
-//            Console.WriteLine("game scene.");
-//            GraphicsContext.DrawImage(img, 0, 0, 192, 256);
-//            System.IO.StreamReader sr = new System.IO.StreamReader("game.txt", System.Text.Encoding.GetEncoding("shift_jis"));
-//            GraphicsContext.DrawString(sr.ReadToEnd(), new Font("ＭＳ ゴシック", 12), Brushes.Black, 192, 0);
-//=======
             if (Input.Sp2.Pushed)
             {
                 Scene.Pop();
