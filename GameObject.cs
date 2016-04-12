@@ -358,6 +358,36 @@ namespace HackTheWorld
         }
 
         /// <summary>
+        /// 衝突後の調整関数。
+        /// </summary>
+        /// <param name="obj">渡されたオブジェクトに衝突しているとき重ならない状態にする。</param>
+        /// <returns>重なっていたらオブジェクトを動かす。</returns>
+        public virtual void Adjust(GameObject obj)
+        {
+            if (this.Intersects(obj))
+            {
+                int max = 10;//めり込み許容量
+                if (GetMaxY() > obj.GetMinY() && GetMaxY() - obj.GetMinY() < max)
+                {
+                    this._position.Y -= (GetMaxY() - obj.GetMinY()) * Scale;
+                }
+                else if (GetMinY() < obj.GetMaxY() && GetMinY() - obj.GetMaxY() > -max)
+                {
+                    this._position.Y -= (GetMinY() - obj.GetMaxY()) * Scale;
+                }
+                else if (GetMaxX() > obj.GetMinX() && GetMaxX() - obj.GetMinX() < max)
+                {
+                    this._position.X -= (GetMaxX() - obj.GetMinX()) * Scale;
+                }
+                else if (GetMinX() < obj.GetMaxX() && GetMinX() - obj.GetMaxX() > -max)
+                {
+                    this._position.X -= (GetMinX() - obj.GetMaxX()) * Scale;
+                }
+                // else { /*エラー*/ }
+            }
+        }
+
+        /// <summary>
         /// オブジェクトがウィンドウの中に納まっているか判定する。
         /// </summary>
         /// <returns>オブジェクトがウィンドウ内にあればture、ウインドウ外にあればfalseを返す。</returns>
