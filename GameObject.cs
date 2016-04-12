@@ -381,10 +381,23 @@ namespace HackTheWorld
             }
         }
         /// <summary>
+        /// 自分が持っている座標に自分が持っている大きさの矩形を描画する。
+        /// </summary>
+        /// <param name="brush">オブジェクトの色。</param>
+        public virtual void Draw(Brush brush)
+        {
+            if (this._isAlive)
+            {
+                GraphicsContext.FillRectangle(brush, GetMinX(), GetMinY(), GetWidth(), GetHeight());
+                GraphicsContext.DrawRectangle(Pens.Black, GetMinX(), GetMinY(), GetWidth(), GetHeight());
+            }
+        }
+
+        /// <summary>
         /// 自分が持っている座標に画像を自分が持っている大きさで描画する。
         /// </summary>
         /// <param name="g">このグラフィックスコンテクストにオブジェクトを描画する。</param>
-        public virtual void Draw(Image img)
+        public virtual void DrawImage(Image img)
         {
             if (this._isAlive)
             {

@@ -11,6 +11,7 @@ namespace HackTheWorld
         //このSceneで使用する変数
         Image _img;
         GameObject player;
+        List<GameObject> blocks;
 
         public override void Cleanup()//終了時処理
         {
@@ -19,8 +20,16 @@ namespace HackTheWorld
         public override void Startup()//初期化処理
         {
             _img = Image.FromFile(@"image\masato1.jpg");
+            // playerの初期化
             player = new GameObject(100, 100);
             player.Initialize(ObjectType.Player);
+            // ブロックの初期化
+            blocks = new List<GameObject>();
+            for (int i=0;i<10; i++){
+                GameObject b = new GameObject(100*i+50, 500+50);
+                b.Initialize(ObjectType.Block);
+                blocks.Add(b);
+            }
         }
 
         public override void Update()
@@ -33,7 +42,7 @@ namespace HackTheWorld
             // 計算とか
 
             player.MovebyKeys(100);
-
+            
 
             GraphicsContext.Clear(Color.White);
             //GraphicsContext.DrawImage(_img, 0, 0);
@@ -41,8 +50,10 @@ namespace HackTheWorld
             //ここに作成
             // 描画のみ
 
-            player.Draw(_img);
-
+            player.DrawImage(_img);
+            foreach (var block in blocks) {
+                block.Draw(Brushes.Brown);
+            }
 
         }
     }
