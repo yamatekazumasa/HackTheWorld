@@ -26,9 +26,9 @@ namespace HackTheWorld
             // ブロックの初期化
             blocks = new List<GameObject>();
             for (int i=0;i<5; i++){
-                GameObject b = new GameObject(300*i+50, 500+50);
-                b.Initialize(ObjectType.Block);
-                blocks.Add(b);
+                GameObject block = new GameObject(300*i+50, 500+50);
+                block.Initialize(ObjectType.Block);
+                blocks.Add(block);
             }
         }
 
