@@ -41,7 +41,7 @@ namespace HackTheWorld
             //ここに作成
             // 計算とか
 
-            player.MovebyKeys(100);//playerのスピード
+            player.MovebyKeys(10);//playerのスピード
             foreach (var block in blocks)
             {
                 player.Adjust(block);

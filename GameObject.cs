@@ -282,7 +282,7 @@ namespace HackTheWorld
         public void Initialize(ObjectType type)
         {
             this._isAlive = true;
-            this.SetSize(100, 100);
+            this.SetSize(100, 100);// 大きさはとりあえず100で設定
             this.SetObjectType(type);
         }
 
@@ -292,6 +292,7 @@ namespace HackTheWorld
         /// </summary>
         public void MovebyKeys(int speed)
         {
+            speed *= Scale / 10;    // スケール調整
             if (Input.Left.Pressed) this._position += new Vector(-speed, 0);
             if (Input.Right.Pressed) this._position += new Vector(+speed, 0);
             if (Input.Up.Pressed) this._position += new Vector(0, -speed);
@@ -380,20 +381,20 @@ namespace HackTheWorld
         {
             if (this.Intersects(obj))
             {
-                int max = 10;//めり込み許容量
-                if (GetMaxY() > obj.GetMinY() && GetMaxY() - obj.GetMinY() < max)
+                int max = 10;// めり込み許容量。10という値は仮で、要調整。
+                if (GetMaxY() > obj.GetMinY() && GetMaxY() - obj.GetMinY() <= max)
                 {
                     this._position.Y -= (GetMaxY() - obj.GetMinY()) * Scale;
                 }
-                else if (GetMinY() < obj.GetMaxY() && GetMinY() - obj.GetMaxY() > -max)
+                else if (GetMinY() < obj.GetMaxY() && GetMinY() - obj.GetMaxY() >= -max)
                 {
                     this._position.Y -= (GetMinY() - obj.GetMaxY()) * Scale;
                 }
-                else if (GetMaxX() > obj.GetMinX() && GetMaxX() - obj.GetMinX() < max)
+                else if (GetMaxX() > obj.GetMinX() && GetMaxX() - obj.GetMinX() <= max)
                 {
                     this._position.X -= (GetMaxX() - obj.GetMinX()) * Scale;
                 }
-                else if (GetMinX() < obj.GetMaxX() && GetMinX() - obj.GetMaxX() > -max)
+                else if (GetMinX() < obj.GetMaxX() && GetMinX() - obj.GetMaxX() >= -max)
                 {
                     this._position.X -= (GetMinX() - obj.GetMaxX()) * Scale;
                 }
