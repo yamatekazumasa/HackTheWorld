@@ -16,14 +16,14 @@ namespace HackTheWorld
 
             public void Append(uint s)
             {
-                _history = (_history << 1) | (uint)(s > 0 ? 1 : 0);
+                _history = (_history << 1) | s;
             }
 
             public bool Pressed => (_history & 0x01) > 0;
             public bool Pushed => !((_history & 0x02) > 0) && ((_history & 0x01) > 0);
         }
 
-        public static void Update(List<Keys> pressedKeys)
+        public static void Update(LinkedList<Keys> pressedKeys)
         {
             Up.Append((uint)(pressedKeys.Contains(Keys.Up) ? 1 : 0));
             Down.Append((uint)(pressedKeys.Contains(Keys.Down) ? 1 : 0));
