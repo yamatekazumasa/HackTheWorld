@@ -295,8 +295,17 @@ namespace HackTheWorld
             speed *= Scale / 10;    // スケール調整
             if (Input.Left.Pressed) this._position += new Vector(-speed, 0);
             if (Input.Right.Pressed) this._position += new Vector(+speed, 0);
-            if (Input.Up.Pressed) this._position += new Vector(0, -speed);
-            if (Input.Down.Pressed) this._position += new Vector(0, +speed);
+            //if (Input.Up.Pressed) this._position += new Vector(0, -speed);
+            //if (Input.Down.Pressed) this._position += new Vector(0, +speed);
+        }
+
+        /// <summary>
+        /// 押されたキー(上)によりvelocityが更新される。
+        /// </summary>
+        public void JumpbyKeys(int speed)
+        {
+            speed *= Scale / 10;    // スケール調整
+            if (Input.Sp1.Pushed) this._velocity = new Vector(0, -speed);
         }
 
         /// <summary>
@@ -327,15 +336,25 @@ namespace HackTheWorld
         }
 
         /// <summary>
+        /// 定数を指定して、velocityに乗じる。
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public virtual void SpeedUp(double a)
+        {
+            this._velocity = this._velocity.Extend(a);
+        }
+
+        /// <summary>
         /// 加速度を指定して、velocityに加える。
         /// </summary>
         /// <param name="a"></param>
         /// <returns></returns>
-        public virtual void Accelerate(double a)
+        public virtual void Accelerate(Vector a)
         {
-            this._velocity = this._velocity.Extend(a);
+            this._velocity += a;
         }
-        
+
         /// <summary>
         /// 重なりの判定。
         /// 渡されたオブジェクトの矩形領域と重なっているか判定する。
@@ -361,6 +380,18 @@ namespace HackTheWorld
         }
 
         /// <summary>
+        /// 接触判定。
+        /// 渡されたオブジェクトの矩形領域と接触して(または重なって)いるか判定する。
+        /// </summary>
+        /// <param name="obj">渡されたオブジェクト。</param>
+        /// <returns>接触していたらtrue、接触していなかったらfalseを返す。</returns>
+        public virtual bool ContactWith(GameObject obj)
+        {
+            return GetMinX() <= obj.GetMaxX() && GetMaxX() >= obj.GetMinX() &&
+                   GetMinY() <= obj.GetMaxY() && GetMaxY() >= obj.GetMinY();
+        }
+
+        /// <summary>
         /// 衝突判定。
         /// </summary>
         /// <param name="obj">渡されたオブジェクトと衝突しているか判定する。</param>
@@ -379,16 +410,12 @@ namespace HackTheWorld
         /// <returns>重なっていたらオブジェクトを動かす。</returns>
         public virtual void Adjust(GameObject obj)
         {
-            if (this.Intersects(obj))
+            if (this.CollideWith(obj))// 上→左右→下の順に判定
             {
-                int max = 10;// めり込み許容量。10という値は仮で、要調整。
+                int max = 5;// めり込み許容量。5という値は仮で、要調整。
                 if (GetMaxY() > obj.GetMinY() && GetMaxY() - obj.GetMinY() <= max)
                 {
                     this._position.Y -= (GetMaxY() - obj.GetMinY()) * Scale;
-                }
-                else if (GetMinY() < obj.GetMaxY() && GetMinY() - obj.GetMaxY() >= -max)
-                {
-                    this._position.Y -= (GetMinY() - obj.GetMaxY()) * Scale;
                 }
                 else if (GetMaxX() > obj.GetMinX() && GetMaxX() - obj.GetMinX() <= max)
                 {
@@ -398,8 +425,24 @@ namespace HackTheWorld
                 {
                     this._position.X -= (GetMinX() - obj.GetMaxX()) * Scale;
                 }
+                else if (GetMinY() < obj.GetMaxY() && GetMinY() - obj.GetMaxY() >= -max)
+                {
+                    this._position.Y -= (GetMinY() - obj.GetMaxY()) * Scale;
+                }
                 // else { /*エラー*/ }
             }
+        }
+
+        /// <summary>
+        /// 乗り判定。
+        /// 渡されたオブジェクトの矩形領域の上辺に(重ならずに)接触しているか判定する。
+        /// </summary>
+        /// <param name="obj">渡されたオブジェクト。</param>
+        /// <returns>乗っていたらtrue、乗っていなかったらfalseを返す。</returns>
+        public virtual bool StandOn(GameObject obj)
+        {
+            return GetMinX() < obj.GetMaxX() && GetMaxX() > obj.GetMinX() &&
+                   GetMaxY() == obj.GetMinY();
         }
 
         /// <summary>
