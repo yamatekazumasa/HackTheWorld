@@ -143,16 +143,6 @@ namespace HackTheWorld
         }
 
         /// <summary>
-        /// オブジェクトタイプを指定する。
-        /// </summary>
-        /// <param name="type">オブジェクトタイプ。</param>
-        /// <returns></returns>
-        public void SetObjectType(ObjectType type)
-        {
-            this._objectType = type;
-        }
-
-        /// <summary>
         /// 中央の座標を取得する。
         /// </summary>
         /// <returns></returns>
@@ -274,30 +264,13 @@ namespace HackTheWorld
         /// <summary>
         /// 初期化用。
         /// </summary>
-        //public void Initialize()
-        //{
-        //    this._isAlive = true;
-        //    this.SetSize(30, 30);
-        //}
-        public void Initialize(ObjectType type)
+        public void Initialize()
         {
             this._isAlive = true;
-            this.SetSize(100, 100);// 大きさはとりあえず100で設定
-            this.SetObjectType(type);
+            this.SetSize(30, 30);
         }
 
         #region GameObject専用
-        /// <summary>
-        /// 押されたキー(上下左右)により1フレーム分動く。
-        /// </summary>
-        public void MovebyKeys(int speed)
-        {
-            speed *= Scale / 10;    // スケール調整
-            if (Input.Left.Pressed) this._position += new Vector(-speed, 0);
-            if (Input.Right.Pressed) this._position += new Vector(+speed, 0);
-            if (Input.Up.Pressed) this._position += new Vector(0, -speed);
-            if (Input.Down.Pressed) this._position += new Vector(0, +speed);
-        }
 
         /// <summary>
         /// 設定された速度で1フレーム分動く。
@@ -373,36 +346,6 @@ namespace HackTheWorld
         }
 
         /// <summary>
-        /// 衝突後の調整関数。
-        /// </summary>
-        /// <param name="obj">渡されたオブジェクトに衝突しているとき重ならない状態にする。</param>
-        /// <returns>重なっていたらオブジェクトを動かす。</returns>
-        public virtual void Adjust(GameObject obj)
-        {
-            if (this.Intersects(obj))
-            {
-                int max = 10;// めり込み許容量。10という値は仮で、要調整。
-                if (GetMaxY() > obj.GetMinY() && GetMaxY() - obj.GetMinY() <= max)
-                {
-                    this._position.Y -= (GetMaxY() - obj.GetMinY()) * Scale;
-                }
-                else if (GetMinY() < obj.GetMaxY() && GetMinY() - obj.GetMaxY() >= -max)
-                {
-                    this._position.Y -= (GetMinY() - obj.GetMaxY()) * Scale;
-                }
-                else if (GetMaxX() > obj.GetMinX() && GetMaxX() - obj.GetMinX() <= max)
-                {
-                    this._position.X -= (GetMaxX() - obj.GetMinX()) * Scale;
-                }
-                else if (GetMinX() < obj.GetMaxX() && GetMinX() - obj.GetMaxX() >= -max)
-                {
-                    this._position.X -= (GetMinX() - obj.GetMaxX()) * Scale;
-                }
-                // else { /*エラー*/ }
-            }
-        }
-
-        /// <summary>
         /// オブジェクトがウィンドウの中に納まっているか判定する。
         /// </summary>
         /// <returns>オブジェクトがウィンドウ内にあればture、ウインドウ外にあればfalseを返す。</returns>
@@ -425,29 +368,6 @@ namespace HackTheWorld
                 GraphicsContext.FillRectangle(Brushes.Red, GetMinX(), GetMinY(), GetWidth(), GetHeight());
             }
         }
-        /// <summary>
-        /// 自分が持っている座標に自分が持っている大きさの矩形を描画する。
-        /// </summary>
-        /// <param name="brush">オブジェクトの色。</param>
-        public virtual void Draw(Brush brush)
-        {
-            if (this._isAlive)
-            {
-                GraphicsContext.FillRectangle(brush, GetMinX(), GetMinY(), GetWidth(), GetHeight());
-                GraphicsContext.DrawRectangle(Pens.Black, GetMinX(), GetMinY(), GetWidth(), GetHeight());
-            }
-        }
 
-        /// <summary>
-        /// 自分が持っている座標に画像を自分が持っている大きさで描画する。
-        /// </summary>
-        /// <param name="g">このグラフィックスコンテクストにオブジェクトを描画する。</param>
-        public virtual void DrawImage(Image img)
-        {
-            if (this._isAlive)
-            {
-                GraphicsContext.DrawImage(img, GetMinX(), GetMinY(), GetWidth(), GetHeight());
-            }
-        }
     }
 }

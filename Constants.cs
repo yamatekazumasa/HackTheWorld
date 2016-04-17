@@ -32,7 +32,7 @@ namespace HackTheWorld
         /// </summary>
         public enum ObjectType
         {
-            Player, Enemy, Item, Block
+            Player, Enemy, Item
         }
 
         public static Graphics GraphicsContext;
