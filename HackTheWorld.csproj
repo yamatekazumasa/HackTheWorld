@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -69,10 +70,13 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GameObject.cs" />
+    <Compile Include="InoueLab.Wd.cs" />
     <Compile Include="MasatoScene3.cs" />
     <Compile Include="MasatoScene2.cs" />
     <Compile Include="MasatoScene1.cs" />
     <Compile Include="GameScene.cs" />
+    <Compile Include="InoueLab.Mt.cs" />
+    <Compile Include="InputDevice.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="MenuItem.cs" />
     <Compile Include="Process.cs" />

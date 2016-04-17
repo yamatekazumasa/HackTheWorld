@@ -20,7 +20,13 @@ namespace HackTheWorld
 
         public override void Update()
         {
-            if (Input.Sp2.Pushed)
+//<<<<<<< HEAD
+//            Console.WriteLine("game scene.");
+//            GraphicsContext.DrawImage(img, 0, 0, 192, 256);
+//            System.IO.StreamReader sr = new System.IO.StreamReader("game.txt", System.Text.Encoding.GetEncoding("shift_jis"));
+//            GraphicsContext.DrawString(sr.ReadToEnd(), new Font("ＭＳ ゴシック", 12), Brushes.Black, 192, 0);
+//=======
+            if (Input.Sp2.Pushed||Input.MouseLeft.Pushed)
             {
                 Scene.Pop();
             }
