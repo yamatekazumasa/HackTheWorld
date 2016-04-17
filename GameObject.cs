@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Drawing;
+using System.Windows.Forms;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -79,6 +80,19 @@ namespace HackTheWorld
 
 
         #region アクセサ
+
+        // まだ追加途中
+        public Vector Position 
+        {
+            get { return _position/Scale; }
+            set { _position = value*Scale; }
+        }
+
+        public Vector Velocity
+        {
+            get { return _velocity/Scale*10; }
+            set { _velocity = value*Scale/10; }
+        }
 
         /// <summary>
         /// 中央の位置を指定する。

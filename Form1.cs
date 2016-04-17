@@ -24,8 +24,9 @@ namespace HackTheWorld
     public partial class Form1 : Form
     {
         private Bitmap _bmp;
-        private List<Keys> pressedKeys;
         private List<MouseButtons> mouseButtons;
+
+        private LinkedList<Keys> pressedKeys; 
 
         public Form1()
         {
@@ -44,8 +45,10 @@ namespace HackTheWorld
         private void MainProcess()
         {
             _bmp = new Bitmap(ScreenWidth, ScreenHeight);
-            pressedKeys = new List<Keys>();
+
             mouseButtons = new List<MouseButtons>();
+
+            pressedKeys = new LinkedList<Keys>();
             GraphicsContext = Graphics.FromImage(_bmp);
             Scene.Current = new TitleScene();
             while (!IsDisposed) // 毎フレーム呼ばれる処理
@@ -74,7 +77,7 @@ namespace HackTheWorld
         /// </summary>
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (!pressedKeys.Contains(e.KeyCode)) pressedKeys.Add(e.KeyCode);
+            if (!pressedKeys.Contains(e.KeyCode)) pressedKeys.AddLast(e.KeyCode);
             Console.WriteLine(String.Join(",", pressedKeys));
         }
         /// <summary>

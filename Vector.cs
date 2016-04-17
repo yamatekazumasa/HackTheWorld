@@ -58,12 +58,12 @@ namespace HackTheWorld
             return new Vector(a.X / b, a.Y / b);
         }
 
-        public static explicit operator Size(Vector v)
+        public static implicit operator Size(Vector v)
         {
             return new Size((int)v.X, (int)v.Y);
         }
 
-        public static explicit operator Point(Vector v)
+        public static implicit operator Point(Vector v)
         {
             return new Point((int)v.X, (int)v.Y);
         }
