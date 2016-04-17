@@ -19,6 +19,7 @@ namespace HackTheWorld
             SetSize(defaultImage.Width, defaultImage.Height);
         }
 
+
         public override void Draw()
         {
             var img = _selected ? _images[1] : _images[0];

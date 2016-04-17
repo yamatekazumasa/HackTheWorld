@@ -26,7 +26,7 @@ namespace HackTheWorld
 //            System.IO.StreamReader sr = new System.IO.StreamReader("game.txt", System.Text.Encoding.GetEncoding("shift_jis"));
 //            GraphicsContext.DrawString(sr.ReadToEnd(), new Font("ＭＳ ゴシック", 12), Brushes.Black, 192, 0);
 //=======
-            if (Input.Sp2.Pushed)
+            if (Input.Sp2.Pushed||Input.MouseLeft.Pushed)
             {
                 Scene.Pop();
             }
