@@ -1,8 +1,1 @@
-キムワイプおいしい
-山手test
-john
-山手test2
-コラボれーたーのテスト
-とても眠い
-yamada
-hara
+textファイルです
