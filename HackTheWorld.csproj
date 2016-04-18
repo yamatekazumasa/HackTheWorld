@@ -70,6 +70,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GameObject.cs" />
+    <Compile Include="IControllable.cs" />
     <Compile Include="MasatoScene3.cs" />
     <Compile Include="MasatoScene2.cs" />
     <Compile Include="MasatoScene1.cs" />
