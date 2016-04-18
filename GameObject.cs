@@ -212,8 +212,8 @@ namespace HackTheWorld
         /// <returns>重なっていたらtrue、重なっていなかったらfalseを返す。</returns>
         public virtual bool Intersects(GameObject obj)
         {
-            return GetMinX() < obj.GetMaxX() && GetMaxX() > obj.GetMinX() &&
-                   GetMinY() < obj.GetMaxY() && GetMaxY() > obj.GetMinY();
+            return MinX < obj.MaxX && MaxX > obj.MinX &&
+                   MinY < obj.MaxY && MaxY > obj.MinY;
         }
 
         /// <summary>
@@ -224,8 +224,8 @@ namespace HackTheWorld
         /// <returns>包含していたらtrue、包含していなかったらfalseを返す。</returns>
         public virtual bool Contains(GameObject obj)
         {
-            return GetMinX() < obj.GetMinX() && GetMaxX() > obj.GetMaxX() &&
-                   GetMinY() < obj.GetMinY() && GetMaxY() > obj.GetMaxY();
+            return MinX < obj.MinX && MaxX > obj.MaxX &&
+                   MinY < obj.MinY && MaxY > obj.MaxY;
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace HackTheWorld
         public virtual bool CollideWith(GameObject obj)
         {
             if (!obj._isAlive) return false;
-            if (_objectType == obj._objectType) return false;
+            if (_objectType == obj.ObjectType) return false;
             return this.Intersects(obj);
         }
 
@@ -246,8 +246,8 @@ namespace HackTheWorld
         /// <returns>オブジェクトがウィンドウ内にあればture、ウインドウ外にあればfalseを返す。</returns>
         public virtual bool InWindow()
         {
-            return GetMinX() > -100 && GetMinX() < ScreenWidth + 100 &&
-                   GetMinY() > -100 && GetMinY() < ScreenHeight + 100;
+            return MinX > -100 && MinX < ScreenWidth + 100 &&
+                   MinY > -100 && MinY < ScreenHeight + 100;
         }
 
         #endregion
