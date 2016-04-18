@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
-using
-    InoueLab;
 using System.Drawing;
 
 namespace HackTheWorld

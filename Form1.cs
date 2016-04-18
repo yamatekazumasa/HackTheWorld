@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
-using InoueLab;
 using static HackTheWorld.Input;
 
 
