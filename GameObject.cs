@@ -38,7 +38,10 @@ namespace HackTheWorld
         /// <summary>
         /// 何も指定せずにオブジェクトを出現させる。
         /// </summary>
-        public GameObject() { }
+        public GameObject()
+        {
+            Initialize();
+        }
 
         /// <summary>
         ///  位置を指定してオブジェクトを出現させる。
@@ -81,18 +84,33 @@ namespace HackTheWorld
 
         #region アクセサ
 
-        // まだ追加途中
-        public Vector Position 
+        public Vector Position
         {
-            get { return _position/Scale; }
-            set { _position = value*Scale; }
+            get { return _position / Scale; }
+            set { _position = value * Scale; }
         }
 
         public Vector Velocity
         {
-            get { return _velocity/Scale*10; }
-            set { _velocity = value*Scale/10; }
+            get { return _velocity / Scale * 10; }
+            set { _velocity = value * Scale / 10; }
         }
+
+        public Vector Size
+        {
+            get { return _size / Scale; }
+            set { _size = value * Scale; }
+        }
+
+        public int MinX => (int)((_position.X - _size.X / 2) / Scale);
+        public int MinY => (int)((_position.Y - _size.Y / 2) / Scale);
+        public int MaxX => (int)((_position.X + _size.X / 2) / Scale);
+        public int MaxY => (int)((_position.Y + _size.Y / 2) / Scale);
+        public int MidX => (int)(_position.X / Scale);
+        public int MidY => (int)(_position.Y / Scale);
+        public int Width => (int)(_size.X / Scale);
+        public int Height => (int)(_size.Y / Scale);
+        public ObjectType ObjectType => _objectType;
 
         /// <summary>
         /// 中央の位置を指定する。
@@ -103,11 +121,6 @@ namespace HackTheWorld
         public void SetPosition(int x, int y)
         {
             this._position = new Vector(x, y) * Scale;
-        }
-
-        public void SetPosition(Vector v)
-        {
-            this._position = v * Scale;
         }
 
         /// <summary>
@@ -121,11 +134,6 @@ namespace HackTheWorld
             this._velocity = new Vector(vx, vy) * Scale / 10;
         }
 
-        public void SetVelocity(Vector v)
-        {
-            this._velocity = v * Scale / 10;
-        }
-
         /// <summary>
         /// サイズを指定する。
         /// </summary>
@@ -137,125 +145,12 @@ namespace HackTheWorld
             this._size = new Vector(w, h) * Scale;
         }
 
-        public void SetSize(Vector v)
-        {
-            this._size = v * Scale;
-        }
-
-        /// <summary>
-        /// 中央の座標を取得する。
-        /// </summary>
-        /// <returns></returns>
-        public Vector GetPosition()
-        {
-            return _position / Scale;
-        }
-
-        /// <summary>
-        /// 速度を取得する。
-        /// </summary>
-        /// <returns></returns>
-        public Vector GetVelocity()
-        {
-            return _velocity / Scale * 10;
-        }
-
-        /// <summary>
-        /// サイズを取得する。
-        /// </summary>
-        /// <returns></returns>
-        public Vector GetSize()
-        {
-            return _size / Scale;
-        }
-
-        /// <summary>
-        /// 左上のx座標を取得する。
-        /// </summary>
-        /// <returns></returns>
-        public int GetMinX()
-        {
-            return (int)((_position.X - _size.X / 2) / Scale);
-        }
-
-        /// <summary>
-        /// 左上のy座標を取得する。
-        /// </summary>
-        /// <returns></returns>
-        public int GetMinY()
-        {
-            return (int)((_position.Y - _size.Y / 2) / Scale);
-        }
-
-        /// <summary>
-        /// 右下のx座標を取得する。
-        /// </summary>
-        /// <returns></returns>
-        public int GetMaxX()
-        {
-            return (int)((_position.X + _size.X / 2) / Scale);
-        }
-
-        /// <summary>
-        /// 右下のy座標を取得する。
-        /// </summary>
-        /// <returns></returns>
-        public int GetMaxY()
-        {
-            return (int)((_position.Y + _size.Y / 2) / Scale);
-        }
-
-        /// <summary>
-        /// 中央のx座標を取得する。
-        /// </summary>
-        /// <returns></returns>
-        public int GetMidX()
-        {
-            return (int)(_position.X / Scale);
-        }
-
-        /// <summary>
-        /// 中央のy座標を取得する。
-        /// </summary>
-        /// <returns></returns>
-        public int GetMidY()
-        {
-            return (int)(_position.Y / Scale);
-        }
-
-        /// <summary>
-        /// 横幅を取得する。
-        /// </summary>
-        /// <returns></returns>
-        public int GetWidth()
-        {
-            return (int)(_size.X / Scale);
-        }
-
-        /// <summary>
-        /// 高さを取得する。
-        /// </summary>
-        /// <returns></returns>
-        public int GetHeight()
-        {
-            return (int)(_size.Y / Scale);
-        }
-
         /// <summary>
         /// オブジェクトを消す。
         /// </summary>
         public virtual void Die()
         {
             this._isAlive = false;
-        }
-
-        /// <summary>
-        /// オブジェクトのタイプを返す。
-        /// </summary>
-        /// <returns></returns>
-        public virtual ObjectType GetObjectType()
-        {
-            return this._objectType;
         }
 
         #endregion
@@ -365,7 +260,7 @@ namespace HackTheWorld
         {
             if(this._isAlive)
             {
-                GraphicsContext.FillRectangle(Brushes.Red, GetMinX(), GetMinY(), GetWidth(), GetHeight());
+                GraphicsContext.FillRectangle(Brushes.Red, MinX, MinY, Width, Height);
             }
         }
 

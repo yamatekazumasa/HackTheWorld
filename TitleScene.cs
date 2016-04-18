@@ -61,32 +61,32 @@ namespace HackTheWorld
             _focused = false;
 
 
-            if ((Input.mp.position.X >= _menu[0].GetMinX() && Input.mp.position.X <= _menu[0].GetMaxX()) &&
-                (Input.mp.position.Y >= _menu[0].GetMinY() && Input.mp.position.Y <= _menu[0].GetMaxY()))
+            if ((Input.mp.position.X >= _menu[0].MinX && Input.mp.position.X <= _menu[0].MaxX) &&
+                (Input.mp.position.Y >= _menu[0].MinY && Input.mp.position.Y <= _menu[0].MaxY))
             {
                 _focused = true;
                 _cursor = 0;
             }
-            if ((Input.mp.position.X >= _menu[1].GetMinX() && Input.mp.position.X <= _menu[1].GetMaxX()) &&
-                (Input.mp.position.Y >= _menu[1].GetMinY() && Input.mp.position.Y <= _menu[1].GetMaxY()))
+            if ((Input.mp.position.X >= _menu[1].MinX && Input.mp.position.X <= _menu[1].MaxX) &&
+                (Input.mp.position.Y >= _menu[1].MinY && Input.mp.position.Y <= _menu[1].MaxY))
             {
                 _focused = true;
                 _cursor = 1;
             }
-            if ((Input.mp.position.X >= _menu[2].GetMinX() && Input.mp.position.X <= _menu[2].GetMaxX()) &&
-                (Input.mp.position.Y >= _menu[2].GetMinY() && Input.mp.position.Y <= _menu[2].GetMaxY()))
+            if ((Input.mp.position.X >= _menu[2].MinX && Input.mp.position.X <= _menu[2].MaxX) &&
+                (Input.mp.position.Y >= _menu[2].MinY && Input.mp.position.Y <= _menu[2].MaxY))
             {
                 _focused = true;
                 _cursor = 2;
             }
-            if ((Input.mp.position.X >= _menu[3].GetMinX() && Input.mp.position.X <= _menu[3].GetMaxX()) &&
-                (Input.mp.position.Y >= _menu[3].GetMinY() && Input.mp.position.Y <= _menu[3].GetMaxY()))
+            if ((Input.mp.position.X >= _menu[3].MinX && Input.mp.position.X <= _menu[3].MaxX) &&
+                (Input.mp.position.Y >= _menu[3].MinY && Input.mp.position.Y <= _menu[3].MaxY))
             {
                 _focused = true;
                 _cursor = 3;
             }
-            if ((Input.mp.position.X >= _menu[4].GetMinX() && Input.mp.position.X <= _menu[4].GetMaxX()) &&
-                (Input.mp.position.Y >= _menu[4].GetMinY() && Input.mp.position.Y <= _menu[4].GetMaxY()))
+            if ((Input.mp.position.X >= _menu[4].MinX && Input.mp.position.X <= _menu[4].MaxX) &&
+                (Input.mp.position.Y >= _menu[4].MinY && Input.mp.position.Y <= _menu[4].MaxY))
             {
                 _focused = true;
                 _cursor = 4;

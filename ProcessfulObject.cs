@@ -34,7 +34,7 @@ namespace HackTheWorld
 
         public override void Draw()
         {
-            GraphicsContext.FillRectangle(Brushes.Turquoise, GetMinX(), GetMinY(), GetWidth(), GetHeight());
+            GraphicsContext.FillRectangle(Brushes.Turquoise, MinX, MinY, Width, Height);
         }
     }
 }
