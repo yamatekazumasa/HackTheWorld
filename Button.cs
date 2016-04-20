@@ -23,7 +23,7 @@ namespace HackTheWorld
         }
         public override void Draw()
         {
-            GraphicsContext.DrawImage(image, GetMinX(), GetMinY(),(float)GetSize().X,(float)GetSize().Y);
+            GraphicsContext.DrawImage(image, MinX,MinY,(float)Size.X,(float)Size.Y);
         }
     }
 }

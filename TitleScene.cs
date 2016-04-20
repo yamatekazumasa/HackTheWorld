@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
 
+
 namespace HackTheWorld
 {
     class TitleScene : Scene
@@ -13,6 +14,7 @@ namespace HackTheWorld
         private Image[] _menuImages;
         private MenuItem[] _menu;
         private int _cursor;
+        private bool _focused;
 
 
         public override void Cleanup()
@@ -45,29 +47,40 @@ namespace HackTheWorld
         {
           
 
-            if (Input.MouseLeft.Pushed)
-            {
-                switch (_cursor)
-                {
-                    case 0:
-                        Scene.Push(new GameScene());
-                        break;
-                    case 1:
-                        Scene.Push(new MasatoScene1());
-                        break;
-                    case 2:
-                        Scene.Push(new MasatoScene2());
-                        break;
-                    case 3:
-                        Scene.Push(new MasatoScene3());
-                        break;
-                    case 4:
-                        Application.Exit();
-                        break;
-                }
+            _focused = false;
 
+
+            if ((Input.mp.position.X >= _menu[0].MinX && Input.mp.position.X <= _menu[0].MaxX) &&
+                (Input.mp.position.Y >= _menu[0].MinY && Input.mp.position.Y <= _menu[0].MaxY))
+            {
+                _focused = true;
+                _cursor = 0;
             }
-            
+            if ((Input.mp.position.X >= _menu[1].MinX && Input.mp.position.X <= _menu[1].MaxX) &&
+                (Input.mp.position.Y >= _menu[1].MinY && Input.mp.position.Y <= _menu[1].MaxY))
+            {
+                _focused = true;
+                _cursor = 1;
+            }
+            if ((Input.mp.position.X >= _menu[2].MinX && Input.mp.position.X <= _menu[2].MaxX) &&
+                (Input.mp.position.Y >= _menu[2].MinY && Input.mp.position.Y <= _menu[2].MaxY))
+            {
+                _focused = true;
+                _cursor = 2;
+            }
+            if ((Input.mp.position.X >= _menu[3].MinX && Input.mp.position.X <= _menu[3].MaxX) &&
+                (Input.mp.position.Y >= _menu[3].MinY && Input.mp.position.Y <= _menu[3].MaxY))
+            {
+                _focused = true;
+                _cursor = 3;
+            }
+            if ((Input.mp.position.X >= _menu[4].MinX && Input.mp.position.X <= _menu[4].MaxX) &&
+                (Input.mp.position.Y >= _menu[4].MinY && Input.mp.position.Y <= _menu[4].MaxY))
+            {
+                _focused = true;
+                _cursor = 4;
+            }
+
 
             if (Input.Down.Pushed)
             {
@@ -79,7 +92,7 @@ namespace HackTheWorld
                 _cursor = (_cursor + 4) % 5;
             }
 
-            if (Input.Sp1.Pushed)
+            if (Input.Sp1.Pushed || (Input.MouseLeft.Pushed && _focused))
             {
                 switch (_cursor)
                 {
@@ -101,12 +114,6 @@ namespace HackTheWorld
                 }
             }
 
-
-            for (int i = 0; i <= 4; i++)
-            {
-                if (_menu[i].Intersects(Input.mp.position)) _cursor = i;
-            }
-            // 下に戻っちゃうのは入力を pushed と pressed に分ければ解決する。
             if (Input.Sp2.Pushed)
             {
                 _cursor = 4;
