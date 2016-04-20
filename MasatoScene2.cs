@@ -9,6 +9,8 @@ namespace HackTheWorld
     class MasatoScene2 : Scene
     {
         Image _img;
+        private Button backButton = new Button(Image.FromFile(@"image\back.png"));
+
         public override void Cleanup()
         {
         }
@@ -16,18 +18,23 @@ namespace HackTheWorld
         public override void Startup()
         {
             _img = Image.FromFile(@".\image\masato2.jpg");
+            backButton.SetSize(50, 50); backButton.SetPosition(25, 500);
+
         }
 
         public override void Update()
         {
-            if (Input.Sp2.Pushed || Input.MouseLeft.Pushed)
+            if (Input.Sp2.Pushed )
 
             {
                 Scene.Pop();
             }
-            
+            if (backButton.clicked(Input.mp.position, Input.MouseLeft.Pushed)) Scene.Pop();
+
+
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);
+            backButton.Draw();
 
         }
     }

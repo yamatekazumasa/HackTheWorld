@@ -320,6 +320,11 @@ namespace HackTheWorld
             return GetMinX() < obj.GetMaxX() && GetMaxX() > obj.GetMinX() &&
                    GetMinY() < obj.GetMaxY() && GetMaxY() > obj.GetMinY();
         }
+        public virtual bool Intersects(Point p)
+        {
+            return GetMinX() <= p.X && GetMaxX() >= p.X &&
+                   GetMinY() <=p.Y && GetMaxY() >=p.Y;
+        }
 
         /// <summary>
         /// 包含判定。

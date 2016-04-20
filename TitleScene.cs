@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
-using InoueLab;
 
 namespace HackTheWorld
 {
@@ -44,18 +43,7 @@ namespace HackTheWorld
 
         public override void Update()
         {
-            //<<<<<<< HEAD
-            //            Console.WriteLine("title scene.");
-            //            GraphicsContext.DrawImage(img, 0, 0,192,256);
-            //            System.IO.StreamReader sr = new System.IO.StreamReader("title.txt", System.Text.Encoding.GetEncoding("shift_jis"));
-
-            //            LinearGradientBrush b = new LinearGradientBrush(
-            //                GraphicsContext.VisibleClipBounds,
-            //                                        Color.White,
-            //                                        Color.Black,
-            //                                        LinearGradientMode.Horizontal);
-            //            GraphicsContext.DrawString(sr.ReadToEnd(), new Font("ＭＳ ゴシック", 50), b, 0, 256);
-            //=======
+          
 
             if (Input.MouseLeft.Pushed)
             {
@@ -112,14 +100,12 @@ namespace HackTheWorld
                         break;
                 }
             }
-           
 
-            if ((Input.mp.position.X >= _menu[0].GetMinX() && Input.mp.position.X <= _menu[0].GetMaxX()) && (Input.mp.position.Y >= _menu[0].GetMinY() && Input.mp.position.Y <= _menu[0].GetMaxY())) _cursor = 0;
-            if ((Input.mp.position.X >= _menu[1].GetMinX() && Input.mp.position.X <= _menu[1].GetMaxX()) && (Input.mp.position.Y >= _menu[1].GetMinY() && Input.mp.position.Y <= _menu[1].GetMaxY())) _cursor = 1;
-            if ((Input.mp.position.X >= _menu[2].GetMinX() && Input.mp.position.X <= _menu[2].GetMaxX()) && (Input.mp.position.Y >= _menu[2].GetMinY() && Input.mp.position.Y <= _menu[2].GetMaxY())) _cursor = 2;
-            if ((Input.mp.position.X >= _menu[3].GetMinX() && Input.mp.position.X <= _menu[3].GetMaxX()) && (Input.mp.position.Y >= _menu[3].GetMinY() && Input.mp.position.Y <= _menu[3].GetMaxY())) _cursor = 3;
-            if ((Input.mp.position.X >= _menu[4].GetMinX() && Input.mp.position.X <= _menu[4].GetMaxX()) && (Input.mp.position.Y >= _menu[4].GetMinY() && Input.mp.position.Y <= _menu[4].GetMaxY())) _cursor = 4;
 
+            for (int i = 0; i <= 4; i++)
+            {
+                if (_menu[i].Intersects(Input.mp.position)) _cursor = i;
+            }
             // 下に戻っちゃうのは入力を pushed と pressed に分ければ解決する。
             if (Input.Sp2.Pushed)
             {
