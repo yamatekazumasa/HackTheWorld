@@ -274,11 +274,6 @@ namespace HackTheWorld
         /// <summary>
         /// 初期化用。
         /// </summary>
-        //public void Initialize()
-        //{
-        //    this._isAlive = true;
-        //    this.SetSize(30, 30);
-        //}
         public void Initialize(ObjectType type)
         {
             this._isAlive = true;
@@ -287,26 +282,8 @@ namespace HackTheWorld
         }
 
         #region GameObject専用
-        /// <summary>
-        /// 押されたキー(上下左右)により1フレーム分動く。
-        /// </summary>
-        public void MovebyKeys(int speed)
-        {
-            speed *= Scale / 10;    // スケール調整
-            if (Input.Left.Pressed) this._position += new Vector(-speed, 0);
-            if (Input.Right.Pressed) this._position += new Vector(+speed, 0);
-            //if (Input.Up.Pressed) this._position += new Vector(0, -speed);
-            //if (Input.Down.Pressed) this._position += new Vector(0, +speed);
-        }
 
-        /// <summary>
-        /// 押されたキー(上)によりvelocityが更新される。
-        /// </summary>
-        public void JumpbyKeys(int speed)
-        {
-            speed *= Scale / 10;    // スケール調整
-            if (Input.Sp1.Pushed) this._velocity = new Vector(0, -speed);
-        }
+
 
         /// <summary>
         /// 設定された速度で1フレーム分動く。
@@ -460,23 +437,11 @@ namespace HackTheWorld
         /// <summary>
         /// 自分が持っている座標に自分が持っている大きさの矩形を描画する。
         /// </summary>
-        /// <param name="g">このグラフィックスコンテクストにオブジェクトを描画する。</param>
         public virtual void Draw()
         {
             if(this._isAlive)
             {
-                GraphicsContext.FillRectangle(Brushes.Red, GetMinX(), GetMinY(), GetWidth(), GetHeight());
-            }
-        }
-        /// <summary>
-        /// 自分が持っている座標に自分が持っている大きさの矩形を描画する。
-        /// </summary>
-        /// <param name="brush">オブジェクトの色。</param>
-        public virtual void Draw(Brush brush)
-        {
-            if (this._isAlive)
-            {
-                GraphicsContext.FillRectangle(brush, GetMinX(), GetMinY(), GetWidth(), GetHeight());
+                GraphicsContext.FillRectangle(objectBrush[(int)_objectType], GetMinX(), GetMinY(), GetWidth(), GetHeight());
                 GraphicsContext.DrawRectangle(Pens.Black, GetMinX(), GetMinY(), GetWidth(), GetHeight());
             }
         }
@@ -484,8 +449,7 @@ namespace HackTheWorld
         /// <summary>
         /// 自分が持っている座標に画像を自分が持っている大きさで描画する。
         /// </summary>
-        /// <param name="g">このグラフィックスコンテクストにオブジェクトを描画する。</param>
-        public virtual void DrawImage(Image img)
+        public virtual void Draw(Image img)
         {
             if (this._isAlive)
             {

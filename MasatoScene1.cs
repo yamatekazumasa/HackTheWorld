@@ -10,7 +10,7 @@ namespace HackTheWorld
     {
         //このSceneで使用する変数
         Image _img;
-        GameObject player;
+        Player player;
         List<GameObject> blocks;
 
         public override void Cleanup()//終了時処理
@@ -21,7 +21,7 @@ namespace HackTheWorld
         {
             _img = Image.FromFile(@"image\masato1.jpg");
             // playerの初期化
-            player = new GameObject(50, 500);
+            player = new Player(50, 500);
             player.Initialize(ObjectType.Player);
             player.SetSize(70,90);  // プレーヤーサイズ(仮) 
             // ブロックの初期化
@@ -51,10 +51,14 @@ namespace HackTheWorld
             // 移動する前に行う計算
             foreach (var block in blocks)
             {
-                if (player.StandOn(block) || block.StandOn(player))
+                if (player.StandOn(block) && player.GetVelocity().Y > 0)
                 {
                     player.SetVelocity(0, 0);
                     player.JumpbyKeys(50);// ジャンプの初速
+                }
+                if (block.StandOn(player) && player.GetVelocity().Y < 0)
+                {
+                    player.SetVelocity(0, 0);
                 }
             }
             player.Accelerate(new Vector(0, 5));// 重力
@@ -73,10 +77,10 @@ namespace HackTheWorld
             GraphicsContext.Clear(Color.White);
 
             // 描画
-            player.DrawImage(_img);
-            //player.Draw(Brushes.Aqua);
+            player.Draw(_img);
+            player.Draw();
             foreach (var block in blocks) {
-                block.Draw(Brushes.Brown);
+                block.Draw();
             }
 
         }
