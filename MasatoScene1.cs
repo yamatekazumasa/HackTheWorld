@@ -29,7 +29,7 @@ namespace HackTheWorld
                 {
                     if (Map[i, j] == 1)
                     {
-                        _blocks.Add(new GameObject(ScreenWidth / 16 * j, ScreenHeight / 9 * i, 0, 0, ScreenWidth/16, ScreenHeight/9));
+                        _blocks.Add(new GameObject(Cell * j, Cell * i, 0, 0, Cell, Cell));
                     }
                 }
             }
@@ -52,13 +52,20 @@ namespace HackTheWorld
                 }
                 _player.Adjust(block);
             }
-            
-            GraphicsContext.Clear(Color.White);
+
+            ScreenClear();
+
             _player.Draw();
             foreach (var block in _blocks)
             {
                 block.Draw();
             }
+
+        }
+
+        private void ScreenClear()
+        {
+            GraphicsContext.Clear(Color.White);
 
         }
     }
