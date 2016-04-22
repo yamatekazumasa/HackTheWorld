@@ -23,9 +23,8 @@ namespace HackTheWorld
     public partial class Form1 : Form
     {
         private Bitmap _bmp;
-        private List<MouseButtons> mouseButtons;
-
-        private LinkedList<Keys> pressedKeys; 
+        private LinkedList<Keys> _pressedKeys;
+        private LinkedList<MouseButtons> _mouseButtons;
 
         public Form1()
         {
@@ -45,17 +44,17 @@ namespace HackTheWorld
         {
             _bmp = new Bitmap(ScreenWidth, ScreenHeight);
 
-            mouseButtons = new List<MouseButtons>();
+            _pressedKeys = new LinkedList<Keys>();
+            _mouseButtons = new LinkedList<MouseButtons>();
 
-            pressedKeys = new LinkedList<Keys>();
             GraphicsContext = Graphics.FromImage(_bmp);
             Scene.Current = new TitleScene();
             while (!IsDisposed) // 毎フレーム呼ばれる処理
             {
 
-                Input.Update(pressedKeys);
-                Input.Update(mouseButtons);
-                Input.Update(this.Location, MousePosition);
+                Input.Update(_pressedKeys);
+                Input.Update(_mouseButtons);
+                Input.Update(MousePosition, this.Location);
                 // プレイヤーとステージをアップデート
                 Scene.Current.Update();
                
@@ -76,8 +75,8 @@ namespace HackTheWorld
         /// </summary>
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (!pressedKeys.Contains(e.KeyCode)) pressedKeys.AddLast(e.KeyCode);
-            Console.WriteLine(String.Join(",", pressedKeys));
+            if (!_pressedKeys.Contains(e.KeyCode)) _pressedKeys.AddLast(e.KeyCode);
+            Console.WriteLine(String.Join(",", _pressedKeys));
         }
         /// <summary>
         /// キー入力取得用。
@@ -85,21 +84,21 @@ namespace HackTheWorld
         /// </summary>
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            pressedKeys.Remove(e.KeyCode);
-            Console.WriteLine(String.Join(",", pressedKeys));
+            _pressedKeys.Remove(e.KeyCode);
+            Console.WriteLine(String.Join(",", _pressedKeys));
         }
 
         //押されているマウスのボタン
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (!mouseButtons.Contains(e.Button)) mouseButtons.Add(e.Button);
+            if (!_mouseButtons.Contains(e.Button)) _mouseButtons.Add(e.Button);
             Cursor.Current = Cursors.Hand;
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            mouseButtons.Remove(e.Button);
+            _mouseButtons.Remove(e.Button);
         }
 
 

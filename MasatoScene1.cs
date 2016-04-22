@@ -37,7 +37,7 @@ namespace HackTheWorld
 
         public override void Update()
         {
-            if (Input.Sp2.Pushed||Input.MouseLeft.Pushed)
+            if (Input.Sp2.Pushed||Input.LeftButton.Pushed)
             {
                 Scene.Pop();
             }

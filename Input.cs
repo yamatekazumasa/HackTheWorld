@@ -24,33 +24,32 @@ namespace HackTheWorld
             public bool Pushed => !((_history & 0x02) > 0) && ((_history & 0x01) > 0);
         }
 
-        public class Mouse
+        public class MouseButton
         {
             private uint _history;
 
             public void Append(uint s)
             {
-                _history = (_history << 1) | (uint)(s > 0 ? 1 : 0);
+                _history = (_history << 1) | (uint) (s > 0 ? 1 : 0);
             }
 
             public bool Pressed => (_history & 0x01) > 0;
             public bool Pushed => !((_history & 0x02) > 0) && ((_history & 0x01) > 0);
         }
-        public class mousePosition
-        {
-            private Point cp; private Point sp;
-            internal Point position;
-            public void setpoint(Point cp, Point sp)
-            {
-                this.cp = cp;
-                this.sp = sp;
-                var x = sp.X - cp.X-9;
-                var y = sp.Y - cp.Y-30;
-                position = new Point(x, y);
-            }
-         
-        }
 
+        public class MousePosition
+        {
+            private Vector _position;
+
+            public void Append(Vector mousePosition, Vector windowPosition)
+            {
+                _position = mousePosition - windowPosition - new Vector(9, 30);
+
+            }
+
+            public int X => (int)_position.X;
+            public int Y => (int)_position.Y;
+        }
 
 
         public static void Update(LinkedList<Keys> pressedKeys)
@@ -65,25 +64,16 @@ namespace HackTheWorld
             Sp2.Append((uint)(pressedKeys.Contains(Keys.X) ? 1 : 0));
         }
 
-
-        public static void Update(List<MouseButtons> mouseButtons)
+        public static void Update(LinkedList<MouseButtons> mouseButtons)
         {
-            MouseLeft.Append((uint)(mouseButtons.Contains(MouseButtons.Left) ? 1 : 0));
-            MouseRight.Append((uint)(mouseButtons.Contains(MouseButtons.Right) ? 1 : 0));
-          
-        }
-        public static void Update(Point cp, Point sp)
-        {
-            mp.setpoint(cp,sp);
+            LeftButton.Append((uint)(mouseButtons.Contains(MouseButtons.Left) ? 1 : 0));
+            RightButton.Append((uint)(mouseButtons.Contains(MouseButtons.Right) ? 1 : 0));
         }
 
-    
-
-
-        public static Mouse MouseLeft { get; } = new Mouse();
-        public static Mouse MouseRight { get; } = new Mouse();
-
-        public static mousePosition mp = new mousePosition();
+        public static void Update(Point mousePosition, Point windowPosition)
+        {
+            Mouse.Append(mousePosition.ToVector(), windowPosition.ToVector());
+        }
 
         public static Key Up { get; } = new Key();
         public static Key Down { get; } = new Key();
@@ -93,5 +83,10 @@ namespace HackTheWorld
         public static Key Button2 { get; } = new Key();
         public static Key Sp1 { get; } = new Key();
         public static Key Sp2 { get; } = new Key();
+
+        public static MousePosition Mouse { get; } = new MousePosition();
+        public static MouseButton LeftButton { get; } = new MouseButton();
+        public static MouseButton RightButton { get; } = new MouseButton();
+
     }
 }
