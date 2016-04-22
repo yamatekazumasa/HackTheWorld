@@ -31,15 +31,15 @@ namespace HackTheWorld
             _menuImages[1] = Image.FromFile(@".\image\3.png");
 
             _menu[0] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[0].SetPosition(100, 100);
+            _menu[0].Position = new Vector(100, 100);
             _menu[1] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[1].SetPosition(100, 200);
+            _menu[1].Position = new Vector(100, 200);
             _menu[2] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[2].SetPosition(100, 300);
+            _menu[2].Position = new Vector(100, 300);
             _menu[3] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[3].SetPosition(100, 400);
+            _menu[3].Position = new Vector(100, 400);
             _menu[4] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[4].SetPosition(100, 500);
+            _menu[4].Position = new Vector(100, 500);
 
         }
 

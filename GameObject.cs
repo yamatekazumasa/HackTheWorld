@@ -50,7 +50,7 @@ namespace HackTheWorld
         /// <param name="y">初期y座標。</param>
         public GameObject(int x, int y) : this()
         {
-            SetPosition(x, y);
+            Position = new Vector(x, y);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace HackTheWorld
         /// <param name="vy">初期速度のy方向成分。</param>
         public GameObject(int x, int y, int vx, int vy) : this(x, y)
         {
-            SetVelocity(vx, vy);
+            Velocity = new Vector(vx, vy);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace HackTheWorld
         /// <param name="h">高さ。</param>
         public GameObject(int x, int y, int vx, int vy, int w, int h) : this(x, y, vx, vy)
         {
-            SetSize(w, h);
+            Size = new Vector(w, h);
         }
 
         #endregion
@@ -86,64 +86,86 @@ namespace HackTheWorld
 
         public Vector Position
         {
-            get { return _position / Scale; }
-            set { _position = value * Scale; }
+            get { return _position/Scale; }
+            set { _position = value*Scale; }
         }
 
         public Vector Velocity
         {
-            get { return _velocity / Scale * 10; }
-            set { _velocity = value * Scale / 10; }
+            get { return _velocity; }
+            set { _velocity = value; }
         }
 
         public Vector Size
         {
-            get { return _size / Scale; }
-            set { _size = value * Scale; }
+            get { return _size/Scale; }
+            set { _size = value*Scale; }
         }
 
-        public int MinX => (int)((_position.X - _size.X / 2) / Scale);
-        public int MinY => (int)((_position.Y - _size.Y / 2) / Scale);
-        public int MaxX => (int)((_position.X + _size.X / 2) / Scale);
-        public int MaxY => (int)((_position.Y + _size.Y / 2) / Scale);
-        public int MidX => (int)(_position.X / Scale);
-        public int MidY => (int)(_position.Y / Scale);
+        public int MinX
+        {
+            get { return (int) (_position.X/Scale); }
+            set { _position.X = value*Scale; }
+        }
+
+        public int MinY
+        {
+            get { return (int) (_position.Y/Scale); }
+            set { _position.Y = value*Scale; }
+        }
+
+        public int MaxX
+        {
+            get { return (int) ((_position.X + _size.X)/Scale); }
+            set { _position.X = value*Scale - _size.X; }
+        }
+
+        public int MaxY
+        {
+            get { return (int) ((_position.Y + _size.Y)/Scale); }
+            set { _position.Y = value*Scale - _size.Y; }
+        }
+
+        public int MidX
+        {
+            get { return (int) ((_position.X + _size.X/2)/Scale); }
+            set { _position.X = value*Scale - _size.X/2; }
+        }
+
+        public int MidY
+        {
+            get { return (int) ((_position.Y + _size.Y/2)/Scale); }
+            set { _position.Y = value*Scale - _size.Y/2; }
+        }
+
+        public int X
+        {
+            get { return MinX; }
+            set { MinX = value; }
+        }
+
+        public int Y
+        {
+            get { return MinY; }
+            set { MinY = value; }
+        }
+
+        public int VX
+        {
+            get { return (int)_velocity.X; }
+            set { _velocity.X = value; }
+        }
+
+        public int VY
+        {
+            get { return (int)_velocity.Y; }
+            set { _velocity.Y = value; }
+        }
+
         public int Width => (int)(_size.X / Scale);
         public int Height => (int)(_size.Y / Scale);
         public ObjectType ObjectType => _objectType;
 
-        /// <summary>
-        /// 中央の位置を指定する。
-        /// </summary>
-        /// <param name="x">x座標。</param>
-        /// <param name="y">y座標。</param>
-        /// <returns></returns>
-        public void SetPosition(int x, int y)
-        {
-            this._position = new Vector(x, y) * Scale;
-        }
-
-        /// <summary>
-        /// 速度を指定する。
-        /// </summary>
-        /// <param name="vx">速度のx方向成分。</param>
-        /// <param name="vy">速度のy方向成分。</param>
-        /// <returns></returns>
-        public void SetVelocity(int vx, int vy)
-        {
-            this._velocity = new Vector(vx, vy) * Scale / 10;
-        }
-
-        /// <summary>
-        /// サイズを指定する。
-        /// </summary>
-        /// <param name="w">幅。</param>
-        /// <param name="h">高さ。</param>
-        /// <returns></returns>
-        public void SetSize(int w, int h)
-        {
-            this._size = new Vector(w, h) * Scale;
-        }
 
         /// <summary>
         /// オブジェクトを消す。
@@ -162,7 +184,7 @@ namespace HackTheWorld
         public void Initialize()
         {
             this._isAlive = true;
-            this.SetSize(30, 30);
+            Size = new Vector(50, 50);
         }
 
         #region GameObject専用
@@ -180,7 +202,7 @@ namespace HackTheWorld
         /// </summary>
         public virtual void Move(int vx, int vy)
         {
-            SetVelocity(vx, vy);
+            Velocity = new Vector(vx, vy);
             Move();
         }
         
@@ -233,7 +255,7 @@ namespace HackTheWorld
         /// </summary>
         /// <param name="obj">渡されたオブジェクトと衝突しているか判定する。</param>
         /// <returns>衝突していたらtrue、衝突していなかったらfalseを返す。</returns>
-        public virtual bool CollideWith(GameObject obj)
+        public virtual bool CollidesWith(GameObject obj)
         {
             if (!obj._isAlive) return false;
             if (_objectType == obj.ObjectType) return false;
@@ -250,7 +272,47 @@ namespace HackTheWorld
                    MinY > -100 && MinY < ScreenHeight + 100;
         }
 
+        public virtual bool OnGround()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// 衝突後の調整関数。
+        /// </summary>
+        /// <param name="obj">渡されたオブジェクトに衝突しているとき重ならない状態にする。</param>
+        /// <returns>重なっていたらオブジェクトを動かす。</returns>
+        public virtual void Adjust(GameObject obj)
+        {
+            if (this.Intersects(obj))
+            {
+                int max = 10;// めり込み許容量。10という値は仮で、要調整。
+                if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
+                {
+                    this._position.Y -= (MaxY - obj.MinY) * Scale;
+                }
+                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
+                {
+                    this._position.Y -= (MinY - obj.MaxY) * Scale;
+                }
+                else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
+                {
+                    this._position.X -= (MaxX - obj.MinX) * Scale;
+                }
+                else if (MinX < obj.MaxX && MinX - obj.MaxX >= -max)
+                {
+                    this._position.X -= (MinX - obj.MaxX) * Scale;
+                }
+            }
+        }
+
+
         #endregion
+
+        public virtual void Update()
+        {
+            
+        }
 
         /// <summary>
         /// 自分が持っている座標に自分が持っている大きさの矩形を描画する。
