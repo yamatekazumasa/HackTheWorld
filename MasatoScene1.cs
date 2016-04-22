@@ -74,7 +74,7 @@ namespace HackTheWorld
             }
 
             // 画面のクリア
-            GraphicsContext.Clear(Color.White);
+            ScreenClear();
 
             // 描画
             player.Draw(_img);
@@ -83,6 +83,19 @@ namespace HackTheWorld
                 block.Draw();
             }
 
+        }
+
+        private void ScreenClear()
+        {
+            GraphicsContext.Clear(Color.White);
+            for (int ix = 0; ix < ScreenWidth; ix += Cell)
+            {
+                GraphicsContext.DrawLine(Pens.LightGray, ix, 0, ix, ScreenHeight);
+            }
+            for (int iy = 0; iy < ScreenHeight; iy += Cell)
+            {
+                GraphicsContext.DrawLine(Pens.Gray, 0, iy, ScreenWidth, iy);
+            }
         }
     }
 }

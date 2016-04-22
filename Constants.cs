@@ -26,6 +26,8 @@ namespace HackTheWorld
         public static readonly int ScreenWidth = 1280;
         public static readonly int ScreenHeight = 720;
 
+        public static readonly int Cell = 100;
+
 
         /// <summary>
         /// オブジェクトのタイプ。
