@@ -20,10 +20,10 @@ namespace HackTheWorld
         {
             _img = Image.FromFile(@"image\masato3.jpg");
             pobj = new ProcessfulObject(new Process[4] {
-                new Process(obj => obj.SetSize(10, 10), 60),
+                new Process(obj => { obj.Size = new Vector(10, 10); } , 60),
                 new Process(obj => { }, 60),
-                new Process(obj => obj.SetSize(30, 30), 60),
-                new Process(obj => obj.SetSize(300, 300), 60)
+                new Process(obj => { obj.Size = new Vector(30, 30); }, 60),
+                new Process(obj => { obj.Size = new Vector(300, 300); }, 60)
             });
             processes = pobj.GetEnumerator();
 
@@ -31,7 +31,8 @@ namespace HackTheWorld
 
         public override void Update()
         {
-            if (Input.Sp2.Pushed)
+            if (Input.Sp2.Pushed || Input.MouseLeft.Pushed)
+
             {
                 Scene.Pop();
             }

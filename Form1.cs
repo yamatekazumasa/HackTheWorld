@@ -11,44 +11,64 @@ using System.Windows.Forms;
 using static HackTheWorld.Constants;
 using static HackTheWorld.Input;
 
+
+
 namespace HackTheWorld
+
+    
 {
+
+
+
     public partial class Form1 : Form
     {
         private Bitmap _bmp;
+        private List<MouseButtons> mouseButtons;
+
         private LinkedList<Keys> pressedKeys; 
 
         public Form1()
         {
             InitializeComponent();
+   
             this.SetStyle(ControlStyles.ResizeRedraw, true);
             this.SetStyle(ControlStyles.DoubleBuffer, true);
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             ThreadSeparate(ref _drawThread, MainProcess);
+
+
         }
+
 
         private void MainProcess()
         {
             _bmp = new Bitmap(ScreenWidth, ScreenHeight);
+
+            mouseButtons = new List<MouseButtons>();
+
             pressedKeys = new LinkedList<Keys>();
             GraphicsContext = Graphics.FromImage(_bmp);
             Scene.Current = new TitleScene();
-
             while (!IsDisposed) // 毎フレーム呼ばれる処理
             {
 
                 Input.Update(pressedKeys);
-
+                Input.Update(mouseButtons);
+                Input.Update(this.Location, MousePosition);
                 // プレイヤーとステージをアップデート
                 Scene.Current.Update();
-
+               
+                //if (Dragging) GraphicsContext.DrawEllipse(Pens.Aqua, 0, 0,10,10);
                 // 画面の更新
                 InterThreadRefresh(Refresh);
 
             }
 
         }
+
+
+
 
         /// <summary>
         /// キー入力取得用。
@@ -68,6 +88,20 @@ namespace HackTheWorld
             pressedKeys.Remove(e.KeyCode);
             Console.WriteLine(String.Join(",", pressedKeys));
         }
+
+        //押されているマウスのボタン
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            if (!mouseButtons.Contains(e.Button)) mouseButtons.Add(e.Button);
+            Cursor.Current = Cursors.Hand;
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            mouseButtons.Remove(e.Button);
+        }
+
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -98,7 +132,6 @@ namespace HackTheWorld
             {
             }
         }
-
 
     }
 }

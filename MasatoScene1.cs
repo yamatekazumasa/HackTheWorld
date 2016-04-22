@@ -8,46 +8,50 @@ namespace HackTheWorld
 {
     class MasatoScene1 : Scene
     {
-        //このSceneで使用する変数
         Image _img;
-        GameObject player;
-        List<GameObject> blocks;
+        Player _player;
+        List<GameObject> _blocks;
 
-        public override void Cleanup()//終了時処理
+        public override void Cleanup()
         {
         }
 
-        public override void Startup()//初期化処理
+        public override void Startup()
         {
             _img = Image.FromFile(@"image\masato1.jpg");
             // playerの初期化
-            player = new Player(1000, 400);
-            player.Initialize(ObjectType.Player);
+            _player = new Player(_img);
+            _player.Initialize(ObjectType.Player);
             // ブロックの初期化
-            blocks = new List<GameObject>();
-            for (int i=0;i<5; i++){
-                GameObject b = new GameObject(Cell*i+Cell/2, Cell*9+Cell/2);
+            _blocks = new List<GameObject>();
+            for (int i=0;i<5; i+=2){
+                GameObject b = new GameObject(Cell*i, Cell*10);
                 b.Initialize(ObjectType.Block);
-                blocks.Add(b);
+                _blocks.Add(b);
+
             }
         }
 
         public override void Update()
         {
-            if (Input.Sp2.Pushed)
+            if (Input.Sp2.Pushed||Input.MouseLeft.Pushed)
             {
                 Scene.Pop();
             }
-            //ここに作成
-            // 計算とか
 
-            player.MovebyKeys(10);//playerのスピード
-            foreach (var block in blocks)
+            _player.Update();
+
+            foreach (var block in _blocks)
             {
-                player.Adjust(block);
+                if (_player.Intersects(block))
+                {
+                    _player.VY = 0;
+                }
+                _player.Adjust(block);
             }
-
+            
             GraphicsContext.Clear(Color.White);
+
             //GraphicsContext.DrawImage(_img, 0, 0);
 
             //ここに作成
@@ -61,9 +65,12 @@ namespace HackTheWorld
                 GraphicsContext.DrawLine(Pens.Gray, 0, iy, ScreenWidth, iy);
             }
 
-            player.DrawImage(_img);
-            foreach (var block in blocks) {
-                block.Draw(Brushes.Brown);
+
+            _player.Draw();
+            foreach (var block in _blocks)
+            {
+                block.Draw();
+
             }
 
         }

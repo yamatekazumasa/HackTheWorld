@@ -16,13 +16,14 @@ namespace HackTheWorld
         public MenuItem(Image defaultImage, Image selectedImage)
         {
             _images = new Image[2] {defaultImage, selectedImage};
-            SetSize(defaultImage.Width, defaultImage.Height);
+            Size = new Vector(defaultImage.Width, defaultImage.Height);
         }
+
 
         public override void Draw()
         {
             var img = _selected ? _images[1] : _images[0];
-            GraphicsContext.DrawImage(img, GetMinX(), GetMinY());
+            GraphicsContext.DrawImage(img, MinX, MinY);
         }
 
     }
