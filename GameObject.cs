@@ -184,7 +184,15 @@ namespace HackTheWorld
         public void Initialize()
         {
             this._isAlive = true;
-            Size = new Vector(50, 50);
+            Size = new Vector(Cell, Cell);
+        }
+        /// <summary>
+        /// 初期化用。
+        /// </summary>
+        /// <param name="type">オブジェクトタイプ。</param>
+        public void Initialize(ObjectType type)
+        {
+            this._objectType = type;
         }
 
         #region GameObject専用

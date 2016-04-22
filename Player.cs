@@ -13,7 +13,7 @@ namespace HackTheWorld
         public Player(Image img)
         {
             this._img = img;
-            this.Size = new Vector(50, 50);
+            this.Size = new Vector(Cell, Cell);
         }
 
         public override void Update()
