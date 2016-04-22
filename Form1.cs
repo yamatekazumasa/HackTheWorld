@@ -92,7 +92,7 @@ namespace HackTheWorld
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (!_mouseButtons.Contains(e.Button)) _mouseButtons.Add(e.Button);
+            if (!_mouseButtons.Contains(e.Button)) _mouseButtons.AddLast(e.Button);
             Cursor.Current = Cursors.Hand;
         }
 
