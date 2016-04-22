@@ -21,12 +21,12 @@ namespace HackTheWorld
         {
             _img = Image.FromFile(@"image\masato1.jpg");
             // playerの初期化
-            player = new GameObject(1000, 400);
+            player = new Player(1000, 400);
             player.Initialize(ObjectType.Player);
             // ブロックの初期化
             blocks = new List<GameObject>();
             for (int i=0;i<5; i++){
-                GameObject b = new GameObject(300*i+50, 500+50);
+                GameObject b = new GameObject(Cell*i+Cell/2, Cell*9+Cell/2);
                 b.Initialize(ObjectType.Block);
                 blocks.Add(b);
             }
@@ -52,6 +52,14 @@ namespace HackTheWorld
 
             //ここに作成
             // 描画のみ
+            for (int ix=0;ix<ScreenWidth;ix+=Cell)
+            {
+                GraphicsContext.DrawLine(Pens.Gray, ix, 0, ix, ScreenHeight);
+            }
+            for (int iy = 0; iy < ScreenHeight; iy += Cell)
+            {
+                GraphicsContext.DrawLine(Pens.Gray, 0, iy, ScreenWidth, iy);
+            }
 
             player.DrawImage(_img);
             foreach (var block in blocks) {

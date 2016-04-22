@@ -282,7 +282,7 @@ namespace HackTheWorld
         public void Initialize(ObjectType type)
         {
             this._isAlive = true;
-            this.SetSize(100, 100);// 大きさはとりあえず100で設定
+            this.SetSize(Cell, Cell);// 大きさはとりあえず100で設定
             this.SetObjectType(type);
         }
 
