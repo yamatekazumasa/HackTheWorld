@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace HackTheWorld
 {
-    public static class Constants
+    public static partial class Constants
     {
         /// <summary>
         /// FPS(Frame per second)。
