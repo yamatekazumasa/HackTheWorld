@@ -59,32 +59,27 @@ namespace HackTheWorld
             _focused = false;
 
 
-            if ((Input.Mouse.X >= _menu[0].MinX && Input.Mouse.X <= _menu[0].MaxX) &&
-                (Input.Mouse.Y >= _menu[0].MinY && Input.Mouse.Y <= _menu[0].MaxY))
+            if (_menu[0].Contains(Input.Mouse.Position))
             {
                 _focused = true;
                 _cursor = 0;
             }
-            if ((Input.Mouse.X >= _menu[1].MinX && Input.Mouse.X <= _menu[1].MaxX) &&
-                (Input.Mouse.Y >= _menu[1].MinY && Input.Mouse.Y <= _menu[1].MaxY))
+            if (_menu[1].Contains(Input.Mouse.Position))
             {
                 _focused = true;
                 _cursor = 1;
             }
-            if ((Input.Mouse.X >= _menu[2].MinX && Input.Mouse.X <= _menu[2].MaxX) &&
-                (Input.Mouse.Y >= _menu[2].MinY && Input.Mouse.Y <= _menu[2].MaxY))
+            if (_menu[2].Contains(Input.Mouse.Position))
             {
                 _focused = true;
                 _cursor = 2;
             }
-            if ((Input.Mouse.X >= _menu[3].MinX && Input.Mouse.X <= _menu[3].MaxX) &&
-                (Input.Mouse.Y >= _menu[3].MinY && Input.Mouse.Y <= _menu[3].MaxY))
+            if (_menu[3].Contains(Input.Mouse.Position))
             {
                 _focused = true;
                 _cursor = 3;
             }
-            if ((Input.Mouse.X >= _menu[4].MinX && Input.Mouse.X <= _menu[4].MaxX) &&
-                (Input.Mouse.Y >= _menu[4].MinY && Input.Mouse.Y <= _menu[4].MaxY))
+            if (_menu[4].Contains(Input.Mouse.Position))
             {
                 _focused = true;
                 _cursor = 4;
