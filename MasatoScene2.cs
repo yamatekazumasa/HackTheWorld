@@ -18,7 +18,7 @@ namespace HackTheWorld
             _img = Image.FromFile(@".\image\masato2.jpg");
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             if (Input.Sp2.Pushed || Input.LeftButton.Pushed)
 

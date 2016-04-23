@@ -35,14 +35,14 @@ namespace HackTheWorld
             }
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             if (Input.Sp2.Pushed||Input.LeftButton.Pushed)
             {
                 Scene.Pop();
             }
 
-            _player.Update();
+            _player.Update(dt);
 
             foreach (var block in _blocks)
             {

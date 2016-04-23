@@ -43,7 +43,7 @@ namespace HackTheWorld
 
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
 //            Console.WriteLine("title scene.");
 //            GraphicsContext.DrawImage(img, 0, 0, 192, 256);
