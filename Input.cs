@@ -49,6 +49,7 @@ namespace HackTheWorld
 
             public int X => (int)_position.X;
             public int Y => (int)_position.Y;
+            public Vector Position => _position;
         }
 
 
@@ -58,10 +59,16 @@ namespace HackTheWorld
             Down.Append((uint)(pressedKeys.Contains(Keys.Down) ? 1 : 0));
             Left.Append((uint)(pressedKeys.Contains(Keys.Left) ? 1 : 0));
             Right.Append((uint)(pressedKeys.Contains(Keys.Right) ? 1 : 0));
-            Button1.Append((uint)(pressedKeys.Contains(Keys.Enter) ? 1 : 0));
-            Button2.Append((uint)(pressedKeys.Contains(Keys.Space) ? 1 : 0));
             Sp1.Append((uint)(pressedKeys.Contains(Keys.Z) ? 1 : 0));
             Sp2.Append((uint)(pressedKeys.Contains(Keys.X) ? 1 : 0));
+            Sp3.Append((uint)(pressedKeys.Contains(Keys.C) ? 1 : 0));
+            Enter.Append((uint)(pressedKeys.Contains(Keys.Enter) ? 1 : 0));
+            Space.Append((uint)(pressedKeys.Contains(Keys.Space) ? 1 : 0));
+            Tab.Append((uint)(pressedKeys.Contains(Keys.Tab) ? 1 : 0));
+            Shift.Append((uint)(pressedKeys.Contains(Keys.Shift) ? 1 : 0));
+            Control.Append((uint)(pressedKeys.Contains(Keys.Control) ? 1 : 0));
+            Back.Append((uint)(pressedKeys.Contains(Keys.Back) ? 1 : 0));
+            Delete.Append((uint)(pressedKeys.Contains(Keys.Delete) ? 1 : 0));
         }
 
         public static void Update(LinkedList<MouseButtons> mouseButtons)
@@ -79,10 +86,16 @@ namespace HackTheWorld
         public static Key Down { get; } = new Key();
         public static Key Left { get; } = new Key();
         public static Key Right { get; } = new Key();
-        public static Key Button1 { get; } = new Key();
-        public static Key Button2 { get; } = new Key();
         public static Key Sp1 { get; } = new Key();
         public static Key Sp2 { get; } = new Key();
+        public static Key Sp3 { get; } = new Key();
+        public static Key Enter { get; } = new Key();
+        public static Key Space { get; } = new Key();
+        public static Key Tab { get; } = new Key();
+        public static Key Shift { get; } = new Key();
+        public static Key Control { get; } = new Key();
+        public static Key Back { get; } = new Key();
+        public static Key Delete { get; } = new Key();
 
         public static MousePosition Mouse { get; } = new MousePosition();
         public static MouseButton LeftButton { get; } = new MouseButton();
