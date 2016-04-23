@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static HackTheWorld.Constants;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace HackTheWorld
 {
@@ -52,6 +47,31 @@ namespace HackTheWorld
             public Vector Position => _position;
         }
 
+        public class KeyBoards
+        {
+            private Dictionary<Keys, uint> _histories = new Dictionary<Keys, uint>();
+
+            public void Append(Keys key, uint s)
+            {
+                if (!_histories.ContainsKey(key)) _histories.Add(key, s);
+                _histories[key] = (_histories[key] << 1) | s;
+            }
+
+            public bool Pressed(Keys key)
+            {
+                if (!_histories.ContainsKey(key)) _histories.Add(key, 0);
+                return (_histories[key] & 0x01) > 0;
+            }
+
+            public bool Pushed(Keys key)
+            {
+                if (!_histories.ContainsKey(key)) _histories.Add(key, 0);
+                return !((_histories[key] & 0x02) > 0) && ((_histories[key] & 0x01) > 0);
+            }
+
+        }
+
+        public static KeyBoards KeyBoard { set; get; } = new KeyBoards();
 
         public static void Update(LinkedList<Keys> pressedKeys)
         {
@@ -69,6 +89,11 @@ namespace HackTheWorld
             Control.Append((uint)(pressedKeys.Contains(Keys.Control) ? 1 : 0));
             Back.Append((uint)(pressedKeys.Contains(Keys.Back) ? 1 : 0));
             Delete.Append((uint)(pressedKeys.Contains(Keys.Delete) ? 1 : 0));
+
+            foreach (var key in pressedKeys)
+            {
+                KeyBoard.Append(key, 1);
+            }
         }
 
         public static void Update(LinkedList<MouseButtons> mouseButtons)

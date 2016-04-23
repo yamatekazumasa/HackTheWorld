@@ -10,16 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
-using static HackTheWorld.Input;
 
 
 
 namespace HackTheWorld
-
-    
 {
-
-
 
     public partial class Form1 : Form
     {
@@ -78,9 +73,6 @@ namespace HackTheWorld
 
         }
 
-
-
-
         /// <summary>
         /// キー入力取得用。
         /// 押されたキーをpressedKeysに格納する。
@@ -97,6 +89,7 @@ namespace HackTheWorld
         protected override void OnKeyUp(KeyEventArgs e)
         {
             _pressedKeys.Remove(e.KeyCode);
+            Input.KeyBoard.Append(e.KeyCode, 0);
             Console.WriteLine(String.Join(",", _pressedKeys));
         }
 

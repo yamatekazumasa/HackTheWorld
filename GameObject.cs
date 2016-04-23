@@ -191,6 +191,11 @@ namespace HackTheWorld
 
         public ObjectType ObjectType => _objectType;
 
+        public static implicit operator Rectangle(GameObject obj)
+        {
+            return new Rectangle((int)obj.X, (int)obj.Y, (int)obj.W, (int)obj.H);
+        }
+
 
         /// <summary>
         /// オブジェクトを消す。
