@@ -267,6 +267,25 @@ namespace HackTheWorld
         }
 
         /// <summary>
+        /// 包含判定。
+        /// 渡された点を包含しているか判定する。
+        /// </summary>
+        public virtual bool Contains(Point p)
+        {
+            return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y; 
+        }
+
+        /// <summary>
+        /// 包含判定。
+        /// 渡された点を包含しているか判定する。
+        /// </summary>
+        public virtual bool Contains(int x, int y)
+        {
+            return MinX < x && MaxX > x && MinY < y && MaxY > y;
+        }
+
+
+        /// <summary>
         /// 衝突判定。
         /// </summary>
         /// <param name="obj">渡されたオブジェクトと衝突しているか判定する。</param>
