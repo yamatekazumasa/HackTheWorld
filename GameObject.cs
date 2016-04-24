@@ -191,9 +191,22 @@ namespace HackTheWorld
 
         public ObjectType ObjectType => _objectType;
 
+        /// <summary>
+        /// 自分の矩形範囲を暗黙的に指定できる。
+        /// </summary>
+        /// <param name="obj"></param>
         public static implicit operator Rectangle(GameObject obj)
         {
             return new Rectangle((int)obj.X, (int)obj.Y, (int)obj.W, (int)obj.H);
+        }
+
+        /// <summary>
+        /// 自分の矩形範囲を暗黙的に指定できる。
+        /// </summary>
+        /// <param name="obj"></param>
+        public static implicit operator RectangleF(GameObject obj)
+        {
+            return new RectangleF(obj.X, obj.Y, obj.W, obj.H);
         }
 
 

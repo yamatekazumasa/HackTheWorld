@@ -14,7 +14,7 @@ namespace HackTheWorld
         private Image[] _menuImages;
         private MenuItem[] _menu;
         private int _cursor;
-        private bool _focused;
+        private bool _isFocused;
 
 
         public override void Cleanup()
@@ -30,16 +30,11 @@ namespace HackTheWorld
             _menuImages[0] = Image.FromFile(@".\image\10.png");
             _menuImages[1] = Image.FromFile(@".\image\3.png");
 
-            _menu[0] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[0].Position = new Vector(100, 100);
-            _menu[1] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[1].Position = new Vector(100, 200);
-            _menu[2] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[2].Position = new Vector(100, 300);
-            _menu[3] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[3].Position = new Vector(100, 400);
-            _menu[4] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[4].Position = new Vector(100, 500);
+            _menu[0] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 100)};
+            _menu[1] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 200)};
+            _menu[2] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 300)};
+            _menu[3] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 400)};
+            _menu[4] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 500)};
 
         }
 
@@ -56,32 +51,32 @@ namespace HackTheWorld
 //                                        LinearGradientMode.Horizontal);
 //            GraphicsContext.DrawString(sr.ReadToEnd(), new Font("ＭＳ ゴシック", 50), b, 0, 256);
 
-            _focused = false;
+            _isFocused = false;
 
 
             if (_menu[0].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 0;
             }
             if (_menu[1].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 1;
             }
             if (_menu[2].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 2;
             }
             if (_menu[3].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 3;
             }
             if (_menu[4].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 4;
             }
 
@@ -96,7 +91,7 @@ namespace HackTheWorld
                 _cursor = (_cursor + 4) % 5;
             }
 
-            if (Input.Sp1.Pushed || (Input.LeftButton.Pushed && _focused))
+            if (Input.Sp1.Pushed || (Input.LeftButton.Pushed && _isFocused))
             {
                 switch (_cursor)
                 {
@@ -125,9 +120,9 @@ namespace HackTheWorld
 
             foreach (var item in _menu)
             {
-                item._selected = false;
+                item.IsSelected = false;
             }
-            _menu[_cursor]._selected = true;
+            _menu[_cursor].IsSelected = true;
 
 
 
