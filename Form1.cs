@@ -133,5 +133,94 @@ namespace HackTheWorld
             }
         }
 
+        //ここからいじった
+        private void textBox1_TextChanged(object sender , EventArgs e)
+        {
+            
+        }
+        private void button1_Click(object sender , EventArgs e)
+        {
+            textBox2.Text = "";
+            For( );
+            FourOperations( );
+        }
+        private void FourOperations( )
+        {
+            //とりあえず数字の計算をさせたい
+            //textbox1の内容を計算してtextbox2に出す
+            string test = textBox1.Text;
+            string[ ] testdata = test.Split(' ');
+
+            //For()のほうでやらせたいやつだったら無視
+            if(testdata[0] == "for")
+            {
+                return;
+            }
+
+            //四則演算の式になっていないとうまく使えないので書いている途中は何もしない
+            if(test.EndsWith("+") || test.EndsWith("-") || test.EndsWith("*") || test.EndsWith("/") || test.EndsWith("."))
+            {
+                return;
+            }
+
+            //ここで計算
+            System.Data.DataTable dt = new System.Data.DataTable( );
+
+
+            //出力するとき型があってないといけないらしいので型をとって条件分岐
+            Type t = dt.Compute(test , "").GetType( );
+
+            //型の確かめ用
+            //textBox2.Text = t.ToString( );
+
+            //分岐
+            if(t.ToString( ) == "System.DBNull")
+            {
+                textBox2.Text = "なんもない";
+            }
+            else {
+                if(t.ToString( ) == "System.Int32")
+                {
+                    int result = (int)dt.Compute(test , "");
+                    textBox2.Text = result.ToString( );
+                }
+                else
+                {
+                    double result = (double)dt.Compute(test , "");
+                    textBox2.Text = result.ToString( );
+                }
+            }
+        }
+        private void For( )
+        {
+            //入力 半角の空白ごとに取得したい
+            //for 3 jump() とかを想定
+            string test = textBox1.Text;
+            string[ ] testdata = test.Split(' ');
+
+            //この形になってなかったら無視
+            if(testdata.Length < 3)
+            {
+                return;
+            }
+            else {
+                if(testdata[0] == "for")
+                {
+                    int num = int.Parse(testdata[1]);
+                    for(int i = 0; i < num; i++)
+                    {
+                        if(i == num-1)
+                        {
+                            textBox2.Text += testdata[2];
+                        }
+                        else {
+                            textBox2.Text += testdata[2] + " ";
+                        }
+                    }
+                }
+            }
+        }
+
+        
     }
 }
