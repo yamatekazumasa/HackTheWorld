@@ -10,7 +10,7 @@ namespace HackTheWorld
     {
         Image _img;
         Player _player;
-        List<GameObject> _blocks;
+        List<Block> _blocks;
 
         public override void Cleanup()
         {
@@ -23,14 +23,14 @@ namespace HackTheWorld
             _player = new Player(_img);
 
             // ブロックの初期化
-            _blocks = new List<GameObject>();
-            for (int i = 0; i < 9; i++)
+            _blocks = new List<Block>();
+            for (int iy = 0; iy < GridY; iy++)
             {
-                for (int j = 0; j < 16; j++)
+                for (int ix = 0; ix < GridX; ix++)
                 {
-                    if (Map[i, j] == 1)
+                    if (Map[iy, ix] == 1)
                     {
-                        _blocks.Add(new GameObject(Cell * j, Cell * i, 0, 0, Cell, Cell));
+                        _blocks.Add(new Block(Cell * ix, Cell * iy));
                     }
                 }
             }
