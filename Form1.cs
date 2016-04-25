@@ -144,7 +144,13 @@ namespace HackTheWorld
             For( );
             FourOperations( );
         }
-        private void FourOperations( )
+        //private void Wait( )
+        //{
+        //      string test = textBox1.Text;
+        //    string [] testdata =test.Split(' ');
+        //}
+        //的な感じ
+        private void FourOperations()
         {
             //とりあえず数字の計算をさせたい
             //textbox1の内容を計算してtextbox2に出す
@@ -177,6 +183,7 @@ namespace HackTheWorld
             if(t.ToString( ) == "System.DBNull")
             {
                 textBox2.Text = "なんもない";
+                listBox1.Items.Add("ばなな");
             }
             else {
                 if(t.ToString( ) == "System.Int32")
@@ -206,15 +213,19 @@ namespace HackTheWorld
             else {
                 if(testdata[0] == "for")
                 {
+                    //testdata[1] = FourOperations(testdata[1]);
                     int num = int.Parse(testdata[1]);
                     for(int i = 0; i < num; i++)
                     {
-                        if(i == num-1)
+                        for(int j = 2; j < testdata.Length; j++)
                         {
-                            textBox2.Text += testdata[2];
-                        }
-                        else {
-                            textBox2.Text += testdata[2] + " ";
+                            if(i == num - 1)
+                            {
+                                textBox2.Text += testdata[j];
+                            }
+                            else {
+                                textBox2.Text += testdata[j] + " ";
+                            }
                         }
                     }
                 }
