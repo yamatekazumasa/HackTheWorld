@@ -44,19 +44,33 @@ namespace HackTheWorld
                 Scene.Pop();
             }
 
-            _player.Update(dt);
-
+            // 移動する前に行う計算
             foreach (var block in _blocks)
             {
-                if (_player.Intersects(block))
+                if (_player.StandOn(block) && _player.VY > 0)
+                {
+                    _player.VY = 0;
+                    _player.onGround = true;// ジャンプの初速
+                }
+                if (_player.HitHeadOn(block) && _player.VY < 0)
                 {
                     _player.VY = 0;
                 }
+            }
+
+            // 移動
+            _player.Update(dt);
+
+            // 調整
+            foreach (var block in _blocks)
+            {
                 _player.Adjust(block);
             }
 
+            // 画面のクリア
             ScreenClear();
 
+            // 描画
             _player.Draw();
             foreach (var block in _blocks)
             {

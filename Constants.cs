@@ -39,11 +39,6 @@ namespace HackTheWorld
             Player, Enemy, Item, Block
         }
 
-        /// <summary>
-        /// オブジェクトを描画するときのブラシ。ObjectTypeをintに変換してください。
-        /// </summary>
-        public static Brush[] objectBrush = { Brushes.Aqua, Brushes.DarkRed, Brushes.Yellow, Brushes.Brown };
-
         public static Graphics GraphicsContext;
 
     }
