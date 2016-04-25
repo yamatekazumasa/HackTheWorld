@@ -14,42 +14,51 @@ namespace HackTheWorld
         public Player(Image img)
         {
             this._img = img;
-            this.Size = new Vector(Cell, Cell);
+            this.Size = new Vector(Cell * 7 / 10, Cell * 9 / 10);
         }
 
         public override void Update(float dt)
         {
             // キーで動かす部分
-            int speed = 100;
+            int speed = Cell * 3;
             if (Input.Left.Pressed)  X -= speed * dt;
             if (Input.Right.Pressed) X += speed * dt;
             if (Input.Up.Pushed && onGround)
             {
                 onGround = false;
-                VY = -1000;
+                VY = -Cell * 13; // h=v^2/2g
             }
             //if (Input.Down.Pressed)  Y += speed * dt;
 
             // 自動で動く部分
-            int gravity = 2000;
+            int gravity = Cell * 25;
             VY += gravity * dt;
             Move(dt);
 
         }
 
-        public bool StandOn(GameObject obj)
+        /// <summary>
+        /// 乗り判定。
+        /// 渡されたオブジェクトの矩形領域の上辺に(重ならずに)接触しているか判定する。
+        /// </summary>
+        /// <param name="obj">渡されたオブジェクト。</param>
+        /// <returns>乗っていたらtrue、乗っていなかったらfalseを返す。</returns>
+        public virtual bool StandOn(GameObject obj)
         {
-            return true;
+            return MinX < obj.MaxX && MaxX > obj.MinX &&
+                   MaxY == obj.MinY;
         }
 
-        public bool HitHeadOn(GameObject obj)
+        public virtual bool HitHeadOn(GameObject obj)
         {
-            return true;
+            return MinX < obj.MaxX && MaxX > obj.MinX &&
+                   MinY == obj.MaxY;
         }
 
         public override void Draw()
         {
             GraphicsContext.DrawImage(_img, X, Y, Width, Height);
+            GraphicsContext.FillRectangle(Brushes.Aqua, X, Y, Width, Height);
         }
 
     }

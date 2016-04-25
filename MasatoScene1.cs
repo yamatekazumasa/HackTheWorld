@@ -24,9 +24,9 @@ namespace HackTheWorld
 
             // ブロックの初期化
             _blocks = new List<Block>();
-            for (int iy = 0; iy < GridY; iy++)
+            for (int iy = 0; iy < CellNumY; iy++)
             {
-                for (int ix = 0; ix < GridX; ix++)
+                for (int ix = 0; ix < CellNumX; ix++)
                 {
                     if (Map[iy, ix] == 1)
                     {
@@ -45,12 +45,13 @@ namespace HackTheWorld
             }
 
             // 移動する前に行う計算
+            _player.onGround = false;
             foreach (var block in _blocks)
             {
-                if (_player.StandOn(block) && _player.VY > 0)
+                if (_player.StandOn(block))
                 {
-                    _player.VY = 0;
-                    _player.onGround = true;// ジャンプの初速
+                    _player.onGround = true;
+                    if (_player.VY > 0) _player.VY = 0;
                 }
                 if (_player.HitHeadOn(block) && _player.VY < 0)
                 {
