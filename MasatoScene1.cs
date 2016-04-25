@@ -21,6 +21,7 @@ namespace HackTheWorld
             _img = Image.FromFile(@"image\masato1.jpg");
             // playerの初期化
             _player = new Player(_img);
+
             // ブロックの初期化
             _blocks = new List<GameObject>();
             for (int i = 0; i < 9; i++)
@@ -33,16 +34,17 @@ namespace HackTheWorld
                     }
                 }
             }
+
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             if (Input.Sp2.Pushed||Input.LeftButton.Pushed)
             {
                 Scene.Pop();
             }
 
-            _player.Update();
+            _player.Update(dt);
 
             foreach (var block in _blocks)
             {
