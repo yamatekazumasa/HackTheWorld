@@ -18,7 +18,7 @@ namespace HackTheWorld
             _img = Image.FromFile(@"image\masato.jpg");
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
 //            Console.WriteLine("game scene.");
 //            GraphicsContext.DrawImage(img, 0, 0, 192, 256);

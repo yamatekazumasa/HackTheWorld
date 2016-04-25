@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -9,16 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
-using static HackTheWorld.Input;
 
 
 
 namespace HackTheWorld
-
-    
 {
-
-
 
     public partial class Form1 : Form
     {
@@ -49,25 +45,33 @@ namespace HackTheWorld
 
             GraphicsContext = Graphics.FromImage(_bmp);
             Scene.Current = new TitleScene();
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            long prevTime = stopWatch.ElapsedMilliseconds;
+
             while (!IsDisposed) // 毎フレーム呼ばれる処理
             {
+                long currentTime = stopWatch.ElapsedMilliseconds;
+                if (currentTime > 100000) stopWatch.Restart();
+                float dt = (currentTime - prevTime) / 1000.0F;
 
                 Input.Update(_pressedKeys);
                 Input.Update(_mouseButtons);
-                Input.Update(MousePosition, this.Location);
+                Input.Update(MousePosition, Location);
+
                 // プレイヤーとステージをアップデート
-                Scene.Current.Update();
-               
-                //if (Dragging) GraphicsContext.DrawEllipse(Pens.Aqua, 0, 0,10,10);
+                Scene.Current.Update(dt);
+
                 // 画面の更新
                 InterThreadRefresh(Refresh);
+
+                prevTime = currentTime;
+                Console.WriteLine("dt:{0}, FPS:{1}", dt, 1000 / dt);
 
             }
 
         }
-
-
-
 
         /// <summary>
         /// キー入力取得用。
@@ -85,6 +89,7 @@ namespace HackTheWorld
         protected override void OnKeyUp(KeyEventArgs e)
         {
             _pressedKeys.Remove(e.KeyCode);
+            Input.KeyBoard.Append(e.KeyCode, 0);
             Console.WriteLine(String.Join(",", _pressedKeys));
         }
 

@@ -1,29 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
-using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Drawing;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
     class GameObject
     {
-        /// <summary>
-        /// 位置。
-        /// </summary>
-        private Vector _position;
-        /// <summary>
-        /// 速度。
-        /// </summary>
-        private Vector _velocity;
-        /// <summary>
-        /// サイズ。衝突判定に用いる。矩形で与えられる。
-        /// </summary>
-        private Vector _size;
+        private int _x;
+        private int _y;
+        private int _vx;
+        private int _vy;
+        private int _w;
+        private int _h;
+
         /// <summary>
         /// 生死フラグ。基本はdelete以外で弄らないように。
         /// </summary>
@@ -50,7 +38,8 @@ namespace HackTheWorld
         /// <param name="y">初期y座標。</param>
         public GameObject(int x, int y) : this()
         {
-            Position = new Vector(x, y);
+            X = x;
+            Y = y;
         }
 
         /// <summary>
@@ -62,7 +51,8 @@ namespace HackTheWorld
         /// <param name="vy">初期速度のy方向成分。</param>
         public GameObject(int x, int y, int vx, int vy) : this(x, y)
         {
-            Velocity = new Vector(vx, vy);
+            VX = vx;
+            VY = vy;
         }
 
         /// <summary>
@@ -76,7 +66,8 @@ namespace HackTheWorld
         /// <param name="h">高さ。</param>
         public GameObject(int x, int y, int vx, int vy, int w, int h) : this(x, y, vx, vy)
         {
-            Size = new Vector(w, h);
+            Width = w;
+            Height = h;
         }
 
         #endregion
@@ -86,85 +77,137 @@ namespace HackTheWorld
 
         public Vector Position
         {
-            get { return _position/Scale; }
-            set { _position = value*Scale; }
+            get { return new Vector(_x, _y) / Scale; }
+            set
+            {
+                _x = (int)(value.X * Scale);
+                _y = (int)(value.Y * Scale);
+            }
         }
 
         public Vector Velocity
         {
-            get { return _velocity; }
-            set { _velocity = value; }
+            get { return new Vector(_vx, _vy) / Scale; }
+            set
+            {
+                _vx = (int)(value.X * Scale);
+                _vy = (int)(value.Y * Scale);
+            }
         }
 
         public Vector Size
         {
-            get { return _size/Scale; }
-            set { _size = value*Scale; }
+            get { return new Vector(_w, _h) / Scale; }
+            set
+            {
+                _w = (int)(value.X * Scale);
+                _h = (int)(value.Y * Scale);
+            }
         }
 
-        public int MinX
+        public float MinX
         {
-            get { return (int) (_position.X/Scale); }
-            set { _position.X = value*Scale; }
+            get { return (float)_x / Scale; }
+            set { _x = (int)(value*Scale); }
         }
 
-        public int MinY
+        public float MinY
         {
-            get { return (int) (_position.Y/Scale); }
-            set { _position.Y = value*Scale; }
+            get { return (float)_y / Scale; }
+            set { _y = (int)(value * Scale); }
         }
 
-        public int MaxX
+        public float MaxX
         {
-            get { return (int) ((_position.X + _size.X)/Scale); }
-            set { _position.X = value*Scale - _size.X; }
+            get { return (float)(_x + _w) / Scale; }
+            set { _x = (int)(value*Scale) - _w; }
         }
 
-        public int MaxY
+        public float MaxY
         {
-            get { return (int) ((_position.Y + _size.Y)/Scale); }
-            set { _position.Y = value*Scale - _size.Y; }
+            get { return (float)(_y + _h) / Scale; }
+            set { _y = (int)(value * Scale) - _h; }
         }
 
-        public int MidX
+        public float MidX
         {
-            get { return (int) ((_position.X + _size.X/2)/Scale); }
-            set { _position.X = value*Scale - _size.X/2; }
+            get { return (float)(_x + _w/2) / Scale; }
+            set { _x = (int)(value * Scale) - _w/2; }
         }
 
-        public int MidY
+        public float MidY
         {
-            get { return (int) ((_position.Y + _size.Y/2)/Scale); }
-            set { _position.Y = value*Scale - _size.Y/2; }
+            get { return (float)(_y + _h/2) / Scale; }
+            set { _y = (int)(value * Scale) - _h/2; }
         }
 
-        public int X
+        public float X
         {
             get { return MinX; }
             set { MinX = value; }
         }
 
-        public int Y
+        public float Y
         {
             get { return MinY; }
             set { MinY = value; }
         }
 
-        public int VX
+        public float VX
         {
-            get { return (int)_velocity.X; }
-            set { _velocity.X = value; }
+            get { return (float)_vx / Scale; }
+            set { _vx = (int)(value * Scale); }
         }
 
-        public int VY
+        public float VY
         {
-            get { return (int)_velocity.Y; }
-            set { _velocity.Y = value; }
+            get { return (float)_vy / Scale; }
+            set { _vy = (int)(value * Scale); }
         }
 
-        public int Width => (int)(_size.X / Scale);
-        public int Height => (int)(_size.Y / Scale);
+        public float Width
+        {
+            get { return (float)_w / Scale; }
+            set { _w = (int)(value * Scale); }
+        }
+
+        public float Height
+        {
+            get { return (float)_h / Scale; }
+            set { _h = (int)(value * Scale); }
+        }
+
+        public float W
+        {
+            get { return Width; }
+            set { Width = value; }
+        }
+
+        public float H
+        {
+            get { return Height; }
+            set { Height = value; }
+        }
+
         public ObjectType ObjectType => _objectType;
+
+        /// <summary>
+        /// 自分の矩形範囲を暗黙的に指定できる。
+        /// </summary>
+        /// <param name="obj"></param>
+        public static implicit operator Rectangle(GameObject obj)
+        {
+            return new Rectangle((int)obj.X, (int)obj.Y, (int)obj.W, (int)obj.H);
+        }
+
+        /// <summary>
+        /// 自分の矩形範囲を暗黙的に指定できる。
+        /// </summary>
+        /// <param name="obj"></param>
+        public static implicit operator RectangleF(GameObject obj)
+        {
+            return new RectangleF(obj.X, obj.Y, obj.W, obj.H);
+        }
 
 
         /// <summary>
@@ -172,7 +215,7 @@ namespace HackTheWorld
         /// </summary>
         public virtual void Die()
         {
-            this._isAlive = false;
+            _isAlive = false;
         }
 
         #endregion
@@ -183,7 +226,7 @@ namespace HackTheWorld
         /// </summary>
         public void Initialize()
         {
-            this._isAlive = true;
+            _isAlive = true;
             Size = new Vector(Cell, Cell);
         }
 
@@ -192,18 +235,9 @@ namespace HackTheWorld
         /// <summary>
         /// 設定された速度で1フレーム分動く。
         /// </summary>
-        public virtual void Move()
+        public virtual void Move(float dt)
         {
-            _position += _velocity;
-        }
-
-        /// <summary>
-        /// 渡された速度で1フレーム分動く。
-        /// </summary>
-        public virtual void Move(int vx, int vy)
-        {
-            Velocity = new Vector(vx, vy);
-            Move();
+            Position += Velocity * dt;
         }
         
         /// <summary>
@@ -213,7 +247,7 @@ namespace HackTheWorld
         /// <returns></returns>
         public virtual void Rotate(double deg)
         {
-            this._velocity = this._velocity.Rotate(deg);
+            this.Velocity = this.Velocity.Rotate(deg);
         }
 
         /// <summary>
@@ -223,7 +257,7 @@ namespace HackTheWorld
         /// <returns></returns>
         public virtual void Accelerate(double a)
         {
-            this._velocity = this._velocity.Extend(a);
+            this.Velocity = this.Velocity.Extend(a);
         }
         
         /// <summary>
@@ -251,6 +285,25 @@ namespace HackTheWorld
         }
 
         /// <summary>
+        /// 包含判定。
+        /// 渡された点を包含しているか判定する。
+        /// </summary>
+        public virtual bool Contains(Point p)
+        {
+            return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y; 
+        }
+
+        /// <summary>
+        /// 包含判定。
+        /// 渡された点を包含しているか判定する。
+        /// </summary>
+        public virtual bool Contains(int x, int y)
+        {
+            return MinX < x && MaxX > x && MinY < y && MaxY > y;
+        }
+
+
+        /// <summary>
         /// 衝突判定。
         /// </summary>
         /// <param name="obj">渡されたオブジェクトと衝突しているか判定する。</param>
@@ -259,7 +312,7 @@ namespace HackTheWorld
         {
             if (!obj._isAlive) return false;
             if (_objectType == obj.ObjectType) return false;
-            return this.Intersects(obj);
+            return Intersects(obj);
         }
 
         /// <summary>
@@ -284,24 +337,24 @@ namespace HackTheWorld
         /// <returns>重なっていたらオブジェクトを動かす。</returns>
         public virtual void Adjust(GameObject obj)
         {
-            if (this.Intersects(obj))
+            if (Intersects(obj))
             {
                 int max = 10;// めり込み許容量。10という値は仮で、要調整。
                 if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
                 {
-                    this._position.Y -= (MaxY - obj.MinY) * Scale;
+                    this.Y -= MaxY - obj.MinY;
                 }
                 else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
                 {
-                    this._position.Y -= (MinY - obj.MaxY) * Scale;
+                    this.Y -= MinY - obj.MaxY;
                 }
                 else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
                 {
-                    this._position.X -= (MaxX - obj.MinX) * Scale;
+                    this.MinX -= MaxX - obj.MinX;
                 }
                 else if (MinX < obj.MaxX && MinX - obj.MaxX >= -max)
                 {
-                    this._position.X -= (MinX - obj.MaxX) * Scale;
+                    this.MinX -= MinX - obj.MaxX;
                 }
             }
         }
@@ -309,7 +362,7 @@ namespace HackTheWorld
 
         #endregion
 
-        public virtual void Update()
+        public virtual void Update(float dt)
         {
             
         }
@@ -320,7 +373,7 @@ namespace HackTheWorld
         /// <param name="g">このグラフィックスコンテクストにオブジェクトを描画する。</param>
         public virtual void Draw()
         {
-            if(this._isAlive)
+            if(_isAlive)
             {
                 GraphicsContext.FillRectangle(Brushes.Red, MinX, MinY, Width, Height);
             }

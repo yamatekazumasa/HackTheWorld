@@ -68,6 +68,16 @@ namespace HackTheWorld
             return new Point((int)v.X, (int)v.Y);
         }
 
+        public static implicit operator PointF(Vector v)
+        {
+            return new PointF((float)v.X, (float)v.Y);
+        }
+
+        public static implicit operator SizeF(Vector v)
+        {
+            return new SizeF((float)v.X, (float)v.Y);
+        }
+
     }
 
 }

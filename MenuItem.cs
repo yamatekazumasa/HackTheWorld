@@ -11,7 +11,7 @@ namespace HackTheWorld
     class MenuItem : GameObject
     {
         private readonly Image[] _images;
-        public bool _selected = false;
+        public bool IsSelected { get; set; } = false;
 
         public MenuItem(Image defaultImage, Image selectedImage)
         {
@@ -19,11 +19,10 @@ namespace HackTheWorld
             Size = new Vector(defaultImage.Width, defaultImage.Height);
         }
 
-
         public override void Draw()
         {
-            var img = _selected ? _images[1] : _images[0];
-            GraphicsContext.DrawImage(img, MinX, MinY);
+            var img = IsSelected ? _images[1] : _images[0];
+            GraphicsContext.DrawImage(img, this);
         }
 
     }
