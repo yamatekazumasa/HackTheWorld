@@ -32,6 +32,10 @@ namespace HackTheWorld
                     {
                         _blocks.Add(new Block(Cell * ix, Cell * iy));
                     }
+                    if (Map[iy, ix] == 2)
+                    {
+                        _blocks.Add(new Block1(Cell * ix, Cell * iy, 0, -Cell));
+                    }
                 }
             }
 
@@ -51,7 +55,8 @@ namespace HackTheWorld
                 if (_player.StandOn(block))
                 {
                     _player.onGround = true;
-                    if (_player.VY > 0) _player.VY = 0;
+                    if (_player.VY > block.VY) _player.VY = block.VY;
+                    if (block.work && !block.isWorking) block.isWorking = true;
                 }
                 if (_player.HitHeadOn(block) && _player.VY < 0)
                 {
@@ -61,6 +66,10 @@ namespace HackTheWorld
 
             // 移動
             _player.Update(dt);
+            foreach (var block in _blocks)
+            {
+                block.Update(dt);
+            }
 
             // 調整
             foreach (var block in _blocks)

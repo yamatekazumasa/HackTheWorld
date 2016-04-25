@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
+    <Compile Include="Block1.cs" />
     <Compile Include="CodeBox.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions.cs" />

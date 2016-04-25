@@ -5,7 +5,14 @@ namespace HackTheWorld
 {
     class Block : GameObject
     {
+        public bool work = false;
+        public bool isWorking = false;
+
         public Block(int x, int y) : base(x, y)
+        {
+        }
+
+        public Block(int x, int y, int vx, int vy) : base(x, y, vx, vy)
         {
         }
 
