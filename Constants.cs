@@ -27,7 +27,7 @@ namespace HackTheWorld
         public static readonly int ScreenHeight = 720;
 
         /// <summary>
-        /// 格子サイズ。
+        /// 格子のサイズ。
         /// </summary>
         public static readonly int CellSize = 60;
 
