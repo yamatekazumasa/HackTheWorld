@@ -5,9 +5,9 @@ namespace HackTheWorld
 {
     class Block1 : Block
     {
-        public Block1(int x, int y, int vx, int vy) : base(x, y, vx, vy)
+        public Block1(int x, int y) : base(x, y)
         {
-            work = true;
+            //work = true;
         }
 
         public override void Update(float dt)

@@ -23,12 +23,14 @@ namespace HackTheWorld
             int speed = CellSize * 3;
             if (Input.Left.Pressed)  X -= speed * dt;
             if (Input.Right.Pressed) X += speed * dt;
+            //if (Input.Down.Pressed)  Y += speed * dt;
+
+            // キーで操作する部分
             if (Input.Up.Pushed && onGround)
             {
                 onGround = false;
                 VY = -CellSize * 13; // h=v^2/2g
             }
-            //if (Input.Down.Pressed)  Y += speed * dt;
 
             // 自動で動く部分
             int gravity = CellSize * 25;
@@ -59,6 +61,7 @@ namespace HackTheWorld
         {
             GraphicsContext.DrawImage(_img, X, Y, Width, Height);
             GraphicsContext.FillRectangle(Brushes.Aqua, X, Y, Width, Height);
+            GraphicsContext.DrawRectangle(Pens.LightBlue, X, Y, Width, Height);
         }
 
     }
