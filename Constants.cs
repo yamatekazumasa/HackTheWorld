@@ -29,7 +29,7 @@ namespace HackTheWorld
         /// <summary>
         /// 格子サイズ。
         /// </summary>
-        public static readonly int Cell = 60;
+        public static readonly int CellSize = 60;
 
         /// <summary>
         /// オブジェクトのタイプ。

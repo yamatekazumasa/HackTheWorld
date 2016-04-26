@@ -14,24 +14,24 @@ namespace HackTheWorld
         public Player(Image img)
         {
             this._img = img;
-            this.Size = new Vector(Cell * 7 / 10, Cell * 9 / 10);
+            this.Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
         }
 
         public override void Update(float dt)
         {
             // キーで動かす部分
-            int speed = Cell * 3;
+            int speed = CellSize * 3;
             if (Input.Left.Pressed)  X -= speed * dt;
             if (Input.Right.Pressed) X += speed * dt;
             if (Input.Up.Pushed && onGround)
             {
                 onGround = false;
-                VY = -Cell * 13; // h=v^2/2g
+                VY = -CellSize * 13; // h=v^2/2g
             }
             //if (Input.Down.Pressed)  Y += speed * dt;
 
             // 自動で動く部分
-            int gravity = Cell * 25;
+            int gravity = CellSize * 25;
             VY += gravity * dt;
             Move(dt);
 

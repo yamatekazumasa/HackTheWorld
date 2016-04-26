@@ -11,6 +11,7 @@ namespace HackTheWorld
         Image _img;
         Player _player;
         List<Block> _blocks;
+        List<Block1> _block1s;
 
         public override void Cleanup()
         {
@@ -24,17 +25,20 @@ namespace HackTheWorld
 
             // ブロックの初期化
             _blocks = new List<Block>();
+            _block1s = new List<Block1>();
             for (int iy = 0; iy < CellNumY; iy++)
             {
                 for (int ix = 0; ix < CellNumX; ix++)
                 {
-                    if (Map[iy, ix] == 1)
-                    {
-                        _blocks.Add(new Block(Cell * ix, Cell * iy));
-                    }
                     if (Map[iy, ix] == 2)
                     {
-                        _blocks.Add(new Block1(Cell * ix, Cell * iy, 0, -Cell));
+                        _blocks.Add(new Block(CellSize * ix, CellSize * iy));
+                    }
+                    if (Map[iy, ix] == 1)
+                    {
+                        var block1 = new Block1(CellSize * ix, CellSize * iy, 0, -CellSize);
+                        _blocks.Add(block1);
+                        _block1s.Add(block1);
                     }
                 }
             }
@@ -66,9 +70,9 @@ namespace HackTheWorld
 
             // 移動
             _player.Update(dt);
-            foreach (var block in _blocks)
+            foreach (var block1 in _block1s)
             {
-                block.Update(dt);
+                block1.Update(dt);
             }
 
             // 調整
