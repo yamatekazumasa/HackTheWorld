@@ -227,7 +227,7 @@ namespace HackTheWorld
         public void Initialize()
         {
             _isAlive = true;
-            Size = new Vector(50, 50);
+            Size = new Vector(CellSize, CellSize);
         }
 
         #region GameObject専用
