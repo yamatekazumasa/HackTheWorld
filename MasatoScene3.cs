@@ -19,12 +19,15 @@ namespace HackTheWorld
         public override void Startup()
         {
             _img = Image.FromFile(@"image\masato3.jpg");
-            pobj = new ProcessfulObject(new Process[4] {
+            pobj = new ProcessfulObject();
+
+            pobj.SetProcess( new Process[] {
                 new Process(obj => { obj.Size = new Vector(10, 10); } , 60),
-                new Process(obj => { }, 60),
+                new Process(obj => { obj.X += 1; }, 60),
                 new Process(obj => { obj.Size = new Vector(30, 30); }, 60),
                 new Process(obj => { obj.Size = new Vector(300, 300); }, 60)
             });
+
             processes = pobj.GetEnumerator();
 
         }

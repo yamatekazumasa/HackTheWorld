@@ -12,11 +12,11 @@ namespace HackTheWorld
 {
     class ProcessfulObject : GameObject, IEnumerable
     {
-        private readonly Process[] _processes;
+        private Process[] _processes;
 
-        public ProcessfulObject(Process[] processes) : base(500, 300, 100, 100)
+        public ProcessfulObject() : base(500, 300, 100, 100)
         {
-            _processes = processes;
+            
         }
 
         public IEnumerator GetEnumerator()
@@ -30,6 +30,11 @@ namespace HackTheWorld
                 }
             }
 
+        }
+
+        public void SetProcess(Process[] processes)
+        {
+            _processes = processes;
         }
 
         public override void Draw()
