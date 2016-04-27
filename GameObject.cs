@@ -87,7 +87,7 @@ namespace HackTheWorld
         public Vector Position
         {
             get { return _position / Scale; }
-            set { _position = value * Scale; }
+            set { _position = value *Scale; }
         }
 
         public Vector Velocity

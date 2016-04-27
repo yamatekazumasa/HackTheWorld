@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
 using static HackTheWorld.Input;
+using System.Runtime.InteropServices;
 
 
 
@@ -25,7 +26,9 @@ namespace HackTheWorld
         private Bitmap _bmp;
         private List<MouseButtons> mouseButtons;
 
-        private LinkedList<Keys> pressedKeys; 
+        private LinkedList<Keys> pressedKeys;
+
+   
 
         public Form1()
         {
@@ -37,6 +40,7 @@ namespace HackTheWorld
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             ThreadSeparate(ref _drawThread, MainProcess);
 
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;//サイズの固定
 
         }
 
