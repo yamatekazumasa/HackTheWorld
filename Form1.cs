@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -9,26 +10,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
-using static HackTheWorld.Input;
-using System.Runtime.InteropServices;
 
 
 
 namespace HackTheWorld
-
-    
 {
-
-
 
     public partial class Form1 : Form
     {
         private Bitmap _bmp;
-        private List<MouseButtons> mouseButtons;
-
-        private LinkedList<Keys> pressedKeys;
-
-   
+        private LinkedList<Keys> _pressedKeys;
+        private LinkedList<MouseButtons> _mouseButtons;
 
         public Form1()
         {
@@ -49,30 +41,38 @@ namespace HackTheWorld
         {
             _bmp = new Bitmap(ScreenWidth, ScreenHeight);
 
-            mouseButtons = new List<MouseButtons>();
+            _pressedKeys = new LinkedList<Keys>();
+            _mouseButtons = new LinkedList<MouseButtons>();
 
-            pressedKeys = new LinkedList<Keys>();
             GraphicsContext = Graphics.FromImage(_bmp);
             Scene.Current = new TitleScene();
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            long prevTime = stopWatch.ElapsedMilliseconds;
+
             while (!IsDisposed) // 毎フレーム呼ばれる処理
             {
+                long currentTime = stopWatch.ElapsedMilliseconds;
+                if (currentTime > 100000) stopWatch.Restart();
+                float dt = (currentTime - prevTime) / 1000.0F;
 
-                Input.Update(pressedKeys);
-                Input.Update(mouseButtons);
-                Input.Update(this.Location, MousePosition);
+                Input.Update(_pressedKeys);
+                Input.Update(_mouseButtons);
+                Input.Update(MousePosition, Location);
+
                 // プレイヤーとステージをアップデート
-                Scene.Current.Update();
-               
-                //if (Dragging) GraphicsContext.DrawEllipse(Pens.Aqua, 0, 0,10,10);
+                Scene.Current.Update(dt);
+
                 // 画面の更新
                 InterThreadRefresh(Refresh);
+
+                prevTime = currentTime;
+                Console.WriteLine("dt:{0}, FPS:{1}", dt, 1000 / dt);
 
             }
 
         }
-
-
-
 
         /// <summary>
         /// キー入力取得用。
@@ -80,8 +80,8 @@ namespace HackTheWorld
         /// </summary>
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (!pressedKeys.Contains(e.KeyCode)) pressedKeys.AddLast(e.KeyCode);
-            Console.WriteLine(String.Join(",", pressedKeys));
+            if (!_pressedKeys.Contains(e.KeyCode)) _pressedKeys.AddLast(e.KeyCode);
+            Console.WriteLine(String.Join(",", _pressedKeys));
         }
         /// <summary>
         /// キー入力取得用。
@@ -89,21 +89,22 @@ namespace HackTheWorld
         /// </summary>
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            pressedKeys.Remove(e.KeyCode);
-            Console.WriteLine(String.Join(",", pressedKeys));
+            _pressedKeys.Remove(e.KeyCode);
+            Input.KeyBoard.Append(e.KeyCode, 0);
+            Console.WriteLine(String.Join(",", _pressedKeys));
         }
 
         //押されているマウスのボタン
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (!mouseButtons.Contains(e.Button)) mouseButtons.Add(e.Button);
+            if (!_mouseButtons.Contains(e.Button)) _mouseButtons.AddLast(e.Button);
             Cursor.Current = Cursors.Hand;
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            mouseButtons.Remove(e.Button);
+            _mouseButtons.Remove(e.Button);
         }
 
 

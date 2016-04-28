@@ -10,7 +10,7 @@ namespace HackTheWorld
     class MasatoScene3 : Scene
     {
         Image _img;
-        private Button backButton = new Button(Image.FromFile(@"image\back.png"));
+        private MenuItem backButton = new MenuItem(Image.FromFile(@"image\back.png"));
 
         private ProcessfulObject pobj;
         private IEnumerator processes;
@@ -21,26 +21,30 @@ namespace HackTheWorld
         public override void Startup()
         {
             _img = Image.FromFile(@"image\masato3.jpg");
-            backButton.SetSize(50, 50); backButton.SetPosition(25, 500);
 
-            pobj = new ProcessfulObject(new Process[4] {
-                new Process(obj => obj.SetSize(10, 10), 60),
-                new Process(obj => { }, 60),
-                new Process(obj => obj.SetSize(30, 30), 60),
-                new Process(obj => obj.SetSize(300, 300), 60)
+            backButton.Size = new Vector(50, 50);
+            backButton.Position = new Vector(25, 500);
+            pobj = new ProcessfulObject();
+
+            pobj.SetProcess( new Process[] {
+                new Process(obj => { obj.Size = new Vector(10, 10); } , 60),
+                new Process(obj => { obj.X += 1; }, 60),
+                new Process(obj => { obj.Size = new Vector(30, 30); }, 60),
+                new Process(obj => { obj.Size = new Vector(300, 300); }, 60)
             });
+
             processes = pobj.GetEnumerator();
 
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             if (Input.Sp2.Pushed)
 
             {
                 Scene.Pop();
             }
-            if (backButton.clicked(Input.mp.position, Input.MouseLeft.Pushed)) Scene.Pop();
+            if (backButton.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed)) Scene.Pop();
 
             processes.MoveNext();
 
@@ -48,7 +52,7 @@ namespace HackTheWorld
             GraphicsContext.DrawImage(_img, 0, 0);
             pobj.Draw();
             backButton.Draw();
-
+            
         }
     }
 }

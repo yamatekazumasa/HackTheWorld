@@ -14,7 +14,7 @@ namespace HackTheWorld
         private Image[] _menuImages;
         private MenuItem[] _menu;
         private int _cursor;
-        private bool _focused;
+        private bool _isFocused;
 
 
         public override void Cleanup()
@@ -30,54 +30,43 @@ namespace HackTheWorld
             _menuImages[0] = Image.FromFile(@".\image\10.png");
             _menuImages[1] = Image.FromFile(@".\image\3.png");
 
-            _menu[0] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[0].SetPosition(100, 100);
-            _menu[1] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[1].SetPosition(100, 200);
-            _menu[2] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[2].SetPosition(100, 300);
-            _menu[3] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[3].SetPosition(100, 400);
-            _menu[4] = new MenuItem(_menuImages[0], _menuImages[1]);
-            _menu[4].SetPosition(100, 500);
+            _menu[0] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 100)};
+            _menu[1] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 200)};
+            _menu[2] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 300)};
+            _menu[3] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 400)};
+            _menu[4] = new MenuItem(_menuImages[0], _menuImages[1]) {Position = new Vector(100, 500)};
 
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
-          
 
-            _focused = false;
+            _isFocused = false;
 
 
-            if ((Input.mp.position.X >= _menu[0].MinX && Input.mp.position.X <= _menu[0].MaxX) &&
-                (Input.mp.position.Y >= _menu[0].MinY && Input.mp.position.Y <= _menu[0].MaxY))
+            if (_menu[0].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 0;
             }
-            if ((Input.mp.position.X >= _menu[1].MinX && Input.mp.position.X <= _menu[1].MaxX) &&
-                (Input.mp.position.Y >= _menu[1].MinY && Input.mp.position.Y <= _menu[1].MaxY))
+            if (_menu[1].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 1;
             }
-            if ((Input.mp.position.X >= _menu[2].MinX && Input.mp.position.X <= _menu[2].MaxX) &&
-                (Input.mp.position.Y >= _menu[2].MinY && Input.mp.position.Y <= _menu[2].MaxY))
+            if (_menu[2].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 2;
             }
-            if ((Input.mp.position.X >= _menu[3].MinX && Input.mp.position.X <= _menu[3].MaxX) &&
-                (Input.mp.position.Y >= _menu[3].MinY && Input.mp.position.Y <= _menu[3].MaxY))
+            if (_menu[3].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 3;
             }
-            if ((Input.mp.position.X >= _menu[4].MinX && Input.mp.position.X <= _menu[4].MaxX) &&
-                (Input.mp.position.Y >= _menu[4].MinY && Input.mp.position.Y <= _menu[4].MaxY))
+            if (_menu[4].Contains(Input.Mouse.Position))
             {
-                _focused = true;
+                _isFocused = true;
                 _cursor = 4;
             }
 
@@ -92,7 +81,7 @@ namespace HackTheWorld
                 _cursor = (_cursor + 4) % 5;
             }
 
-            if (Input.Sp1.Pushed || (Input.MouseLeft.Pushed && _focused))
+            if (Input.Sp1.Pushed || (Input.LeftButton.Pushed && _isFocused))
             {
                 switch (_cursor)
                 {
@@ -121,9 +110,9 @@ namespace HackTheWorld
 
             foreach (var item in _menu)
             {
-                item._selected = false;
+                item.IsSelected = false;
             }
-            _menu[_cursor]._selected = true;
+            _menu[_cursor].IsSelected = true;
 
 
 

@@ -9,7 +9,7 @@ namespace HackTheWorld
     class GameScene : Scene
     {
         Image _img;
-        private Button backButton = new Button(Image.FromFile(@"image\back.png"));
+        private MenuItem backButton = new MenuItem(Image.FromFile(@"image\back.png"));
 
         public override void Cleanup()
         {
@@ -18,17 +18,19 @@ namespace HackTheWorld
         public override void Startup()
         {
             _img = Image.FromFile(@"image\masato.jpg");
-            backButton.SetSize(50, 50); backButton.SetPosition(25, 500);
+            backButton.Size = new Vector(50, 50);
+            backButton.Position=new Vector(25, 500);
 
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             if (Input.Sp2.Pushed)
             {
                 Scene.Pop();
             }
-            if (backButton.clicked(Input.mp.position, Input.MouseLeft.Pushed)) Scene.Pop();
+            if (backButton.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed)) Scene.Pop();
+
 
 
             GraphicsContext.Clear(Color.White);

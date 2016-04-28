@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace HackTheWorld
 {
-    public static class Constants
+    public static partial class Constants
     {
         /// <summary>
         /// FPS(Frame per second)。
@@ -26,6 +26,10 @@ namespace HackTheWorld
         public static readonly int ScreenWidth = 1280;
         public static readonly int ScreenHeight = 720;
 
+        /// <summary>
+        /// 格子のサイズ。
+        /// </summary>
+        public static readonly int CellSize = 60;
 
         /// <summary>
         /// オブジェクトのタイプ。
