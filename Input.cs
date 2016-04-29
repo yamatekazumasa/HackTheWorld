@@ -8,28 +8,32 @@ namespace HackTheWorld
     {
         public class Key
         {
-            private uint _history;
+            private bool _wasPressed;
+            private bool _isPressed;
 
-            public void Append(uint s)
+            public void Append(bool isPressed)
             {
-                _history = (_history << 1) | s;
+                _wasPressed = _isPressed;
+                _isPressed = isPressed;
             }
 
-            public bool Pressed => (_history & 0x01) > 0;
-            public bool Pushed => !((_history & 0x02) > 0) && ((_history & 0x01) > 0);
+            public bool Pressed => _isPressed;
+            public bool Pushed => !_wasPressed && _isPressed;
         }
 
         public class MouseButton
         {
-            private uint _history;
+            private bool _wasPressed;
+            private bool _isPressed;
 
-            public void Append(uint s)
+            public void Append(bool isPressed)
             {
-                _history = (_history << 1) | (uint) (s > 0 ? 1 : 0);
+                _wasPressed = _isPressed;
+                _isPressed = isPressed;
             }
 
-            public bool Pressed => (_history & 0x01) > 0;
-            public bool Pushed => !((_history & 0x02) > 0) && ((_history & 0x01) > 0);
+            public bool Pressed => _isPressed;
+            public bool Pushed => !_wasPressed && _isPressed;
         }
 
         public class MousePosition
@@ -75,20 +79,20 @@ namespace HackTheWorld
 
         public static void Update(LinkedList<Keys> pressedKeys)
         {
-            Up.Append((uint)(pressedKeys.Contains(Keys.Up) ? 1 : 0));
-            Down.Append((uint)(pressedKeys.Contains(Keys.Down) ? 1 : 0));
-            Left.Append((uint)(pressedKeys.Contains(Keys.Left) ? 1 : 0));
-            Right.Append((uint)(pressedKeys.Contains(Keys.Right) ? 1 : 0));
-            Sp1.Append((uint)(pressedKeys.Contains(Keys.Z) ? 1 : 0));
-            Sp2.Append((uint)(pressedKeys.Contains(Keys.X) ? 1 : 0));
-            Sp3.Append((uint)(pressedKeys.Contains(Keys.C) ? 1 : 0));
-            Enter.Append((uint)(pressedKeys.Contains(Keys.Enter) ? 1 : 0));
-            Space.Append((uint)(pressedKeys.Contains(Keys.Space) ? 1 : 0));
-            Tab.Append((uint)(pressedKeys.Contains(Keys.Tab) ? 1 : 0));
-            Shift.Append((uint)(pressedKeys.Contains(Keys.Shift) ? 1 : 0));
-            Control.Append((uint)(pressedKeys.Contains(Keys.Control) ? 1 : 0));
-            Back.Append((uint)(pressedKeys.Contains(Keys.Back) ? 1 : 0));
-            Delete.Append((uint)(pressedKeys.Contains(Keys.Delete) ? 1 : 0));
+            Up.Append(pressedKeys.Contains(Keys.Up));
+            Down.Append(pressedKeys.Contains(Keys.Down));
+            Left.Append(pressedKeys.Contains(Keys.Left));
+            Right.Append(pressedKeys.Contains(Keys.Right));
+            Sp1.Append(pressedKeys.Contains(Keys.Z));
+            Sp2.Append(pressedKeys.Contains(Keys.X));
+            Sp3.Append(pressedKeys.Contains(Keys.C));
+            Enter.Append(pressedKeys.Contains(Keys.Enter));
+            Space.Append(pressedKeys.Contains(Keys.Space));
+            Tab.Append(pressedKeys.Contains(Keys.Tab));
+            Shift.Append(pressedKeys.Contains(Keys.Shift));
+            Control.Append(pressedKeys.Contains(Keys.Control));
+            Back.Append(pressedKeys.Contains(Keys.Back));
+            Delete.Append(pressedKeys.Contains(Keys.Delete));
 
             foreach (var key in pressedKeys)
             {
@@ -98,8 +102,8 @@ namespace HackTheWorld
 
         public static void Update(LinkedList<MouseButtons> mouseButtons)
         {
-            LeftButton.Append((uint)(mouseButtons.Contains(MouseButtons.Left) ? 1 : 0));
-            RightButton.Append((uint)(mouseButtons.Contains(MouseButtons.Right) ? 1 : 0));
+            LeftButton.Append(mouseButtons.Contains(MouseButtons.Left));
+            RightButton.Append(mouseButtons.Contains(MouseButtons.Right));
         }
 
         public static void Update(Point mousePosition, Point windowPosition)

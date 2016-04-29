@@ -30,9 +30,8 @@ namespace HackTheWorld
             this.SetStyle(ControlStyles.DoubleBuffer, true);
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            ThreadSeparate(ref _drawThread, MainProcess);
-
             this.FormBorderStyle = FormBorderStyle.FixedSingle;//サイズの固定
+            ThreadSeparate(ref _drawThread, MainProcess);
 
         }
 
@@ -81,7 +80,6 @@ namespace HackTheWorld
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (!_pressedKeys.Contains(e.KeyCode)) _pressedKeys.AddLast(e.KeyCode);
-            Console.WriteLine(String.Join(",", _pressedKeys));
         }
         /// <summary>
         /// キー入力取得用。
@@ -91,7 +89,6 @@ namespace HackTheWorld
         {
             _pressedKeys.Remove(e.KeyCode);
             Input.KeyBoard.Append(e.KeyCode, 0);
-            Console.WriteLine(String.Join(",", _pressedKeys));
         }
 
         //押されているマウスのボタン
@@ -99,7 +96,6 @@ namespace HackTheWorld
         protected override void OnMouseDown(MouseEventArgs e)
         {
             if (!_mouseButtons.Contains(e.Button)) _mouseButtons.AddLast(e.Button);
-            Cursor.Current = Cursors.Hand;
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
