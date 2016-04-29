@@ -191,6 +191,9 @@ namespace HackTheWorld
 
         public ObjectType ObjectType => _objectType;
 
+        public bool Clicked => Contains(Input.Mouse.Position) && Input.LeftButton.Pushed;
+
+
         /// <summary>
         /// 自分の矩形範囲を暗黙的に指定できる。
         /// </summary>
@@ -270,15 +273,6 @@ namespace HackTheWorld
         {
             return MinX < obj.MaxX && MaxX > obj.MinX &&
                    MinY < obj.MaxY && MaxY > obj.MinY;
-        }
-        public virtual bool Intersects(Vector p)
-        {
-            return MinX <= p.X && MaxX >= p.X &&
-                   MinY <=p.Y && MaxY >=p.Y;
-        }
-        public virtual bool Clicked(Vector p,bool mouseleft)
-        {
-            return Intersects(p) && mouseleft;
         }
 
         /// <summary>

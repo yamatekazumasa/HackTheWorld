@@ -69,8 +69,8 @@ namespace HackTheWorld
 
 
 
-            if (backButton.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed)) Scene.Pop();
-            if (resetButton.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed)) Startup(); ;
+            if (backButton.Clicked) Scene.Pop();
+            if (resetButton.Clicked) Startup(); ;
             backButton.Draw();
             resetButton.Draw(); ;
         }

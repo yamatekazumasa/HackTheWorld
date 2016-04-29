@@ -32,8 +32,8 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
-            if (backButton.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed)) Scene.Pop();
-            if (masato3Button.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed))Scene.Push(new MasatoScene3()) ;
+            if (backButton.Clicked) Scene.Pop();
+            if (masato3Button.Clicked)Scene.Push(new MasatoScene3()) ;
 
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);

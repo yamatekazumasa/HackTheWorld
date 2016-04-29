@@ -44,7 +44,7 @@ namespace HackTheWorld
             {
                 Scene.Pop();
             }
-            if (backButton.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed)) Scene.Pop();
+            if (backButton.Clicked) Scene.Pop();
 
             processes.MoveNext();
 
