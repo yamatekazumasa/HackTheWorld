@@ -36,10 +36,7 @@ namespace HackTheWorld
             if (masato3Button.Clicked) Scene.Push(new MasatoScene3()) ;
 
             if (Input.KeyBoard.IsDefined) _box.Append(Input.KeyBoard.TypedChar);
-
-            GraphicsContext.Clear(Color.White);
-            GraphicsContext.DrawImage(_img, 0, 0);
-            if (Input.Sp2.Pushed) Scene.Pop();
+            if (Input.Sp2.Pushed && !_box.IsFocused) Scene.Pop();
 
             _box.Update();
             

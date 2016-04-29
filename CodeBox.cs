@@ -24,6 +24,8 @@ namespace HackTheWorld
         private bool _isFocused;
         private Font _font;
 
+        public bool IsFocused => _isFocused;
+
         public CodeBox()
         {
             _line = 0;
@@ -37,7 +39,7 @@ namespace HackTheWorld
                 _code.Add(new StringBuilder());
             }
             _isDisplayed = true;
-            _isFocused = true;
+            _isFocused = false;
             _font = new Font("Courier New", 12);
 
             Width = 12 *_cols;
@@ -60,6 +62,8 @@ namespace HackTheWorld
             if (Input.Down.Pushed) _line++;
             if (Input.Right.Pushed) _cursor++;
             if (Input.Left.Pushed) _cursor--;
+            if (_cursor > _code[_line].Length) _cursor = _code[_line].Length;
+
             if (Input.Enter.Pushed)
             {
                 char[] c = new char[_code[_line].Length - _cursor];
@@ -122,7 +126,6 @@ namespace HackTheWorld
                 }
             }
 
-            if (Input.Space.Pushed) _code[_line].Insert(_cursor++, " ");
             if (Input.Tab.Pushed)
             {
                 _code[_line].Insert(_cursor, "    ");
@@ -151,7 +154,7 @@ namespace HackTheWorld
 
         public void Append(char c)
         {
-            _code[_line].Insert(_cursor++, c);
+            if (_isFocused) _code[_line].Insert(_cursor++, c);
             Input.KeyBoard.Clear();
         }
 
