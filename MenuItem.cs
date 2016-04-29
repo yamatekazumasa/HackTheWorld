@@ -18,6 +18,12 @@ namespace HackTheWorld
             _images = new Image[2] {defaultImage, selectedImage};
             Size = new Vector(defaultImage.Width, defaultImage.Height);
         }
+        public MenuItem(Image defaultImage)
+        {
+
+            _images = new Image[2] { defaultImage, defaultImage };
+            Size = new Vector(defaultImage.Width, defaultImage.Height);
+        }
 
         public override void Draw()
         {

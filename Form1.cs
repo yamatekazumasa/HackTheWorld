@@ -32,6 +32,7 @@ namespace HackTheWorld
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             ThreadSeparate(ref _drawThread, MainProcess);
 
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;//サイズの固定
 
         }
 

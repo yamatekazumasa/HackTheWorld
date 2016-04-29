@@ -271,6 +271,15 @@ namespace HackTheWorld
             return MinX < obj.MaxX && MaxX > obj.MinX &&
                    MinY < obj.MaxY && MaxY > obj.MinY;
         }
+        public virtual bool Intersects(Vector p)
+        {
+            return MinX <= p.X && MaxX >= p.X &&
+                   MinY <=p.Y && MaxY >=p.Y;
+        }
+        public virtual bool Clicked(Vector p,bool mouseleft)
+        {
+            return Intersects(p) && mouseleft;
+        }
 
         /// <summary>
         /// 包含判定。

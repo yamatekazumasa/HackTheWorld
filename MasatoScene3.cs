@@ -10,6 +10,8 @@ namespace HackTheWorld
     class MasatoScene3 : Scene
     {
         Image _img;
+        private MenuItem backButton = new MenuItem(Image.FromFile(@"image\back.png"));
+
         private ProcessfulObject pobj;
         private IEnumerator processes;
         public override void Cleanup()
@@ -19,6 +21,9 @@ namespace HackTheWorld
         public override void Startup()
         {
             _img = Image.FromFile(@"image\masato3.jpg");
+
+            backButton.Size = new Vector(50, 50);
+            backButton.Position = new Vector(25, 500);
             pobj = new ProcessfulObject();
 
             pobj.SetProcess( new Process[] {
@@ -34,18 +39,20 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
-            if (Input.Sp2.Pushed || Input.LeftButton.Pushed)
+            if (Input.Sp2.Pushed)
 
             {
                 Scene.Pop();
             }
+            if (backButton.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed)) Scene.Pop();
 
             processes.MoveNext();
 
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);
             pobj.Draw();
-
+            backButton.Draw();
+            
         }
     }
 }

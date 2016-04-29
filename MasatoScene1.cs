@@ -9,9 +9,10 @@ namespace HackTheWorld
     class MasatoScene1 : Scene
     {
         Image _img;
+        private MenuItem backButton = new MenuItem(Image.FromFile(@"image\back.png"));
+        private MenuItem resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"));
         Player _player;
         List<GameObject> _blocks;
-
         public override void Cleanup()
         {
         }
@@ -19,6 +20,11 @@ namespace HackTheWorld
         public override void Startup()
         {
             _img = Image.FromFile(@"image\masato1.jpg");
+
+            backButton.Size = new Vector(50, 50);
+            backButton.Position = new Vector(25, 600);
+            resetButton.Size = new Vector(100,50);
+            resetButton.Position = new Vector(100,600);
             // playerの初期化
             _player = new Player(_img);
 
@@ -38,7 +44,7 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
-            if (Input.Sp2.Pushed||Input.LeftButton.Pushed)
+            if (Input.Sp2.Pushed)
             {
                 Scene.Pop();
             }
@@ -61,6 +67,12 @@ namespace HackTheWorld
                 block.Draw();
             }
 
+
+
+            if (backButton.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed)) Scene.Pop();
+            if (resetButton.Clicked(Input.Mouse.Position, Input.LeftButton.Pushed)) Startup(); ;
+            backButton.Draw();
+            resetButton.Draw(); ;
         }
     }
 }
