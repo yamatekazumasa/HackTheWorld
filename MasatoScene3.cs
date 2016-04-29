@@ -39,11 +39,7 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
-            if (Input.Sp2.Pushed)
-
-            {
-                Scene.Pop();
-            }
+            if (Input.Sp2.Pushed) Scene.Pop();
             if (backButton.Clicked) Scene.Pop();
 
             processes.MoveNext();

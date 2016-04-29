@@ -12,8 +12,6 @@ namespace HackTheWorld
     class CodeBox : GameObject
     {
         private List<StringBuilder> _code;
-        private readonly List<Keys> _availableKeys;
-        private readonly List<Keys> _operationKeys;
         private int _line;
         private int _cursor;
         private int _selectedBegin;
@@ -21,7 +19,7 @@ namespace HackTheWorld
         private int _lineHeight;
         private int _rows;
         private int _cols;
-        private string _clipped;
+        private string _clip;
         private bool _isDisplayed;
         private bool _isFocused;
         private Font _font;
@@ -44,18 +42,6 @@ namespace HackTheWorld
 
             Width = 12 *_cols;
             Height = _lineHeight * _rows;
-
-
-            _availableKeys = new List<Keys>
-            {
-                Keys.A, Keys.B, Keys.C, Keys.D, Keys.E, Keys.F, Keys.G, Keys.H, Keys.I, Keys.J, Keys.K, Keys.L, Keys.M,
-                Keys.N, Keys.O, Keys.P, Keys.Q, Keys.R, Keys.S, Keys.T, Keys.U, Keys.V, Keys.W, Keys.X, Keys.Y, Keys.Z
-            };
-
-            foreach (var key in _availableKeys)
-            {
-                Input.KeyBoard.Append(key, 0);
-            }
 
         }
 
@@ -151,14 +137,22 @@ namespace HackTheWorld
                 }
             }
 
-            foreach (var key in _availableKeys)
+        }
+
+        public string GetString()
+        {
+            string str = "";
+            for (int i = 0; i < _rows; i++)
             {
-                if (Input.KeyBoard.Pushed(key))
-                {
-                    if (Input.Shift.Pressed) _code[_line].Insert(_cursor++, key.ToString().ToUpper());
-                    else                     _code[_line].Insert(_cursor++, key.ToString().ToLower());
-                }
+                str += _code[i] + "\n";
             }
+            return str;
+        }
+
+        public void Append(char c)
+        {
+            _code[_line].Insert(_cursor++, c);
+            Input.KeyBoard.Clear();
         }
 
         public override void Draw()

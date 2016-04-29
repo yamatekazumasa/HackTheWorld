@@ -53,25 +53,21 @@ namespace HackTheWorld
 
         public class KeyBoards
         {
-            private Dictionary<Keys, uint> _histories = new Dictionary<Keys, uint>();
+            char _buffer;
 
-            public void Append(Keys key, uint s)
+            public void Append(char c)
             {
-                if (!_histories.ContainsKey(key)) _histories.Add(key, s);
-                _histories[key] = (_histories[key] << 1) | s;
+                _buffer = c;
             }
 
-            public bool Pressed(Keys key)
+            public void Clear()
             {
-                if (!_histories.ContainsKey(key)) _histories.Add(key, 0);
-                return (_histories[key] & 0x01) > 0;
+                _buffer = '\0';
             }
 
-            public bool Pushed(Keys key)
-            {
-                if (!_histories.ContainsKey(key)) _histories.Add(key, 0);
-                return !((_histories[key] & 0x02) > 0) && ((_histories[key] & 0x01) > 0);
-            }
+            public bool IsDefined => _buffer != '\0';
+
+            public char TypedChar => _buffer;
 
         }
 
@@ -93,11 +89,6 @@ namespace HackTheWorld
             Control.Append(pressedKeys.Contains(Keys.Control));
             Back.Append(pressedKeys.Contains(Keys.Back));
             Delete.Append(pressedKeys.Contains(Keys.Delete));
-
-            foreach (var key in pressedKeys)
-            {
-                KeyBoard.Append(key, 1);
-            }
         }
 
         public static void Update(LinkedList<MouseButtons> mouseButtons)

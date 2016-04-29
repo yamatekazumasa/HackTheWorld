@@ -33,14 +33,14 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
             if (backButton.Clicked) Scene.Pop();
-            if (masato3Button.Clicked)Scene.Push(new MasatoScene3()) ;
+            if (masato3Button.Clicked) Scene.Push(new MasatoScene3()) ;
+
+            if (Input.KeyBoard.IsDefined) _box.Append(Input.KeyBoard.TypedChar);
 
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);
-            if (Input.Sp2.Pushed)
-            {
-                Scene.Pop();
-            }
+            if (Input.Sp2.Pushed) Scene.Pop();
+
             _box.Update();
             
             
@@ -49,6 +49,7 @@ namespace HackTheWorld
             _box.Draw();
             backButton.Draw();
             masato3Button.Draw();
+            GraphicsContext.DrawString(_box.GetString(), new Font("Arial", 12), Brushes.Black, new Rectangle(500, 300, 500, 300));
         }
     }
 }

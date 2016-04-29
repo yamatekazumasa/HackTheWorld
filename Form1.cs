@@ -88,6 +88,7 @@ namespace HackTheWorld
         {
             if (!_pressedKeys.Contains(e.KeyCode)) _pressedKeys.AddLast(e.KeyCode);
         }
+
         /// <summary>
         /// キー入力取得用。
         /// キーが離されるとpressedKeysから除外する。
@@ -95,11 +96,16 @@ namespace HackTheWorld
         protected override void OnKeyUp(KeyEventArgs e)
         {
             _pressedKeys.Remove(e.KeyCode);
-            Input.KeyBoard.Append(e.KeyCode, 0);
+        }
+
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            // バックスペース(\n)、SOF(\u0001)、改行(\r,\n)、タブ(\t)は除外。
+            if (e.KeyChar == '\b' || e.KeyChar == '\u0001' || e.KeyChar == '\r' || e.KeyChar == '\n' || e.KeyChar == '\t') return;
+            Input.KeyBoard.Append(e.KeyChar);
         }
 
         //押されているマウスのボタン
-
         protected override void OnMouseDown(MouseEventArgs e)
         {
             if (!_mouseButtons.Contains(e.Button)) _mouseButtons.AddLast(e.Button);
