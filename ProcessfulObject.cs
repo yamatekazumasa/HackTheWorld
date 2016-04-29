@@ -32,7 +32,7 @@ namespace HackTheWorld
 
         }
 
-        public void SetProcess(Process[] processes)
+        public void SetProcesses(Process[] processes)
         {
             _processes = processes;
         }

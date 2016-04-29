@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HackTheWorld
 {
-    public static class Extensions
+    public static partial class Extensions
     {
         public static Vector ToVector(this Point p)
         {

@@ -26,7 +26,7 @@ namespace HackTheWorld
             backButton.Position = new Vector(25, 500);
             pobj = new ProcessfulObject();
 
-            pobj.SetProcess( new Process[] {
+            pobj.SetProcesses( new Process[] {
                 new Process(obj => { obj.Size = new Vector(10, 10); } , 60),
                 new Process(obj => { obj.X += 1; }, 60),
                 new Process(obj => { obj.Size = new Vector(30, 30); }, 60),
