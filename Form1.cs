@@ -63,11 +63,18 @@ namespace HackTheWorld
                 // プレイヤーとステージをアップデート
                 Scene.Current.Update(dt);
 
+#if DEBUG
+                // デバッグ用文字列
+                string debugDt = "dt:" + dt*1000 + "[ms]";
+                string debugFps = "FPS:" + (int)(1000 / dt);
+                GraphicsContext.DrawString(debugDt, new Font("Arial", 12), Brushes.Black, ScreenWidth - 120, 0);
+                GraphicsContext.DrawString(debugFps, new Font("Arial", 12), Brushes.Black, ScreenWidth - 120, 20);
+#endif
+
                 // 画面の更新
                 InterThreadRefresh(Refresh);
 
                 prevTime = currentTime;
-                Console.WriteLine("dt:{0}, FPS:{1}", dt, 1000 / dt);
 
             }
 
