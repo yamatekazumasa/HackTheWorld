@@ -83,8 +83,8 @@ namespace HackTheWorld
             Enter.Append(pressedKeys.Contains(Keys.Enter));
             Space.Append(pressedKeys.Contains(Keys.Space));
             Tab.Append(pressedKeys.Contains(Keys.Tab));
-            Shift.Append(pressedKeys.Contains(Keys.Shift));
-            Control.Append(pressedKeys.Contains(Keys.Control));
+            Shift.Append(pressedKeys.Contains(Keys.ShiftKey));
+            Control.Append(pressedKeys.Contains(Keys.ControlKey));
             Back.Append(pressedKeys.Contains(Keys.Back));
             Delete.Append(pressedKeys.Contains(Keys.Delete));
         }

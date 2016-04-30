@@ -14,8 +14,8 @@ namespace HackTheWorld
         private List<StringBuilder> _code;
         private int _line;
         private int _cursor;
-        private int _selectedBegin;
-        private int _selectedEnd;
+        private Tuple<int, int> _selectedBegin;
+        private Tuple<int, int> _selectedEnd;
         private int _lineHeight;
         private int _rows;
         private int _cols;
@@ -25,6 +25,7 @@ namespace HackTheWorld
         private Font _font;
 
         public bool IsFocused => _isFocused;
+        public void Focus() { _isFocused = true; }
 
         public CodeBox()
         {
@@ -57,11 +58,36 @@ namespace HackTheWorld
 
             if (!_isFocused) return;
 
-            if (Input.Up.Pushed) _line--;
-            if (Input.Down.Pushed) _line++;
+            if (Input.Up.Pushed)
+            {
+                _line--;
+                if (_line < 0) _line = 0;
+            }
+            if (Input.Down.Pushed)
+            {
+                _line++;
+                if (_code[_line].Length < _cursor) _cursor = _code[_line].Length;
+                if (_line == _rows) _line = _rows - 1;
+            }
             if (Input.Right.Pushed) _cursor++;
             if (Input.Left.Pushed) _cursor--;
-            if (_cursor > _code[_line].Length) _cursor = _code[_line].Length;
+            if (_cursor < 0)
+            {
+                if (_line == 0) _cursor = 0;
+                else _cursor = _code[--_line].Length;
+            }
+            if (_cursor > _code[_line].Length)
+            {
+                if (_line == _rows - 1)
+                {
+                    _cursor = _code[_line].Length;
+                }
+                else
+                {
+                    _line++;
+                    _cursor = 0;
+                }
+            }
 
             if (Input.Enter.Pushed)
             {
@@ -108,9 +134,10 @@ namespace HackTheWorld
 
             if (_line < 0) _line = 0;
             if (_line == _rows) _line = _rows - 1;
-            if (_cursor < 0 && _line != 0)
+            if (_cursor < 0)
             {
-                _cursor = _code[--_line].Length;
+                if (_line == 0) _cursor = 0;
+                else            _cursor = _code[--_line].Length;
             }
             if (_cursor > _code[_line].Length)
             {
@@ -129,6 +156,20 @@ namespace HackTheWorld
             {
                 _code[_line].Insert(_cursor, "    ");
                 _cursor += 4;
+            }
+
+            if (Input.Shift.Pressed)
+            {
+                if (_selectedBegin == null) _selectedBegin = Tuple.Create(_line, _cursor);
+                if (Input.Up.Pushed || Input.Down.Pushed || Input.Right.Pushed || Input.Left.Pushed)
+                {
+                    _selectedEnd = Tuple.Create(_line, _cursor);
+                }
+            }
+            else if(_selectedEnd != null && (_line != _selectedEnd.Item1 || _cursor != _selectedEnd.Item2))
+            {
+                _selectedBegin = null;
+                _selectedEnd = null;
             }
 
             if (Input.Control.Pressed)
@@ -153,7 +194,7 @@ namespace HackTheWorld
 
         public void Append(char c)
         {
-            if (_isFocused) _code[_line].Insert(_cursor++, c);
+            if (_isFocused && !Input.Control.Pressed) _code[_line].Insert(_cursor++, c);
             Input.KeyBoard.Clear();
         }
 
@@ -161,13 +202,22 @@ namespace HackTheWorld
         {
             if (_isDisplayed)
             {
-                if (_isFocused) GraphicsContext.FillRectangle(Brushes.Yellow, this);
-                else GraphicsContext.FillRectangle(Brushes.DarkOrange, this);
+                if (_isFocused) GraphicsContext.FillRectangle(Brushes.White, this);
+                else GraphicsContext.FillRectangle(Brushes.LightGray, this);
+                GraphicsContext.DrawRectangle(Pens.DarkGray, this);
+                if (_selectedBegin != null && _selectedEnd != null)
+                {
+                    if(_selectedBegin.Item1 == _selectedEnd.Item1)
+                        if(_selectedBegin.Item2 < _selectedEnd.Item2)
+                            GraphicsContext.FillRectangle(Brushes.LightBlue, MinX + _selectedBegin.Item2 * 10 + 2, MinY + _selectedBegin.Item1 * _lineHeight, (_selectedEnd.Item2 - _selectedBegin.Item2) * 10, _lineHeight + 5);
+                        else
+                            GraphicsContext.FillRectangle(Brushes.LightBlue, MinX + _selectedEnd.Item2 * 10 + 2, MinY + _selectedBegin.Item1 * _lineHeight, (_selectedBegin.Item2 - _selectedEnd.Item2) * 10, _lineHeight + 5);
+                }
                 for (int i = 0; i < _rows; i++)
                 {
                     GraphicsContext.DrawString(_code[i].ToString(), _font, Brushes.Black, X, Y + i * _lineHeight);
                 }
-                GraphicsContext.DrawLine(Pens.Black, X + 10 * _cursor, Y + _lineHeight * _line, X + 10 * _cursor, Y + _lineHeight * (_line + 1));
+                GraphicsContext.DrawLine(Pens.Black, X + 10 * _cursor + 2, Y + _lineHeight * _line + 2, X + 10 * _cursor + 2, Y + _lineHeight * (_line + 1) + 2);
             }
         }
 

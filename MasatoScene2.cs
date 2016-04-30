@@ -37,6 +37,7 @@ namespace HackTheWorld
 
             if (Input.KeyBoard.IsDefined) _box.Append(Input.KeyBoard.TypedChar);
             if (Input.Sp2.Pushed && !_box.IsFocused) Scene.Pop();
+            if (Input.Space.Pushed) _box.Focus();
 
             _box.Update();
             
