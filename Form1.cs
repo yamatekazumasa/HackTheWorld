@@ -31,7 +31,8 @@ namespace HackTheWorld
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;//サイズの固定
-            ThreadSeparate(ref _drawThread, MainProcess);
+
+            Shown += (sender, e) => { Task.Run(() => { MainProcess(); }); };
 
         }
 
@@ -72,7 +73,10 @@ namespace HackTheWorld
 #endif
 
                 // 画面の更新
-                InterThreadRefresh(Refresh);
+                if (InvokeRequired)
+                    try { Invoke((Action)Refresh); }
+                    catch (Exception) { }
+                else Refresh();
 
                 prevTime = currentTime;
 
@@ -120,31 +124,6 @@ namespace HackTheWorld
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.DrawImage(_bmp, 0, 0);
-        }
-
-        private Thread _drawThread;
-
-        private void ThreadSeparate(ref Thread _thread, Action _function)
-        {
-            if (_thread != null && _thread.IsAlive)
-            {
-                _thread.Abort();
-            }
-            _thread = new Thread(new ThreadStart(_function));
-            _thread.IsBackground = true;
-            _thread.Start();
-        }
-
-        private void InterThreadRefresh(Action _function)
-        {
-            try
-            {
-                if (InvokeRequired) Invoke(_function);
-                else _function();
-            }
-            catch (ObjectDisposedException)
-            {
-            }
         }
 
     }
