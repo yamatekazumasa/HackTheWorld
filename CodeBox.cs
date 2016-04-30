@@ -207,11 +207,48 @@ namespace HackTheWorld
                 GraphicsContext.DrawRectangle(Pens.DarkGray, this);
                 if (_selectedBegin != null && _selectedEnd != null)
                 {
-                    if(_selectedBegin.Item1 == _selectedEnd.Item1)
-                        if(_selectedBegin.Item2 < _selectedEnd.Item2)
-                            GraphicsContext.FillRectangle(Brushes.LightBlue, MinX + _selectedBegin.Item2 * 10 + 2, MinY + _selectedBegin.Item1 * _lineHeight, (_selectedEnd.Item2 - _selectedBegin.Item2) * 10, _lineHeight + 5);
+                    if (_selectedBegin.Item1 == _selectedEnd.Item1)
+                    {
+                        if (_selectedBegin.Item2 < _selectedEnd.Item2)
+                        {
+                            int startX = (int) MinX + _selectedBegin.Item2*10 + 2;
+                            int startY = (int)MinY + _selectedBegin.Item1*_lineHeight;
+                            GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, (_selectedEnd.Item2 - _selectedBegin.Item2) * 10, _lineHeight + 5);
+                        }
                         else
-                            GraphicsContext.FillRectangle(Brushes.LightBlue, MinX + _selectedEnd.Item2 * 10 + 2, MinY + _selectedBegin.Item1 * _lineHeight, (_selectedBegin.Item2 - _selectedEnd.Item2) * 10, _lineHeight + 5);
+                        {
+                            int startX = (int)MinX + _selectedEnd.Item2 * 10 + 2;
+                            int startY = (int)MinY + _selectedEnd.Item1 * _lineHeight;
+                            GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, (_selectedBegin.Item2 - _selectedEnd.Item2) * 10, _lineHeight + 5);
+                        }
+                    }
+                    else if (_selectedBegin.Item1 < _selectedEnd.Item1)
+                    {
+                        int startX = (int) MinX + _selectedBegin.Item2*10 + 2;
+                        int startY = (int) MinY + _selectedBegin.Item1*_lineHeight;
+                        int endX = _selectedEnd.Item2*10 + 2;
+                        int endY = (int) MinY + _selectedEnd.Item1*_lineHeight;
+                        GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, MaxX - startX, _lineHeight + 5);
+                        for (int i = _selectedBegin.Item1+1; i < _selectedEnd.Item1; i++)
+                        {
+                            GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, MinY + i * _lineHeight, Width, _lineHeight + 5);
+                        }
+                        GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, endY, endX, _lineHeight + 5);
+                    }
+                    else
+                    {
+                        int startX = (int)MinX + _selectedEnd.Item2 * 10 + 2;
+                        int startY = (int)MinY + _selectedEnd.Item1 * _lineHeight;
+                        int endX = _selectedBegin.Item2 * 10 + 2;
+                        int endY = (int)MinY + _selectedBegin.Item1 * _lineHeight;
+                        GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, MaxX - startX, _lineHeight + 5);
+                        for (int i = _selectedEnd.Item1 + 1; i < _selectedBegin.Item1; i++)
+                        {
+                            GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, MinY + i * _lineHeight, Width, _lineHeight + 5);
+                        }
+                        GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, endY, endX, _lineHeight + 5);
+
+                    }
                 }
                 for (int i = 0; i < _rows; i++)
                 {
