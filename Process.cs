@@ -8,17 +8,19 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    delegate void ExecuteWith(GameObject obj);
+//    delegate void ExecuteWith(ProcessfulObject obj);
+    delegate void ExecuteWith(ProcessfulObject obj, float dt);
 
     class Process
     {
-        public int Frame { get; private set; }
+        public float MilliSeconds { get; private set; }
         public ExecuteWith ExecuteWith;
 
-        public Process(ExecuteWith executeWith, int frame)
+        public Process(ExecuteWith executeWith, float seconds)
         {
             this.ExecuteWith = executeWith;
-            this.Frame = frame;
+            this.MilliSeconds = seconds * 1000;
         }
+
     }
 }

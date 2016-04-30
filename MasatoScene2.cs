@@ -9,8 +9,8 @@ namespace HackTheWorld
     class MasatoScene2 : Scene
     {
         Image _img;
-        private MenuItem backButton = new MenuItem(Image.FromFile(@"image\back.png"));
-        private MenuItem masato3Button = new MenuItem(Image.FromFile(@"image\masato3.jpg"));
+        private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
+        private readonly MenuItem _masato3Button = new MenuItem(Image.FromFile(@"image\masato3.jpg"));
         private CodeBox _box;
 
         public override void Cleanup()
@@ -23,17 +23,17 @@ namespace HackTheWorld
             _box.Position = new Vector(400, 20);
             _img = Image.FromFile(@".\image\masato2.jpg");
 
-            backButton.Size = new Vector(50, 50);
-            backButton.Position = new Vector(25, 500);
+            _backButton.Size = new Vector(50, 50);
+            _backButton.Position = new Vector(25, 500);
 
-            masato3Button.Size = new Vector(50, 50);
-            masato3Button.Position = new Vector(75, 500);
+            _masato3Button.Size = new Vector(50, 50);
+            _masato3Button.Position = new Vector(75, 500);
         }
 
         public override void Update(float dt)
         {
-            if (backButton.Clicked) Scene.Pop();
-            if (masato3Button.Clicked) Scene.Push(new MasatoScene3()) ;
+            if (_backButton.Clicked) Scene.Pop();
+            if (_masato3Button.Clicked) Scene.Push(new MasatoScene3()) ;
 
             if (Input.KeyBoard.IsDefined) _box.Append(Input.KeyBoard.TypedChar);
             if (Input.Sp2.Pushed && !_box.IsFocused) Scene.Pop();
@@ -44,8 +44,8 @@ namespace HackTheWorld
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);
             _box.Draw();
-            backButton.Draw();
-            masato3Button.Draw();
+            _backButton.Draw();
+            _masato3Button.Draw();
             GraphicsContext.DrawString(_box.GetString(), new Font("Arial", 12), Brushes.Black, new Rectangle(500, 300, 500, 300));
         }
     }

@@ -46,15 +46,15 @@ namespace HackTheWorld
 
             GraphicsContext = Graphics.FromImage(_bmp);
             Scene.Current = new TitleScene();
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
-            long prevTime = stopWatch.ElapsedMilliseconds;
+            long prevTime = stopwatch.ElapsedMilliseconds;
 
             while (!IsDisposed) // 毎フレーム呼ばれる処理
             {
-                long currentTime = stopWatch.ElapsedMilliseconds;
-                if (currentTime > 100000) stopWatch.Restart();
+                long currentTime = stopwatch.ElapsedMilliseconds;
+                if (currentTime > 100000) stopwatch.Restart();
                 float dt = (currentTime - prevTime) / 1000.0F;
 
                 Input.Update(_pressedKeys);
@@ -66,10 +66,13 @@ namespace HackTheWorld
 
 #if DEBUG
                 // デバッグ用文字列
-                string debugDt = "dt:" + dt*1000 + "[ms]";
-                string debugFps = "FPS:" + (int)(1000 / dt);
-                GraphicsContext.DrawString(debugDt, new Font("Arial", 12), Brushes.Black, ScreenWidth - 120, 0);
-                GraphicsContext.DrawString(debugFps, new Font("Arial", 12), Brushes.Black, ScreenWidth - 120, 20);
+                string debugDt = "dt:  " + ((int)(dt*1000)).ToString("D4") + "[ms]";
+                string debugFps = "FPS: " + ((int)(1000 / dt)).ToString("D6");
+                string debugSeconds = "sec: " + (currentTime/1000f).ToString("F1") + "[s]";
+                Font font = new Font("Courier New", 12);
+                GraphicsContext.DrawString(debugDt, font, Brushes.Black, ScreenWidth - 140, 0);
+                GraphicsContext.DrawString(debugFps, font, Brushes.Black, ScreenWidth - 140, 20);
+                GraphicsContext.DrawString(debugSeconds, font, Brushes.Black, ScreenWidth - 140, 40);
 #endif
 
                 // 画面の更新
@@ -123,6 +126,7 @@ namespace HackTheWorld
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            if (_bmp == null) return;
             e.Graphics.DrawImage(_bmp, 0, 0);
         }
 

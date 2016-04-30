@@ -10,10 +10,9 @@ namespace HackTheWorld
     class MasatoScene3 : Scene
     {
         Image _img;
-        private MenuItem backButton = new MenuItem(Image.FromFile(@"image\back.png"));
+        private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
+        private ProcessfulObject _pobj;
 
-        private ProcessfulObject pobj;
-        private IEnumerator processes;
         public override void Cleanup()
         {
         }
@@ -22,32 +21,30 @@ namespace HackTheWorld
         {
             _img = Image.FromFile(@"image\masato3.jpg");
 
-            backButton.Size = new Vector(50, 50);
-            backButton.Position = new Vector(25, 500);
-            pobj = new ProcessfulObject();
+            _backButton.Size = new Vector(50, 50);
+            _backButton.Position = new Vector(25, 500);
+            _pobj = new ProcessfulObject();
 
-            pobj.SetProcesses( new Process[] {
-                new Process(obj => { obj.Size = new Vector(10, 10); } , 60),
-                new Process(obj => { obj.X += 1; }, 60),
-                new Process(obj => { obj.Size = new Vector(30, 30); }, 60),
-                new Process(obj => { obj.Size = new Vector(300, 300); }, 60)
+            _pobj.SetProcesses( new Process[] {
+                new Process((obj, dt) => { obj.Size = new Vector(10, 10); } , 1.0f),
+                new Process((obj, dt) => { obj.X += 100*dt; }, 1.0f),
+                new Process((obj, dt) => { obj.Size = new Vector(30, 30); }, 2.0f),
+                new Process((obj, dt) => { obj.Size = new Vector(300, 300); }, 1.0f)
             });
-
-            processes = pobj.GetEnumerator();
 
         }
 
         public override void Update(float dt)
         {
             if (Input.Sp2.Pushed) Scene.Pop();
-            if (backButton.Clicked) Scene.Pop();
+            if (_backButton.Clicked) Scene.Pop();
 
-            processes.MoveNext();
+            _pobj.Update(dt);
 
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);
-            pobj.Draw();
-            backButton.Draw();
+            _pobj.Draw();
+            _backButton.Draw();
             
         }
     }
