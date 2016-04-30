@@ -31,6 +31,7 @@ namespace HackTheWorld
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;//サイズの固定
+            this.MaximizeBox = false;
 
             Shown += (sender, e) => { Task.Run(() => { MainProcess(); }); };
 
