@@ -52,8 +52,7 @@ namespace HackTheWorld
 
             if (Input.LeftButton.Pushed)
             {
-                if (this.Contains(Input.Mouse.Position)) _isFocused = true;
-                else _isFocused = false;
+                _isFocused = this.Contains(Input.Mouse.Position);
             }
 
             if (!_isFocused) return;

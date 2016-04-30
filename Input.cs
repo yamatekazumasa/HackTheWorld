@@ -71,8 +71,6 @@ namespace HackTheWorld
 
         }
 
-        public static KeyBoards KeyBoard { set; get; } = new KeyBoards();
-
         public static void Update(LinkedList<Keys> pressedKeys)
         {
             Up.Append(pressedKeys.Contains(Keys.Up));
@@ -120,6 +118,8 @@ namespace HackTheWorld
         public static MousePosition Mouse { get; } = new MousePosition();
         public static MouseButton LeftButton { get; } = new MouseButton();
         public static MouseButton RightButton { get; } = new MouseButton();
+
+        public static KeyBoards KeyBoard { get; } = new KeyBoards();
 
     }
 }
