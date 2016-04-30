@@ -33,15 +33,13 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
             if (_backButton.Clicked) Scene.Pop();
-            if (_masato3Button.Clicked) Scene.Push(new MasatoScene3()) ;
-
-            if (Input.KeyBoard.IsDefined) _box.Append(Input.KeyBoard.TypedChar);
+            if (_masato3Button.Clicked) Scene.Push(new MasatoScene3());
             if (Input.Sp2.Pushed && !_box.IsFocused) Scene.Pop();
-            if (Input.Space.Pushed) _box.Focus();
+            if (Input.KeyBoard.IsDefined) _box.Insert(Input.KeyBoard.TypedChar);
 
             _box.Update();
-            
-            
+
+
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);
             _box.Draw();

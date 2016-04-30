@@ -12,6 +12,10 @@ namespace HackTheWorld
     class CodeBox : GameObject
     {
         private List<StringBuilder> _code;
+        private List<StringBuilder> _history;
+        private int _prevLine;
+        private int _prevCursor;
+        private int _prevRows;
         private int _line;
         private int _cursor;
         private Tuple<int, int> _selectedBegin;
@@ -25,14 +29,15 @@ namespace HackTheWorld
         private Font _font;
 
         public bool IsFocused => _isFocused;
-        public void Focus() { _isFocused = true; }
+
+        public bool TextSelected => _selectedBegin != null && _selectedEnd != null;
 
         public CodeBox()
         {
             _line = 0;
             _cursor = 0;
             _cols = 40;
-            _rows = 10;
+            _rows = 5;
             _lineHeight = 12;
             _code = new List<StringBuilder>();
             for (int i = 0; i < _rows; i++)
@@ -50,6 +55,7 @@ namespace HackTheWorld
 
         public void Update()
         {
+            if (Input.Space.Pushed) _isFocused = true;
 
             if (Input.LeftButton.Pushed)
             {
@@ -66,8 +72,8 @@ namespace HackTheWorld
             if (Input.Down.Pushed)
             {
                 _line++;
-                if (_code[_line].Length < _cursor) _cursor = _code[_line].Length;
                 if (_line == _rows) _line = _rows - 1;
+                if (_code[_line].Length < _cursor) _cursor = _code[_line].Length;
             }
             if (Input.Right.Pushed) _cursor++;
             if (Input.Left.Pushed) _cursor--;
@@ -91,8 +97,8 @@ namespace HackTheWorld
 
             if (Input.Enter.Pushed)
             {
+                Historize();
                 char[] c = new char[_code[_line].Length - _cursor];
-
                 StringBuilder str = new StringBuilder();
                 _code[_line].CopyTo(_cursor, c, 0, _code[_line].Length - _cursor);
                 _code[_line].Remove(_cursor, _code[_line].Length - _cursor);
@@ -104,6 +110,7 @@ namespace HackTheWorld
             }
             if (Input.Back.Pushed)
             {
+                Historize();
                 if (_cursor > 0)
                 {
                     _code[_line].Remove(--_cursor, 1);
@@ -116,10 +123,10 @@ namespace HackTheWorld
                     _line--;
                     _rows--;
                 }
-
             }
             if (Input.Delete.Pushed)
             {
+                Historize();
                 if (_cursor < _code[_line].Length)
                 {
                     _code[_line].Remove(_cursor, 1);
@@ -154,8 +161,9 @@ namespace HackTheWorld
 
             if (Input.Tab.Pushed)
             {
-                _code[_line].Insert(_cursor, "    ");
-                _cursor += 4;
+                Historize();
+                _code[_line].Insert(_cursor, "  ");
+                _cursor += 2;
             }
 
             if (Input.Shift.Pressed)
@@ -174,12 +182,13 @@ namespace HackTheWorld
 
             if (Input.Control.Pressed)
             {
-                if (Input.Sp3.Pushed)
+                if (Input.Sp1.Pushed)
                 {
-
+                    Dehistorize();
                 }
             }
 
+            Height = _lineHeight * _rows;
         }
 
         public string GetString()
@@ -192,10 +201,31 @@ namespace HackTheWorld
             return str;
         }
 
-        public void Append(char c)
+        public void Insert(char c)
         {
-            if (_isFocused && !Input.Control.Pressed) _code[_line].Insert(_cursor++, c);
+            if (_isFocused && !Input.Control.Pressed)
+            {
+                Historize();
+                _code[_line].Insert(_cursor++, c);
+            }
             Input.KeyBoard.Clear();
+        }
+
+        public void Historize()
+        {
+            _history = new List<StringBuilder>(_rows);
+            for (int i = 0; i < _rows; i++) _history.Add(new StringBuilder(_code[i].ToString()));
+            _prevLine = _line;
+            _prevCursor = _cursor;
+            _prevRows = _rows;
+        }
+
+        public void Dehistorize()
+        {
+            _code = new List<StringBuilder>(_history);
+            _line = _prevLine;
+            _cursor = _prevCursor;
+            _rows = _prevRows;
         }
 
         public override void Draw()
@@ -205,14 +235,16 @@ namespace HackTheWorld
                 if (_isFocused) GraphicsContext.FillRectangle(Brushes.White, this);
                 else GraphicsContext.FillRectangle(Brushes.LightGray, this);
                 GraphicsContext.DrawRectangle(Pens.DarkGray, this);
-                if (_selectedBegin != null && _selectedEnd != null)
+
+                // 選択範囲の描画
+                if (TextSelected)
                 {
                     if (_selectedBegin.Item1 == _selectedEnd.Item1)
                     {
                         if (_selectedBegin.Item2 < _selectedEnd.Item2)
                         {
                             int startX = (int) MinX + _selectedBegin.Item2*10 + 2;
-                            int startY = (int)MinY + _selectedBegin.Item1*_lineHeight;
+                            int startY = (int)MinY + _selectedBegin.Item1* _lineHeight;
                             GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, (_selectedEnd.Item2 - _selectedBegin.Item2) * 10, _lineHeight + 5);
                         }
                         else
@@ -225,9 +257,9 @@ namespace HackTheWorld
                     else if (_selectedBegin.Item1 < _selectedEnd.Item1)
                     {
                         int startX = (int) MinX + _selectedBegin.Item2*10 + 2;
-                        int startY = (int) MinY + _selectedBegin.Item1*_lineHeight;
+                        int startY = (int) MinY + _selectedBegin.Item1* _lineHeight;
                         int endX = _selectedEnd.Item2*10 + 2;
-                        int endY = (int) MinY + _selectedEnd.Item1*_lineHeight;
+                        int endY = (int) MinY + _selectedEnd.Item1* _lineHeight;
                         GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, MaxX - startX, _lineHeight + 5);
                         for (int i = _selectedBegin.Item1+1; i < _selectedEnd.Item1; i++)
                         {
