@@ -79,7 +79,8 @@ namespace HackTheWorld
             Right.Append(pressedKeys.Contains(Keys.Right));
             Sp1.Append(pressedKeys.Contains(Keys.Z));
             Sp2.Append(pressedKeys.Contains(Keys.X));
-            Sp3.Append(pressedKeys.Contains(Keys.C));
+            R.Append(pressedKeys.Contains(Keys.R));
+            C.Append(pressedKeys.Contains(Keys.C));
             A.Append(pressedKeys.Contains(Keys.A));
             S.Append(pressedKeys.Contains(Keys.S));
             Y.Append(pressedKeys.Contains(Keys.Y));
@@ -109,7 +110,8 @@ namespace HackTheWorld
         public static Key Right { get; } = new Key();
         public static Key Sp1 { get; } = new Key();
         public static Key Sp2 { get; } = new Key();
-        public static Key Sp3 { get; } = new Key();
+        public static Key C { get; } = new Key();
+        public static Key R { get; } = new Key();
         public static Key A { get; } = new Key();
         public static Key S { get; } = new Key();
         public static Key Y { get; } = new Key();

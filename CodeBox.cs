@@ -23,7 +23,7 @@ namespace HackTheWorld
             public int Line { get; set; }
             public int Cursor { get; set; }
             public int MaxLine { get; set; }
-            public List<StringBuilder> Text { get; }
+            public List<StringBuilder> Text { get; private set; }
 
             public static State Current
             {
@@ -36,7 +36,7 @@ namespace HackTheWorld
                 Line = line;
                 Cursor = cursor;
                 MaxLine = maxLine;
-                Text = new List<StringBuilder>(maxLine);
+                Text = new List<StringBuilder>();
                 for (int i = 0; i < maxLine; i++)
                 {
                     Text.Add(new StringBuilder());
@@ -62,6 +62,19 @@ namespace HackTheWorld
             public static void Redo()
             {
                 if (_state[_current + 1] != null && _current < _origin) _current = (_current + 1) % _length;
+            }
+
+            public void ReadFrom(string text)
+            {
+                string[] lines = text.Split('\n');
+                Line = 0;
+                Cursor = 0;
+                MaxLine = lines.Length;
+                Text = new List<StringBuilder>();
+                foreach (string t in lines)
+                {
+                    Text.Add(new StringBuilder(t));
+                }
             }
 
         }
@@ -240,12 +253,21 @@ namespace HackTheWorld
                     _selectedBegin = Tuple.Create(0, 0);
                     _selectedEnd = Tuple.Create(current.Line, current.Cursor);
                 }
+                if (Input.R.Pushed)
+                {
+                    StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
+                    ObjectCode o = JsonConvert.DeserializeObject<ObjectCode>(sr.ReadToEnd());
+                    State.Current.ReadFrom(o.text);
+                    sr.Close();
+                }
                 if (Input.S.Pushed)
                 {
                     Dictionary<string, string> dict = new Dictionary<string, string>();
-                    string str = GetString();
+
+                    string code = GetString();
                     string date = DateTime.Now.ToString();
-                    dict.Add("str", str);
+                    dict.Add("type", "Block");
+                    dict.Add("code", code);
                     dict.Add("date", date);
                     string json = JsonConvert.SerializeObject(dict);
                     StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
