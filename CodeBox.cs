@@ -62,15 +62,6 @@ namespace HackTheWorld
                 if (_state[_current + 1] != null && _current < _origin) _current = (_current + 1) % _length;
             }
 
-            public static State operator ++(State s)
-            {
-                return _state[++_current];
-            }
-
-            public static State operator --(State s)
-            {
-                return _state[--_current];
-            }
         }
 
         private Tuple<int, int> _selectedBegin;
