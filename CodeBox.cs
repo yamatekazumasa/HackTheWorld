@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -238,6 +240,19 @@ namespace HackTheWorld
                     _selectedBegin = Tuple.Create(0, 0);
                     _selectedEnd = Tuple.Create(current.Line, current.Cursor);
                 }
+                if (Input.S.Pushed)
+                {
+                    Dictionary<string, string> dict = new Dictionary<string, string>();
+                    string str = GetString();
+                    string date = DateTime.Now.ToString();
+                    dict.Add("str", str);
+                    dict.Add("date", date);
+                    string json = JsonConvert.SerializeObject(dict);
+                    StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
+                    sw.Write(json);
+                    sw.Close();
+                }
+
             }
 
             Height = _lineHeight * current.MaxLine;
