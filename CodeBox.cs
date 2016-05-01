@@ -13,20 +13,15 @@ namespace HackTheWorld
     {
         class State
         {
-            private static readonly State[] _state = new State[50];
+            private static State[] _state = new State[50];
             private static int _origin;
             private static int _current;
             private static readonly int _length = 50;
-            private int _line;
-            private int _cursor;
-            private int _maxLine;
-            private List<StringBuilder> _text;
-            private bool _branched;
 
-            public List<StringBuilder> Text {get { return _text; } set { _text = value; } }
-            public int Line { get { return _line; } set { _line = value; } }
-            public int Cursor { get { return _cursor; } set { _cursor = value; } }
-            public int MaxLine { get { return _maxLine; } set { _maxLine = value; } }
+            public int Line { get; set; }
+            public int Cursor { get; set; }
+            public int MaxLine { get; set; }
+            public List<StringBuilder> Text { get; }
 
             public static State Current
             {
@@ -36,37 +31,35 @@ namespace HackTheWorld
 
             public State(int line, int cursor, int maxLine)
             {
-                _line = line;
-                _cursor = cursor;
-                _maxLine = maxLine;
-                _text = new List<StringBuilder>(maxLine);
+                Line = line;
+                Cursor = cursor;
+                MaxLine = maxLine;
+                Text = new List<StringBuilder>(maxLine);
                 for (int i = 0; i < maxLine; i++)
                 {
-                    _text.Add(new StringBuilder());
+                    Text.Add(new StringBuilder());
                 }
             }
 
             public static void Record(State s)
             {
-                if (_current < _length - 1)
+                _current = (_current + 1) % _length;
+                _origin = _current;
+                _state[_current] = new State(s.Line, s.Cursor, s.MaxLine);
+                for (int i = 0; i < s.MaxLine; i++)
                 {
-                    _state[_current + 1] = new State(s.Line, s.Cursor, s.MaxLine);
-                    for (int i = 0; i < s.MaxLine; i++)
-                    {
-                        _state[_current + 1].Text[i] = new StringBuilder(s.Text[i].ToString());
-                    }
-                    _current++;
+                    _state[_current].Text[i] = new StringBuilder(s.Text[i].ToString());
                 }
             }
 
             public static void Undo()
             {
-                if (_current > 0) _current--;
+                if (_current > 0) _current = (_current + _length - 1)%_length;
             }
 
             public static void Redo()
             {
-                if (_state[_current + 1] != null) _current++;
+                if (_state[_current + 1] != null && _current < _origin) _current = (_current + 1) % _length;
             }
 
             public static State operator ++(State s)
