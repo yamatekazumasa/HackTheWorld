@@ -11,22 +11,83 @@ namespace HackTheWorld
 {
     class CodeBox : GameObject
     {
-        private List<StringBuilder> _code;
-        private List<StringBuilder> _history;
-        private int _prevLine;
-        private int _prevCursor;
-        private int _prevRows;
-        private int _line;
-        private int _cursor;
+        class State
+        {
+            private static readonly State[] _state = new State[50];
+            private static int _origin;
+            private static int _current;
+            private static readonly int _length = 50;
+            private int _line;
+            private int _cursor;
+            private int _maxLine;
+            private List<StringBuilder> _text;
+            private bool _branched;
+
+            public List<StringBuilder> Text {get { return _text; } set { _text = value; } }
+            public int Line { get { return _line; } set { _line = value; } }
+            public int Cursor { get { return _cursor; } set { _cursor = value; } }
+            public int MaxLine { get { return _maxLine; } set { _maxLine = value; } }
+
+            public static State Current
+            {
+                get { return _state[_current]; }
+                set { _state[_current] = value; }
+            }
+
+            public State(int line, int cursor, int maxLine)
+            {
+                _line = line;
+                _cursor = cursor;
+                _maxLine = maxLine;
+                _text = new List<StringBuilder>(maxLine);
+                for (int i = 0; i < maxLine; i++)
+                {
+                    _text.Add(new StringBuilder());
+                }
+            }
+
+            public static void Record(State s)
+            {
+                if (_current < _length - 1)
+                {
+                    _state[_current + 1] = new State(s.Line, s.Cursor, s.MaxLine);
+                    for (int i = 0; i < s.MaxLine; i++)
+                    {
+                        _state[_current + 1].Text[i] = new StringBuilder(s.Text[i].ToString());
+                    }
+                    _current++;
+                }
+            }
+
+            public static void Undo()
+            {
+                if (_current > 0) _current--;
+            }
+
+            public static void Redo()
+            {
+                if (_state[_current + 1] != null) _current++;
+            }
+
+            public static State operator ++(State s)
+            {
+                return _state[++_current];
+            }
+
+            public static State operator --(State s)
+            {
+                return _state[--_current];
+            }
+        }
+
         private Tuple<int, int> _selectedBegin;
         private Tuple<int, int> _selectedEnd;
         private int _lineHeight;
-        private int _rows;
         private int _cols;
         private string _clip;
         private bool _isDisplayed;
         private bool _isFocused;
-        private Font _font;
+        private readonly Font _font;
 
         public bool IsFocused => _isFocused;
 
@@ -34,147 +95,150 @@ namespace HackTheWorld
 
         public CodeBox()
         {
-            _line = 0;
-            _cursor = 0;
             _cols = 40;
-            _rows = 5;
             _lineHeight = 12;
-            _code = new List<StringBuilder>();
-            for (int i = 0; i < _rows; i++)
-            {
-                _code.Add(new StringBuilder());
-            }
             _isDisplayed = true;
             _isFocused = false;
             _font = new Font("Courier New", 12);
 
+            State.Current = new State(0, 0, 5);
+
             Width = 12 *_cols;
-            Height = _lineHeight * _rows;
+            Height = _lineHeight * State.Current.MaxLine;
 
         }
 
+
         public void Update()
         {
+            var current = State.Current;
+
             if (Input.Space.Pushed) _isFocused = true;
 
             if (Input.LeftButton.Pushed)
             {
-                _isFocused = this.Contains(Input.Mouse.Position);
+                _isFocused = Contains(Input.Mouse.Position);
             }
 
             if (!_isFocused) return;
 
             if (Input.Up.Pushed)
             {
-                _line--;
-                if (_line < 0) _line = 0;
+                current.Line--;
+                if (current.Line < 0) current.Line = 0;
             }
             if (Input.Down.Pushed)
             {
-                _line++;
-                if (_line == _rows) _line = _rows - 1;
-                if (_code[_line].Length < _cursor) _cursor = _code[_line].Length;
+                current.Line++;
+                if (current.Line == current.MaxLine) current.Line = current.MaxLine - 1;
+                if (current.Text[current.Line].Length < current.Cursor) current.Cursor = current.Text[current.Line].Length;
             }
-            if (Input.Right.Pushed) _cursor++;
-            if (Input.Left.Pushed) _cursor--;
-            if (_cursor < 0)
+
+            if (Input.Right.Pushed) current.Cursor++;
+            if (Input.Left.Pushed) current.Cursor--;
+            if (current.Cursor < 0)
             {
-                if (_line == 0) _cursor = 0;
-                else _cursor = _code[--_line].Length;
+                if (current.Line == 0) current.Cursor = 0;
+                else current.Cursor = current.Text[--current.Line].Length;
             }
-            if (_cursor > _code[_line].Length)
+            if (current.Cursor > current.Text[current.Line].Length)
             {
-                if (_line == _rows - 1)
+                if (current.Line == current.MaxLine - 1)
                 {
-                    _cursor = _code[_line].Length;
+                    current.Cursor = current.Text[current.Line].Length;
                 }
                 else
                 {
-                    _line++;
-                    _cursor = 0;
+                    current.Line++;
+                    current.Cursor = 0;
                 }
             }
 
             if (Input.Enter.Pushed)
             {
-                Historize();
-                char[] c = new char[_code[_line].Length - _cursor];
-                StringBuilder str = new StringBuilder();
-                _code[_line].CopyTo(_cursor, c, 0, _code[_line].Length - _cursor);
-                _code[_line].Remove(_cursor, _code[_line].Length - _cursor);
+                State.Record(current);
+                current = State.Current;
+                var c = new char[current.Text[current.Line].Length - current.Cursor];
+                var str = new StringBuilder();
+                current.Text[current.Line].CopyTo(current.Cursor, c, 0, current.Text[current.Line].Length - current.Cursor);
+                current.Text[current.Line].Remove(current.Cursor, current.Text[current.Line].Length - current.Cursor);
                 str.Insert(0, c);
 
-                _cursor = 0;
-                _code.Insert(++_line, str);
-                _rows++;
+                current.Cursor = 0;
+                current.Text.Insert(++current.Line, str);
+                current.MaxLine++;
             }
             if (Input.Back.Pushed)
             {
-                Historize();
-                if (_cursor > 0)
+                State.Record(current);
+                current = State.Current;
+                if (current.Cursor > 0)
                 {
-                    _code[_line].Remove(--_cursor, 1);
+                    current.Text[current.Line].Remove(--current.Cursor, 1);
                 }
-                else if (_line > 0)
+                else if (current.Line > 0)
                 {
-                    _cursor = _code[_line - 1].Length;
-                    _code[_line - 1].Insert(_code[_line - 1].Length, _code[_line].ToString());
-                    _code.RemoveAt(_line);
-                    _line--;
-                    _rows--;
+                    current.Cursor = current.Text[current.Line - 1].Length;
+                    current.Text[current.Line - 1].Insert(current.Text[current.Line - 1].Length, current.Text[current.Line].ToString());
+                    current.Text.RemoveAt(current.Line);
+                    current.Line--;
+                    current.MaxLine--;
                 }
             }
             if (Input.Delete.Pushed)
             {
-                Historize();
-                if (_cursor < _code[_line].Length)
+                State.Record(current);
+                current = State.Current;
+                if (current.Cursor < current.Text[current.Line].Length)
                 {
-                    _code[_line].Remove(_cursor, 1);
+                    current.Text[current.Line].Remove(current.Cursor, 1);
                 }
-                else if (_line < _rows - 1)
+                else if (current.Line < current.MaxLine - 1)
                 {
-                    _code[_line].Insert(_code[_line].Length, _code[_line + 1].ToString());
-                    _code.RemoveAt(_line + 1);
-                    _rows--;
+                    current.Text[current.Line].Insert(current.Text[current.Line].Length, current.Text[current.Line + 1].ToString());
+                    current.Text.RemoveAt(current.Line + 1);
+                    current.MaxLine--;
                 }
             }
 
-            if (_line < 0) _line = 0;
-            if (_line == _rows) _line = _rows - 1;
-            if (_cursor < 0)
+            if (current.Line < 0) current.Line = 0;
+            if (current.Line == current.MaxLine) current.Line = current.MaxLine - 1;
+            if (current.Cursor < 0)
             {
-                if (_line == 0) _cursor = 0;
-                else            _cursor = _code[--_line].Length;
+                if (current.Line == 0) current.Cursor = 0;
+                else current.Cursor = current.Text[--current.Line].Length;
             }
-            if (_cursor > _code[_line].Length)
+            if (current.Cursor > current.Text[current.Line].Length)
             {
-                if (_line == _rows - 1)
+                if (current.Line == current.MaxLine - 1)
                 {
-                    _cursor = _code[_line].Length;
+                    current.Cursor = current.Text[current.Line].Length;
                 }
                 else
                 {
-                    _line++;
-                    _cursor = 0;
+                    current.Line++;
+                    current.Cursor = 0;
                 }
             }
 
             if (Input.Tab.Pushed)
             {
-                Historize();
-                _code[_line].Insert(_cursor, "  ");
-                _cursor += 2;
+                State.Record(current);
+                current = State.Current;
+                current.Text[current.Line].Insert(current.Cursor, "  ");
+                current.Cursor += 2;
             }
 
             if (Input.Shift.Pressed)
             {
-                if (_selectedBegin == null) _selectedBegin = Tuple.Create(_line, _cursor);
+                if (_selectedBegin == null) _selectedBegin = Tuple.Create(current.Line, current.Cursor);
                 if (Input.Up.Pushed || Input.Down.Pushed || Input.Right.Pushed || Input.Left.Pushed)
                 {
-                    _selectedEnd = Tuple.Create(_line, _cursor);
+                    _selectedEnd = Tuple.Create(current.Line, current.Cursor);
                 }
             }
-            else if(_selectedEnd != null && (_line != _selectedEnd.Item1 || _cursor != _selectedEnd.Item2))
+            else if (_selectedEnd != null &&
+                     (current.Line != _selectedEnd.Item1 || current.Cursor != _selectedEnd.Item2))
             {
                 _selectedBegin = null;
                 _selectedEnd = null;
@@ -184,19 +248,24 @@ namespace HackTheWorld
             {
                 if (Input.Sp1.Pushed)
                 {
-                    Dehistorize();
+                    State.Undo();
+                }
+                if (Input.Y.Pushed)
+                {
+                    State.Redo();
                 }
             }
 
-            Height = _lineHeight * _rows;
+            Height = _lineHeight * current.MaxLine;
+
         }
 
         public string GetString()
         {
             string str = "";
-            for (int i = 0; i < _rows; i++)
+            for (int i = 0; i < State.Current.MaxLine; i++)
             {
-                str += _code[i] + "\n";
+                str += State.Current.Text[i] + "\n";
             }
             return str;
         }
@@ -205,27 +274,10 @@ namespace HackTheWorld
         {
             if (_isFocused && !Input.Control.Pressed)
             {
-                Historize();
-                _code[_line].Insert(_cursor++, c);
+                State.Record(State.Current);
+                State.Current.Text[State.Current.Line].Insert(State.Current.Cursor++, c);
             }
             Input.KeyBoard.Clear();
-        }
-
-        public void Historize()
-        {
-            _history = new List<StringBuilder>(_rows);
-            for (int i = 0; i < _rows; i++) _history.Add(new StringBuilder(_code[i].ToString()));
-            _prevLine = _line;
-            _prevCursor = _cursor;
-            _prevRows = _rows;
-        }
-
-        public void Dehistorize()
-        {
-            _code = new List<StringBuilder>(_history);
-            _line = _prevLine;
-            _cursor = _prevCursor;
-            _rows = _prevRows;
         }
 
         public override void Draw()
@@ -282,11 +334,11 @@ namespace HackTheWorld
 
                     }
                 }
-                for (int i = 0; i < _rows; i++)
+                for (int i = 0; i < State.Current.MaxLine; i++)
                 {
-                    GraphicsContext.DrawString(_code[i].ToString(), _font, Brushes.Black, X, Y + i * _lineHeight);
+                    GraphicsContext.DrawString(State.Current.Text[i].ToString(), _font, Brushes.Black, X, Y + i * _lineHeight);
                 }
-                GraphicsContext.DrawLine(Pens.Black, X + 10 * _cursor + 2, Y + _lineHeight * _line + 2, X + 10 * _cursor + 2, Y + _lineHeight * (_line + 1) + 2);
+                GraphicsContext.DrawLine(Pens.Black, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * State.Current.Line + 2, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * (State.Current.Line + 1) + 2);
             }
         }
 
