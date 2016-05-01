@@ -149,7 +149,7 @@ namespace HackTheWorld
         //      string test = textBox1.Text;
         //    string [] testdata =test.Split(' ');
         //}
-        //的な感じ
+        //的な感じで他のも作りたい
         private void FourOperations()
         {
             //とりあえず数字の計算をさせたい
@@ -184,6 +184,11 @@ namespace HackTheWorld
             {
                 textBox2.Text = "なんもない";
                 listBox1.Items.Add("ばなな");
+
+                //listboxから要素をとってくるテスト
+                //選択→選択したアイテムを使う
+                listBox1.SetSelected(0 , true);
+                textBox2.Text = listBox1.SelectedItems[0].ToString( );
             }
             else {
                 if(t.ToString( ) == "System.Int32")
