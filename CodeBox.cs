@@ -230,8 +230,7 @@ namespace HackTheWorld
                     _selectedEnd = Tuple.Create(current.Line, current.Cursor);
                 }
             }
-            else if (_selectedEnd != null &&
-                     (current.Line != _selectedEnd.Item1 || current.Cursor != _selectedEnd.Item2))
+            else if (_selectedEnd != null && (current.Line != _selectedEnd.Item1 || current.Cursor != _selectedEnd.Item2))
             {
                 _selectedBegin = null;
                 _selectedEnd = null;
@@ -239,13 +238,14 @@ namespace HackTheWorld
 
             if (Input.Control.Pressed)
             {
-                if (Input.Sp1.Pushed)
+                if (Input.Sp1.Pushed) State.Undo();
+                if (Input.Y.Pushed) State.Redo();
+                if (Input.A.Pushed)
                 {
-                    State.Undo();
-                }
-                if (Input.Y.Pushed)
-                {
-                    State.Redo();
+                    current.Line = current.MaxLine - 1;
+                    current.Cursor = current.Text[current.MaxLine - 1].Length;
+                    _selectedBegin = Tuple.Create(0, 0);
+                    _selectedEnd = Tuple.Create(current.Line, current.Cursor);
                 }
             }
 
