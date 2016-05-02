@@ -49,13 +49,7 @@ namespace HackTheWorld
                     if (Map[iy, ix] == 2)
                     {
                         var pblock = new PBlock(CellSize * ix, CellSize * iy);
-                        pblock.SetProcesses(new Process[] {
-                            new Process((obj, dt) => { obj.VY = 0; } , 1.0f),
-                            new Process((obj, dt) => { obj.VY = -CellSize; }, 5.0f),
-                            new Process((obj, dt) => { obj.VY = 0; } , 1.0f),
-                            new Process((obj, dt) => { obj.VY = +CellSize; }, 5.0f),
-                            new Process((obj, dt) => { obj.VY = 0; } , 1.0f),
-                        });
+                        GetProcess(pblock);
                         _blocks.Add(pblock);
                         _pblocks.Add(pblock);
                     }
@@ -83,7 +77,8 @@ namespace HackTheWorld
                 if (_player.StandOn(block))
                 {
                     _player.onGround = true;
-                    if (_player.VY > block.VY) _player.VY = block.VY;
+                    if (_player.VY >  block.VY) _player.VY = block.VY;
+                    if (_player.VX != block.VX) _player.VX = block.VX;
                 }
                 if (_player.HitHeadOn(block) && _player.VY < 0)
                 {
@@ -132,6 +127,19 @@ namespace HackTheWorld
             GraphicsContext.Clear(Color.White);
             if (_player.onGround) GraphicsContext.FillRectangle(Brushes.BlueViolet, 1000, 200, 1200, 500); ;
 
+        }
+
+        private void GetProcess(ProcessfulObject pobj)
+        {
+            pobj.SetProcesses(new Process[] {
+                            new Process((obj, dt) => { ; } , 1.0f),
+                            new Process((obj, dt) => { obj.VY = -CellSize; }, 4.0f),
+                            new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
+                            new Process((obj, dt) => { obj.VY = +CellSize; }, 4.0f),
+                            new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
+                            new Process((obj, dt) => { obj.VX = -CellSize; }, 4.0f),
+                            new Process((obj, dt) => { obj.VX = 0; } , 2.0f),
+                        });
         }
     }
 }
