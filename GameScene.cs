@@ -25,10 +25,8 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
-            if (Input.Sp2.Pushed)
-            {
-                Scene.Pop();
-            }
+            if (Input.Sp2.Pushed) Scene.Pop();
+            if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
             if (_backButton.Clicked) Scene.Pop();
 
 

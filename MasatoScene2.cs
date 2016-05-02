@@ -36,6 +36,8 @@ namespace HackTheWorld
             if (_masato3Button.Clicked) Scene.Push(new MasatoScene3());
             if (Input.Sp2.Pushed && !_box.IsFocused) Scene.Pop();
             if (Input.KeyBoard.IsDefined) _box.Insert(Input.KeyBoard.TypedChar);
+            if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
+
 
             _box.Update();
 
