@@ -15,7 +15,7 @@ namespace HackTheWorld
         // ゲーム内変数宣言
         Image _img;
         Player _player;
-        List<GameObject> _blocks;
+        List<Block> _blocks;
 
         public override void Cleanup()
         {
@@ -35,14 +35,14 @@ namespace HackTheWorld
             _player = new Player(_img);
 
             // ブロックの初期化
-            _blocks = new List<GameObject>();
+            _blocks = new List<Block>();
             for (int iy = 0; iy < CellNumY; iy++)
             {
                 for (int ix = 0; ix < CellNumX; ix++)
                 {
                     if (Map[iy, ix] == 1)
                     {
-                        _blocks.Add(new GameObject(CellSize * ix, CellSize * iy));
+                        _blocks.Add(new Block(CellSize * ix, CellSize * iy));
                     }
                 }
             }
