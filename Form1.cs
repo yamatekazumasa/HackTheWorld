@@ -30,8 +30,10 @@ namespace HackTheWorld
             this.SetStyle(ControlStyles.DoubleBuffer, true);
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            ThreadSeparate(ref _drawThread, MainProcess);
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;//サイズの固定
+            this.MaximizeBox = false;
 
+            Shown += (sender, e) => { Task.Run(() => { MainProcess(); }); };
 
         }
 
@@ -43,17 +45,18 @@ namespace HackTheWorld
             _pressedKeys = new LinkedList<Keys>();
             _mouseButtons = new LinkedList<MouseButtons>();
 
-            GraphicsContext = Graphics.FromImage(_bmp);
+            Invoke((Action)(() => { GraphicsContext = Graphics.FromImage(_bmp); }));
+            
             Scene.Current = new TitleScene();
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
-            long prevTime = stopWatch.ElapsedMilliseconds;
+            long prevTime = stopwatch.ElapsedMilliseconds;
 
             while (!IsDisposed) // 毎フレーム呼ばれる処理
             {
-                long currentTime = stopWatch.ElapsedMilliseconds;
-                if (currentTime > 100000) stopWatch.Restart();
+                long currentTime = stopwatch.ElapsedMilliseconds;
+                if (currentTime > 100000) stopwatch.Restart();
                 float dt = (currentTime - prevTime) / 1000.0F;
 
                 Input.Update(_pressedKeys);
@@ -63,11 +66,24 @@ namespace HackTheWorld
                 // プレイヤーとステージをアップデート
                 Scene.Current.Update(dt);
 
+#if DEBUG
+                // デバッグ用文字列
+                string debugDt = "dt:  " + ((int)(dt*1000)).ToString("D4") + "[ms]";
+                string debugFps = "FPS: " + ((int)(1000 / dt)).ToString("D6");
+                string debugSeconds = "sec: " + (currentTime/1000f).ToString("F1") + "[s]";
+                Font font = new Font("Courier New", 12);
+                GraphicsContext.DrawString(debugDt, font, Brushes.Black, ScreenWidth - 140, 0);
+                GraphicsContext.DrawString(debugFps, font, Brushes.Black, ScreenWidth - 140, 20);
+                GraphicsContext.DrawString(debugSeconds, font, Brushes.Black, ScreenWidth - 140, 40);
+#endif
+
                 // 画面の更新
-                InterThreadRefresh(Refresh);
+                if (InvokeRequired)
+                    try { Invoke((Action)Refresh); }
+                    catch (Exception) { }
+                else Refresh();
 
                 prevTime = currentTime;
-                Console.WriteLine("dt:{0}, FPS:{1}", dt, 1000 / dt);
 
             }
 
@@ -80,8 +96,8 @@ namespace HackTheWorld
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (!_pressedKeys.Contains(e.KeyCode)) _pressedKeys.AddLast(e.KeyCode);
-            Console.WriteLine(String.Join(",", _pressedKeys));
         }
+
         /// <summary>
         /// キー入力取得用。
         /// キーが離されるとpressedKeysから除外する。
@@ -89,16 +105,19 @@ namespace HackTheWorld
         protected override void OnKeyUp(KeyEventArgs e)
         {
             _pressedKeys.Remove(e.KeyCode);
-            Input.KeyBoard.Append(e.KeyCode, 0);
-            Console.WriteLine(String.Join(",", _pressedKeys));
+        }
+
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            // バックスペース(\n)、SOF(\u0001)、改行(\r,\n)、タブ(\t)は除外。
+            if (e.KeyChar == '\b' || e.KeyChar == '\u0001' || e.KeyChar == '\r' || e.KeyChar == '\n' || e.KeyChar == '\t') return;
+            Input.KeyBoard.Append(e.KeyChar);
         }
 
         //押されているマウスのボタン
-
         protected override void OnMouseDown(MouseEventArgs e)
         {
             if (!_mouseButtons.Contains(e.Button)) _mouseButtons.AddLast(e.Button);
-            Cursor.Current = Cursors.Hand;
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
@@ -109,32 +128,8 @@ namespace HackTheWorld
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            if (_bmp == null) return;
             e.Graphics.DrawImage(_bmp, 0, 0);
-        }
-
-        private Thread _drawThread;
-
-        private void ThreadSeparate(ref Thread _thread, Action _function)
-        {
-            if (_thread != null && _thread.IsAlive)
-            {
-                _thread.Abort();
-            }
-            _thread = new Thread(new ThreadStart(_function));
-            _thread.IsBackground = true;
-            _thread.Start();
-        }
-
-        private void InterThreadRefresh(Action _function)
-        {
-            try
-            {
-                if (InvokeRequired) Invoke(_function);
-                else _function();
-            }
-            catch (ObjectDisposedException)
-            {
-            }
         }
 
     }

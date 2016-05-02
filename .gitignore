@@ -7,3 +7,6 @@ obj/
 .vs/
 
 !App.config
+packages/
+Newtonsoft.Json.xml
+*.json

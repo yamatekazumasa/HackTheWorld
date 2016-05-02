@@ -8,6 +8,11 @@ namespace HackTheWorld
 {
     class MasatoScene1 : Scene
     {
+        // ゲーム画面外の変数の定義
+        private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
+        private readonly MenuItem _resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"));
+
+        // ゲーム内変数宣言
         Image _img;
         Player _player;
         List<Block> _blocks;
@@ -19,8 +24,15 @@ namespace HackTheWorld
 
         public override void Startup()
         {
-            _img = Image.FromFile(@"image\masato1.jpg");
+            // ゲーム画面外初期化
+            _backButton.Size = new Vector(50, 50);
+            _backButton.Position = new Vector(25, 600);
+            _resetButton.Size = new Vector(100,50);
+            _resetButton.Position = new Vector(100,600);
+            
+            // ゲーム内初期化
             // playerの初期化
+            _img = Image.FromFile(@"image\masato1.jpg");
             _player = new Player(_img);
 
             // ブロックの初期化
@@ -47,11 +59,16 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
-            if (Input.Sp2.Pushed||Input.LeftButton.Pushed)
+            // ゲーム外処理
+            if (Input.Sp2.Pushed)
             {
                 Scene.Pop();
             }
+            if (_backButton.Clicked) Scene.Pop();
+            if (_resetButton.Clicked) Startup();
 
+
+            // ゲーム内処理
             // 移動する前に行う計算
             _player.onGround = false;
             foreach (var block in _blocks)
@@ -80,6 +97,8 @@ namespace HackTheWorld
             {
                 block1.Update(dt);
             }
+
+            // 移動
             _player.Update(dt);
 
             // 調整
@@ -98,12 +117,14 @@ namespace HackTheWorld
             }
             _player.Draw();
 
+            // ゲーム画面外の描画
+            _backButton.Draw();
+            _resetButton.Draw();
         }
 
         private void ScreenClear()
         {
             GraphicsContext.Clear(Color.White);
-
         }
     }
 }

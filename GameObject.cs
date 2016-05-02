@@ -191,6 +191,9 @@ namespace HackTheWorld
 
         public ObjectType ObjectType => _objectType;
 
+        public bool Clicked => Contains(Input.Mouse.Position) && Input.LeftButton.Pushed;
+
+
         /// <summary>
         /// 自分の矩形範囲を暗黙的に指定できる。
         /// </summary>
