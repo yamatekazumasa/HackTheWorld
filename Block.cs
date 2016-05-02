@@ -6,7 +6,7 @@ namespace HackTheWorld
     class Block : GameObject
     {
         //public bool work = false;
-        public bool isWorking = false;
+        //public bool isWorking = false;
 
         public Block(int x, int y) : base(x, y)
         {

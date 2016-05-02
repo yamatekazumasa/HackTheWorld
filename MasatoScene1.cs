@@ -15,8 +15,8 @@ namespace HackTheWorld
         // ゲーム内変数宣言
         Image _img;
         Player _player;
-        List<Block> _blocks;
-        List<Block1> _block1s;
+        List<GameObject> _blocks;
+        List<PBlock> _pblocks;
 
         public override void Cleanup()
         {
@@ -36,8 +36,8 @@ namespace HackTheWorld
             _player = new Player(_img);
 
             // ブロックの初期化
-            _blocks = new List<Block>();
-            _block1s = new List<Block1>();
+            _blocks = new List<GameObject>();
+            _pblocks = new List<PBlock>();
             for (int iy = 0; iy < CellNumY; iy++)
             {
                 for (int ix = 0; ix < CellNumX; ix++)
@@ -48,9 +48,16 @@ namespace HackTheWorld
                     }
                     if (Map[iy, ix] == 2)
                     {
-                        var block1 = new Block1(CellSize * ix, CellSize * iy);
-                        _blocks.Add(block1);
-                        _block1s.Add(block1);
+                        var pblock = new PBlock(CellSize * ix, CellSize * iy);
+                        pblock.SetProcesses(new Process[] {
+                            new Process((obj, dt) => { obj.VY = 0; } , 1.0f),
+                            new Process((obj, dt) => { obj.VY = -CellSize; }, 5.0f),
+                            new Process((obj, dt) => { obj.VY = 0; } , 1.0f),
+                            new Process((obj, dt) => { obj.VY = +CellSize; }, 5.0f),
+                            new Process((obj, dt) => { obj.VY = 0; } , 1.0f),
+                        });
+                        _blocks.Add(pblock);
+                        _pblocks.Add(pblock);
                     }
                 }
             }
@@ -83,22 +90,20 @@ namespace HackTheWorld
                     _player.VY = 0;
                 }
             }
-            foreach (var block1 in _block1s)
-            {
-                if (_player.StandOn(block1) && !block1.isWorking)
-                {
-                    block1.isWorking = true;
-                    block1.VY = -CellSize;
-                }
-            }
+            //foreach (var pblock in _pblocks)
+            //{
+            //    if (_player.StandOn(pblock) && !pblock.isWorking)
+            //    {
+            //        pblock.isWorking = true;
+            //        //pblock.VY = -CellSize;
+            //    }
+            //}
 
             // 移動(重力によりめり込む)
-            foreach (var block1 in _block1s)
+            foreach (var pblock in _pblocks)
             {
-                block1.Update(dt);
+                pblock.Update(dt);
             }
-
-            // 移動
             _player.Update(dt);
 
             // 調整
@@ -125,6 +130,8 @@ namespace HackTheWorld
         private void ScreenClear()
         {
             GraphicsContext.Clear(Color.White);
+            if (_player.onGround) GraphicsContext.FillRectangle(Brushes.BlueViolet, 1000, 200, 1200, 500); ;
+
         }
     }
 }
