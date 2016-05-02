@@ -36,9 +36,9 @@ namespace HackTheWorld
 
             // ブロックの初期化
             _blocks = new List<GameObject>();
-            for (int iy = 0; iy < 9; iy++)
+            for (int iy = 0; iy < CellNumY; iy++)
             {
-                for (int ix = 0; ix < 16; ix++)
+                for (int ix = 0; ix < CellNumX; ix++)
                 {
                     if (Map[iy, ix] == 1)
                     {

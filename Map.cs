@@ -21,5 +21,10 @@ namespace HackTheWorld
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1}
         };
 
+        /// <summary>
+        /// ゲーム画面のマスの個数。
+        /// </summary>
+        public static readonly int CellNumX = 16;
+        public static readonly int CellNumY = 9;
     }
 }
