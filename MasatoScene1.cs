@@ -57,8 +57,6 @@ namespace HackTheWorld
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_resetButton.Clicked) Startup();
-            _backButton.Draw();
-            _resetButton.Draw();
 
 
             // ゲーム内処理
@@ -84,6 +82,8 @@ namespace HackTheWorld
                 block.Draw();
             }
 
+            _backButton.Draw();
+            _resetButton.Draw();
         }
 
         private void ScreenClear()
