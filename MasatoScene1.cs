@@ -60,15 +60,27 @@ namespace HackTheWorld
 
 
             // ゲーム内処理
-
-            _player.Update(dt);
-
+            // 移動する前に行う計算
+            _player.onGround = false;
             foreach (var block in _blocks)
             {
-                if (_player.Intersects(block))
+                if (_player.StandOn(block))
+                {
+                    _player.onGround = true;
+                    if (_player.VY > block.VY) _player.VY = block.VY;
+                }
+                if (_player.HitHeadOn(block) && _player.VY < 0)
                 {
                     _player.VY = 0;
                 }
+            }
+
+            // 移動
+            _player.Update(dt);
+
+            // 調整
+            foreach (var block in _blocks)
+            {
                 _player.Adjust(block);
             }
 
@@ -82,6 +94,7 @@ namespace HackTheWorld
                 block.Draw();
             }
 
+            // ゲーム画面外の描画
             _backButton.Draw();
             _resetButton.Draw();
         }
