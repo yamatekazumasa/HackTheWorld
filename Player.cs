@@ -48,13 +48,13 @@ namespace HackTheWorld
         public virtual bool StandOn(GameObject obj)
         {
             return MinX < obj.MaxX && MaxX > obj.MinX &&
-                   MaxY == obj.MinY;
+                   MaxY >= obj.MinY - 1 && MaxY < obj.MinY + 1;
         }
 
         public virtual bool HitHeadOn(GameObject obj)
         {
             return MinX < obj.MaxX && MaxX > obj.MinX &&
-                   MinY == obj.MaxY;
+                   MinY >= obj.MaxY - 1 && MinY < obj.MaxY + 1;
         }
 
         public override void Draw()

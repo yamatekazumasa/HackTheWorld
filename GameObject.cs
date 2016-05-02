@@ -340,24 +340,24 @@ namespace HackTheWorld
         /// <returns>重なっていたらオブジェクトを動かす。</returns>
         public virtual void Adjust(GameObject obj)
         {
-            if (Intersects(obj))
+            if (Intersects(obj))// 上→左右→下の順に判定
             {
                 int max = 10;// めり込み許容量。10という値は仮で、要調整。
-                if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
+                if      (MaxY > obj.MinY && MaxY - obj.MinY <= +max)
                 {
-                    this.Y -= MaxY - obj.MinY;
+                    MaxY = obj.MinY;
                 }
-                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
+                else if (MaxX > obj.MinX && MaxX - obj.MinX <= +max)
                 {
-                    this.Y -= MinY - obj.MaxY;
-                }
-                else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
-                {
-                    this.MinX -= MaxX - obj.MinX;
+                    MaxX = obj.MinX;
                 }
                 else if (MinX < obj.MaxX && MinX - obj.MaxX >= -max)
                 {
-                    this.MinX -= MinX - obj.MaxX;
+                    MinX = obj.MaxX;
+                }
+                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
+                {
+                    MinY = obj.MaxY;
                 }
             }
         }
