@@ -24,11 +24,10 @@ namespace HackTheWorld
 
         //たぶん再帰的な関数になる
         //かっこが入れ子になってるときとか
-        public static void Outside(string[ ] sArray)
+        public static void Outside(string[ ] sArray , int state)
         {
-            for(int i = 0; i < sArray.Length; i++)
+            for(int i = 0 + state; i < sArray.Length; i++)
             {
-                if(sArray[i] == null) continue;
                 if(sArray[i] == "for") Separate(sArray , 1 , i);
                 if(sArray[i] == "while") Separate(sArray , 2 , i);
                 if(sArray[i] == "if") Separate(sArray , 3 , i);
@@ -66,69 +65,62 @@ namespace HackTheWorld
                             ifcount++;
                             break;
                     }
+                    //複数の式が入ってるときは分割されてほしい
                     if(countfunction(separatedArray) != 1)
                     {
-                        Outside(separatedArray);
+                        Outside(separatedArray , 1);
                     }
                     if(separatedArray[0] == "for") For(separatedArray);
 
                     break;
                 }
             }
-            
-            
+
+
         }
-        public static void For(string[] sArray)
+        public static void For(string[ ] sArray)
         {
-
+            
         }
-        //public static void FourOperations(string test)
-        //{
-        //    //とりあえず数字の計算をさせたい
+        //FourOperations(string,ref intの変数,ref doubleの変数)で使う(参照渡し)
+        public static void FourOperations(string s,ref int result1,ref double result2)
+        {
+            //とりあえず数字の計算をさせたい
 
-        //    //string test = _box.GetString( );
-        //    string[ ] testdata = test.Split(' ');
+            if(s.Contains(@"a-zA-Z"))
+            {
+                return;
+            }
 
-        //    if(test.Contains(@"a-zA-Z"))
-        //    {
-        //        return;
-        //    }
+            //四則演算の式になっていないとうまく使えないので書いている途中は何もしない
+            if(s.EndsWith("+") || s.EndsWith("-") || s.EndsWith("*") || s.EndsWith("/") || s.EndsWith("."))
+            {
+                return;
+            }
 
-        //    //四則演算の式になっていないとうまく使えないので書いている途中は何もしない
-        //    if(test.EndsWith("+") || test.EndsWith("-") || test.EndsWith("*") || test.EndsWith("/") || test.EndsWith("."))
-        //    {
-        //        return;
-        //    }
+            //ここで計算
+            System.Data.DataTable dt = new System.Data.DataTable( );
 
-        //    //ここで計算
-        //    System.Data.DataTable dt = new System.Data.DataTable( );
+            //出力するとき型があってないといけないらしいので型をとって条件分岐
+            Type t = dt.Compute(s , "").GetType( );
 
+            //分岐
+            if(t.ToString( ) == "System.DBNull")
+            {
 
-        //    //出力するとき型があってないといけないらしいので型をとって条件分岐
-        //    Type t = dt.Compute(test , "").GetType( );
-
-
-
-        //    //分岐
-        //    if(t.ToString( ) == "System.DBNull")
-        //    {
-        //        GraphicsContext.DrawString("aiueo" , new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
-
-
-        //    }
-        //    else {
-        //        if(t.ToString( ) == "System.Int32")
-        //        {
-        //            int result = (int)dt.Compute(test , "");
-        //            GraphicsContext.DrawString(result.ToString( ) , new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
-        //        }
-        //        else
-        //        {
-        //            double result = (double)dt.Compute(test , "");
-        //            GraphicsContext.DrawString(result.ToString( ) , new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
-        //        }
-        //    }
-        //}
+            }
+            else {
+                if(t.ToString( ) == "System.Int32")
+                {
+                    result1 = (int)dt.Compute(s , "");
+                    
+                }
+                else
+                {
+                    result2 = (double)dt.Compute(s , "");
+                }
+            }
+        }
 
         //private void Wait( )
         //{
@@ -138,8 +130,8 @@ namespace HackTheWorld
         //的な感じで他のも作りたい
 
 
-            //式がいくつ入ってるかを出す関数
-            public static int countfunction(string[] sArray)
+        //式がいくつ入ってるかを出す関数
+        public static int countfunction(string[ ] sArray)
         {
             int count = 0;
             for(int i = 0; i < sArray.Length; i++)
@@ -148,7 +140,7 @@ namespace HackTheWorld
             }
             return count;
         }
-        
+
         //ノーマルかっこと閉じかっこの数が同じかどうか(いらない気がしてきた)
         public static bool counterN(string[ ] sArray)
         {
