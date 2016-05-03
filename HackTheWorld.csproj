@@ -72,6 +72,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GameObject.cs" />
+    <Compile Include="Kakikae.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MasatoScene3.cs" />
     <Compile Include="MasatoScene2.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
+using static HackTheWorld.Kakikae;
 
 namespace HackTheWorld
 {
@@ -39,6 +40,13 @@ namespace HackTheWorld
 
             _box.Update();
 
+            //文字列をばらばらにする
+            string _s = _box.GetString( );
+            string[ ] _sArray1 = _s.Split('\n');
+            for(int i = 0; i < _sArray1.Length; i++)
+            {
+                string[ ] _sArray2 = _sArray1[i].Split(' ');
+            }
 
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);
@@ -47,5 +55,7 @@ namespace HackTheWorld
             _masato3Button.Draw();
             GraphicsContext.DrawString(_box.GetString(), new Font("Arial", 12), Brushes.Black, new Rectangle(500, 300, 500, 300));
         }
+
+        
     }
 }
