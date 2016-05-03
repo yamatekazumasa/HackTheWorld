@@ -240,6 +240,8 @@ namespace HackTheWorld
                 }
             }
 
+            if (Input.KeyBoard.IsDefined) Insert(Input.KeyBoard.TypedChar);
+
             Height = _lineHeight * current.MaxLine;
 
         }
