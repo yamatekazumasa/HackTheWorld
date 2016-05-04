@@ -15,7 +15,7 @@ namespace HackTheWorld
         /// <summary>
         /// 生死フラグ。基本はdelete以外で弄らないように。
         /// </summary>
-        public bool _isAlive;
+        private bool _isAlive;
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
@@ -212,11 +212,15 @@ namespace HackTheWorld
             return new RectangleF(obj.X, obj.Y, obj.W, obj.H);
         }
 
+        /// <summary>
+        /// 生きていたらtrueを返す。
+        /// </summary>
+        public bool IsAlive => _isAlive;
 
         /// <summary>
         /// オブジェクトを消す。
         /// </summary>
-        public virtual void Die()
+        public void Die()
         {
             _isAlive = false;
         }

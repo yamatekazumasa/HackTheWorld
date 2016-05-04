@@ -11,8 +11,8 @@ namespace HackTheWorld
         Image _img;
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
         private readonly MenuItem _masato3Button = new MenuItem(Image.FromFile(@"image\masato3.jpg"));
+        private readonly List<MenuItem> _menuItem = new List<MenuItem>();
         private CodeBox _box;
-        List<MenuItem> menuItem = new List<MenuItem>();
 
         public override void Cleanup()
         {
@@ -28,12 +28,12 @@ namespace HackTheWorld
             _backButton.Position = new Vector(25, 500);
             _masato3Button.Size = new Vector(50, 50);
             _masato3Button.Position = new Vector(75, 500);
-            menuItem.Add(_backButton);menuItem.Add(_masato3Button);
+            _menuItem.Add(_backButton);_menuItem.Add(_masato3Button);
         }
 
         public override void Update(float dt)
         {
-            foreach (var button in menuItem)
+            foreach (var button in _menuItem)
             {
                 button.IsSelected = false;
                 if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;

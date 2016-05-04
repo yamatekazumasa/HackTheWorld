@@ -9,7 +9,7 @@ namespace HackTheWorld
     class MasatoScene1 : Scene
     {
         // ゲーム画面外の変数の定義
-        List<MenuItem> menuItem = new List<MenuItem>();
+        private readonly List<MenuItem> _menuItem = new List<MenuItem>();
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"), Image.FromFile(@"image\back1.bmp"));
         private readonly MenuItem _resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"), Image.FromFile(@"image\reset1.bmp"));
         private readonly MenuItem _stopButton = new MenuItem(Image.FromFile(@"image\stop.jpg"),Image.FromFile(@"image\stop1.bmp"));
@@ -17,6 +17,7 @@ namespace HackTheWorld
         Image _img;
         Player _player;
         List<GameObject> _blocks;
+
         public override void Cleanup()
         {
         }
@@ -30,7 +31,7 @@ namespace HackTheWorld
             _resetButton.Position = new Vector(75,600);
             _stopButton.Size = new Vector(50,50);
             _stopButton.Position = new Vector(125, 600);
-            menuItem.Add(_backButton);menuItem.Add(_resetButton);menuItem.Add(_stopButton);
+            _menuItem.Add(_backButton);_menuItem.Add(_resetButton);_menuItem.Add(_stopButton);
             // ゲーム内初期化
             // playerの初期化
             _img = Image.FromFile(@"image\masato1.jpg");
@@ -56,36 +57,35 @@ namespace HackTheWorld
             if (Input.Sp2.Pushed) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
             //ボタンの処理
-            foreach (var button in menuItem)
+            foreach (var button in _menuItem)
             {
                 button.IsSelected = false;
                 if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_resetButton.Clicked) Startup();
-            if (_stopButton.Clicked) Scene.Push(new StopedScene());
+            if (_stopButton.Clicked) Scene.Push(new PauseScene());
             // ゲーム内処理
-           
-                if (_player._isAlive)
+            if (_player.IsAlive)
+            {
+                _player.Update(dt);
+            }
+            foreach (var block in _blocks)
+            {
+                if (_player.Intersects(block))
                 {
-                    _player.Update(dt);
+                    _player.VY = 0;
                 }
-                foreach (var block in _blocks)
-                {
-                    if (_player.Intersects(block))
-                    {
-                        _player.VY = 0;
-                    }
-                    _player.Adjust(block);
-                }
-                //死亡
-                if (_player.X > 300)
-                {
-                    _player.Die();
-                    System.Threading.Thread.Sleep(1000);
-                    Scene.Push(new ContinueScene());
-                }
-            
+                _player.Adjust(block);
+            }
+            //死亡
+            if (_player.X > 300)
+            {
+                _player.Die();
+                System.Threading.Thread.Sleep(1000);
+                Scene.Push(new ContinueScene());
+            }
+
             // 画面のクリア
             ScreenClear();
 
@@ -96,7 +96,7 @@ namespace HackTheWorld
                 block.Draw();
             }
             //ボタンの描写
-            foreach (var item in menuItem)
+            foreach (var item in _menuItem)
             {
                 item.Draw();
             }
