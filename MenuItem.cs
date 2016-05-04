@@ -28,7 +28,6 @@ namespace HackTheWorld
         public override void Draw()
         {
             var img = IsSelected ? _images[1] : _images[0];
-            if (IsSelected) GraphicsContext.DrawRectangle(Pens.Black, MinX - 1, MinY - 1, (float)Size.X + 2, (float)Size.Y + 2);
             GraphicsContext.DrawImage(img, this);
         }
 

@@ -27,7 +27,7 @@ namespace HackTheWorld
             VY += 2000 * dt;
 
             Move(dt);
-
+           
         }
 
         public override void Draw()

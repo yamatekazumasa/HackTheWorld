@@ -10,13 +10,13 @@ namespace HackTheWorld
     {
         // ゲーム画面外の変数の定義
         List<MenuItem> menuItem = new List<MenuItem>();
-        private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
-        private readonly MenuItem _resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"));
+        private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"), Image.FromFile(@"image\back1.bmp"));
+        private readonly MenuItem _resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"), Image.FromFile(@"image\reset1.bmp"));
+        private readonly MenuItem _stopButton = new MenuItem(Image.FromFile(@"image\stop.jpg"),Image.FromFile(@"image\stop1.bmp"));
         // ゲーム内変数宣言
         Image _img;
         Player _player;
         List<GameObject> _blocks;
-
         public override void Cleanup()
         {
         }
@@ -26,9 +26,11 @@ namespace HackTheWorld
             // ゲーム画面外初期化
             _backButton.Size = new Vector(50, 50);
             _backButton.Position = new Vector(25, 600);
-            _resetButton.Size = new Vector(100,50);
-            _resetButton.Position = new Vector(100,600);
-            menuItem.Add(_backButton);menuItem.Add(_resetButton);
+            _resetButton.Size = new Vector(50,50);
+            _resetButton.Position = new Vector(75,600);
+            _stopButton.Size = new Vector(50,50);
+            _stopButton.Position = new Vector(125, 600);
+            menuItem.Add(_backButton);menuItem.Add(_resetButton);menuItem.Add(_stopButton);
             // ゲーム内初期化
             // playerの初期化
             _img = Image.FromFile(@"image\masato1.jpg");
@@ -54,28 +56,36 @@ namespace HackTheWorld
             if (Input.Sp2.Pushed) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
             //ボタンの処理
-            foreach(var button in menuItem)
+            foreach (var button in menuItem)
             {
                 button.IsSelected = false;
                 if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;
             }
             if (_backButton.Clicked) Scene.Pop();
-            if (_resetButton.Clicked) Startup(); if (_resetButton.Contains(Input.Mouse.Position)) Cursor.Current = Cursors.Hand;
-
-
+            if (_resetButton.Clicked) Startup();
+            if (_stopButton.Clicked) Scene.Push(new StopedScene());
             // ゲーム内処理
-
-            _player.Update(dt);
-
-            foreach (var block in _blocks)
-            {
-                if (_player.Intersects(block))
+           
+                if (_player._isAlive)
                 {
-                    _player.VY = 0;
+                    _player.Update(dt);
                 }
-                _player.Adjust(block);
-            }
-
+                foreach (var block in _blocks)
+                {
+                    if (_player.Intersects(block))
+                    {
+                        _player.VY = 0;
+                    }
+                    _player.Adjust(block);
+                }
+                //死亡
+                if (_player.X > 300)
+                {
+                    _player.Die();
+                    System.Threading.Thread.Sleep(1000);
+                    Scene.Push(new ContinueScene());
+                }
+            
             // 画面のクリア
             ScreenClear();
 
@@ -86,8 +96,10 @@ namespace HackTheWorld
                 block.Draw();
             }
             //ボタンの描写
-            _backButton.Draw();
-            _resetButton.Draw();
+            foreach (var item in menuItem)
+            {
+                item.Draw();
+            }
         }
 
         private void ScreenClear()
