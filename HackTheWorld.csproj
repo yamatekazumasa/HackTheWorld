@@ -63,7 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContinueScene.cs" />
-    <Compile Include="StopedScene.cs" />
+    <Compile Include="PauseScene.cs" />
     <Compile Include="CodeBox.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions.cs" />

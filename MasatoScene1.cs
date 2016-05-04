@@ -12,7 +12,7 @@ namespace HackTheWorld
         private readonly List<MenuItem> _menuItem = new List<MenuItem>();
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"), Image.FromFile(@"image\back1.bmp"));
         private readonly MenuItem _resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"), Image.FromFile(@"image\reset1.bmp"));
-        private readonly MenuItem _stopButton = new MenuItem(Image.FromFile(@"image\stop.jpg"),Image.FromFile(@"image\stop1.bmp"));
+        private readonly MenuItem _pauseButton = new MenuItem(Image.FromFile(@"image\stop.jpg"),Image.FromFile(@"image\stop1.bmp"));
         // ゲーム内変数宣言
         Image _img;
         Player _player;
@@ -29,9 +29,9 @@ namespace HackTheWorld
             _backButton.Position = new Vector(25, 600);
             _resetButton.Size = new Vector(50,50);
             _resetButton.Position = new Vector(75,600);
-            _stopButton.Size = new Vector(50,50);
-            _stopButton.Position = new Vector(125, 600);
-            _menuItem.Add(_backButton);_menuItem.Add(_resetButton);_menuItem.Add(_stopButton);
+            _pauseButton.Size = new Vector(50,50);
+            _pauseButton.Position = new Vector(125, 600);
+            _menuItem.Add(_backButton);_menuItem.Add(_resetButton);_menuItem.Add(_pauseButton);
             // ゲーム内初期化
             // playerの初期化
             _img = Image.FromFile(@"image\masato1.jpg");
@@ -64,7 +64,7 @@ namespace HackTheWorld
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_resetButton.Clicked) Startup();
-            if (_stopButton.Clicked) Scene.Push(new PauseScene());
+            if (_pauseButton.Clicked) Scene.Push(new PauseScene());
             // ゲーム内処理
             if (_player.IsAlive)
             {
