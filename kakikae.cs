@@ -18,6 +18,7 @@ namespace HackTheWorld
         public static Vector[ ] kakkoset = new Vector[constn];
         static int kakkocount = 0;
 
+     
         public static string yomitori(string s1)
         {
             char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t','\n' };
@@ -74,6 +75,7 @@ namespace HackTheWorld
 
         //そうやって得られたかっこの組から関数に飛びたい
         //forに関してはfor N{なんとかかんとか}の形を考えているので、{から二つ前の部分を見る
+        //他の関数が増えたら場合分けがつくだろう
         public static void warifuri(ArrayList sArray,ArrayList result)
         {
             for(int i = 0; i < constn; i++)
@@ -94,7 +96,6 @@ namespace HackTheWorld
                             //Forに入れる
                             for(int j = 0; j < For(forlist).Count; j++)
                             {
-                                //sArray.Insert((int)kakkoset[i].X - 2+j , For(forlist)[j]);
                                 result.Add(For(forlist)[j]);
                             }
 
@@ -104,6 +105,7 @@ namespace HackTheWorld
             }
         }
         //kakkoset[i]が何かの内側ならtrueを返す
+        //これがないと内側が2回実行される
         public static bool kakkoinside(int i)
         {
             for(int j = 0; j < constn; j++) {
@@ -113,12 +115,18 @@ namespace HackTheWorld
         }
         public static ArrayList For(ArrayList sArray)
         {
+            //[1]が数字かどうか
+            int inttest = 0;
+            if(!int.TryParse((string)sArray[1] , out inttest)) FourOperations(sArray , 1);
+
             //for(sArray[0])の次は繰り返し回数としている
             int n = int.Parse((string)sArray[1]);
             ArrayList expansion = new ArrayList( );
             ArrayList insidefor = new ArrayList( );
             for(int i = 0; i < n; i++)
             {
+                
+                
                 //[3]からかっこの中
                 for(int j = 3; j < sArray.Count; j++)
                 {
@@ -142,7 +150,28 @@ namespace HackTheWorld
             }
             return expansion;
         }
+        //結果がintになる体で作る
+        public static void FourOperations(ArrayList sArray,int i)
+        {
+            //とりあえず数字の計算をさせたい
+            string s = (string)sArray[i];
+            if(s.Contains(@"a-zA-Z"))
+            {
+                return;
+            }
 
+            //四則演算の式になっていないとうまく使えないので書いている途中は何もしない
+            if(s.EndsWith("+") || s.EndsWith("-") || s.EndsWith("*") || s.EndsWith("/") || s.EndsWith("."))
+            {
+                return;
+            }
+
+            //ここで計算
+            System.Data.DataTable dt = new System.Data.DataTable( );
+
+            int result = (int)dt.Compute(s , "");
+            sArray[i] = result.ToString();
+        }
         ////FourOperations(string,ref intの変数,ref doubleの変数)で使う(参照渡し)
         //public static void FourOperations(string s , ref int result1 , ref double result2)
         //{
@@ -189,6 +218,8 @@ namespace HackTheWorld
         //    string [] testdata =test.Split(' ');
         //}
         //的な感じで他のも作りたい
+
+
 
         //ノーマルかっこと閉じかっこの数が同じかどうか(いらない気がしてきた)
         public static bool counterN(string[ ] sArray)
