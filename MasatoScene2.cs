@@ -33,27 +33,30 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
-            if (_backButton.Clicked) Scene.Pop();
+            //if (_backButton.Clicked) Scene.Pop();
+            
+            if(_backButton.Clicked)
+            {
+                string str = "";
+                //文字列をkakikae.csにもってく
+                string _s = _box.GetString( );
+                str=yomitori(_s);
+                GraphicsContext.DrawString(str , new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
+            }
             if (_masato3Button.Clicked) Scene.Push(new MasatoScene3());
             if (Input.Sp2.Pushed && !_box.IsFocused) Scene.Pop();
             if (Input.KeyBoard.IsDefined) _box.Insert(Input.KeyBoard.TypedChar);
 
             _box.Update();
 
-            //文字列をばらばらにする
-            string _s = _box.GetString( );
-            string[ ] _sArray1 = _s.Split('\n');
-            for(int i = 0; i < _sArray1.Length; i++)
-            {
-                string[ ] _sArray2 = _sArray1[i].Split(' ');
-            }
+
 
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);
             _box.Draw();
             _backButton.Draw();
             _masato3Button.Draw();
-            GraphicsContext.DrawString(_box.GetString(), new Font("Arial", 12), Brushes.Black, new Rectangle(500, 300, 500, 300));
+           
         }
 
         

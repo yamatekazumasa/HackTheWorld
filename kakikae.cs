@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,116 +12,168 @@ namespace HackTheWorld
 {
     public static class Kakikae
     {
-        //forとかifとかのかっこの位置を記録しておきたい
-        //エレガントなやり方が思いつかない
-        //かっこのセットが配列のいくつめかを知りたい
-        const int n = 10;
-        public static Vector[ ] forv = new Vector[n];
-        static int forcount = 0;
-        public static Vector[ ] whilev = new Vector[n];
-        static int whilecount = 0;
-        public static Vector[ ] ifv = new Vector[n];
-        static int ifcount = 0;
+        //forとかifとかのかっこの組が配列の何番目か記録しておきたい
+        //いいやり方が思いつかない
+        const int constn = 10;
+        public static Vector[ ] kakkoset = new Vector[constn];
+        static int kakkocount = 0;
 
-        //たぶん再帰的な関数になる
-        //かっこが入れ子になってるときとか
-        public static void Outside(string[ ] sArray , int state)
+        public static string yomitori(string s1)
         {
-            for(int i = 0 + state; i < sArray.Length; i++)
+            char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t','\n' };
+
+            ArrayList sArray = new ArrayList( );
+            string[ ] s2 = s1.Split(delimiterChars);
+            for(int i = 0; i < s2.Length; i++)
             {
-                if(sArray[i] == "for") Separate(sArray , 1 , i);
-                if(sArray[i] == "while") Separate(sArray , 2 , i);
-                if(sArray[i] == "if") Separate(sArray , 3 , i);
+                sArray.Add(s2[i]);
             }
-        }
-        //わける
-        public static void Separate(string[ ] sArray , int type , int _start)
-        {
-            int i = 0;
-            int count = 0;
-            for(i = _start; i < sArray.Length; i++)
+            kakkoread(sArray);
+            warifuri(sArray);
+            string str = "";
+            for(int i = 0; i < sArray.Count; i++)
             {
-                if(sArray[i] == "for" || sArray[i] == "if" || sArray[i] == "while") count++;
-                if(sArray[i] == "}" && count == 0)
+                str += (string)sArray[i];
+            }
+            return str;
+        }
+        //かっこの組を出す
+        public static void kakkoread(ArrayList sArray)
+        {
+            int countfunction = 0;
+            int kakko = 0;
+            for(int i = 0; i < sArray.Count; i++)
+            {
+                //関数の数を数える(今はforだけ)
+                if((string)sArray[i] == "for") countfunction++;
+            }
+            //初めのほうから順番に見ていく
+            for(int i = 0; i < sArray.Count; i++)
+            {
+                if((string)sArray[i] == "{")
                 {
-                    //関数の書いてある部分をコピーする
-                    string[ ] separatedArray = new string[i - _start];
-                    Array.Copy(sArray , _start , separatedArray , 0 , i - _start);
-                    //始まりと終わりをそれぞれ記録する
-                    switch(type)
+                    kakkoset[kakkocount].X = i;
+                    kakko++;
+                    for(int j = i+1; j < sArray.Count; j++)
                     {
-                        case 1:
-                            forv[forcount].X = _start;
-                            forv[forcount].Y = i;
-                            forcount++;
+                        if((string)sArray[j] == "{") kakko++;
+                        if((string)sArray[j] == "}") kakko--;
+                        if(kakko == 0)
+                        {
+                            kakkoset[kakkocount].Y = j;
+                            kakkocount++;
+                            countfunction--;
                             break;
-                        case 2:
-                            whilev[whilecount].X = _start;
-                            whilev[whilecount].Y = i;
-                            whilecount++;
-                            break;
-                        case 3:
-                            ifv[ifcount].X = _start;
-                            ifv[ifcount].Y = i;
-                            ifcount++;
-                            break;
+                        }
                     }
-                    //複数の式が入ってるときは分割されてほしい
-                    if(countfunction(separatedArray) != 1)
+                }
+                if(countfunction == 0) break;
+            }
+        }
+
+        //そうやって得られたかっこの組から関数に飛びたい
+        //forに関してはfor N{なんとかかんとか}の形を考えているので、{から二つ前の部分を見る
+        public static void warifuri(ArrayList sArray)
+        {
+            for(int i = 0; i < constn; i++)
+            {
+                if((int)kakkoset[i].X - 2 >= 0)
+                {
+                    if((string)sArray[(int)kakkoset[i].X - 2] == "for")
                     {
-                        Outside(separatedArray , 1);
+                        //コピー
+                        ArrayList forlist = new ArrayList( );
+                        for(int j = (int)kakkoset[i].X - 2; j < (int)kakkoset[i].Y; j++)
+                        {
+                            forlist.Add(sArray[j]);
+                        }
+                        sArray.RemoveRange((int)kakkoset[i].X - 2 , forlist.Count);
+                        kakkoset[i].Y -= forlist.Count;
+                        for(int j = i + 1; j < constn; j++)
+                        {
+                            kakkoset[j].X -= forlist.Count;
+                            kakkoset[j].Y -= forlist.Count;
+                        }
+                        //Forに入れる
+                        sArray.Insert((int)kakkoset[i].X , For(forlist));
+                        for(int j = i + 1; j < constn; j++)
+                        {
+                            kakkoset[j].X += For(forlist).Count;
+                            kakkoset[j].Y += For(forlist).Count;
+                        }
                     }
-                    if(separatedArray[0] == "for") For(separatedArray);
-
-                    break;
                 }
             }
-
-
         }
-        public static void For(string[ ] sArray)
+
+        public static ArrayList For(ArrayList sArray)
         {
-            
-        }
-        //FourOperations(string,ref intの変数,ref doubleの変数)で使う(参照渡し)
-        public static void FourOperations(string s,ref int result1,ref double result2)
-        {
-            //とりあえず数字の計算をさせたい
-
-            if(s.Contains(@"a-zA-Z"))
+            //for(sArray[0])の次は繰り返し回数としている
+            int n = int.Parse((string)sArray[1]);
+            ArrayList expansion = new ArrayList( );
+            ArrayList insidefor = new ArrayList( );
+            for(int i = 0; i < n; i++)
             {
-                return;
-            }
-
-            //四則演算の式になっていないとうまく使えないので書いている途中は何もしない
-            if(s.EndsWith("+") || s.EndsWith("-") || s.EndsWith("*") || s.EndsWith("/") || s.EndsWith("."))
-            {
-                return;
-            }
-
-            //ここで計算
-            System.Data.DataTable dt = new System.Data.DataTable( );
-
-            //出力するとき型があってないといけないらしいので型をとって条件分岐
-            Type t = dt.Compute(s , "").GetType( );
-
-            //分岐
-            if(t.ToString( ) == "System.DBNull")
-            {
-
-            }
-            else {
-                if(t.ToString( ) == "System.Int32")
+                //[3]からかっこの中
+                for(int j = 3; j < sArray.Count; j++)
                 {
-                    result1 = (int)dt.Compute(s , "");
-                    
-                }
-                else
-                {
-                    result2 = (double)dt.Compute(s , "");
+                    if((string)sArray[j] == "for")
+                    {
+                        for(int k = j; k < sArray.Count; k++)
+                        {
+                            insidefor.Add(sArray[k]);
+                        }
+                        for(int k = 0; k < For(insidefor).Count; k++)
+                        {
+                            expansion.Add(For(insidefor)[k]);
+                        }
+                    }
+                    if((string)sArray[j] == "}") break;
+                    expansion.Add(sArray[j]);
                 }
             }
+            return expansion;
         }
+
+        ////FourOperations(string,ref intの変数,ref doubleの変数)で使う(参照渡し)
+        //public static void FourOperations(string s , ref int result1 , ref double result2)
+        //{
+        //    //とりあえず数字の計算をさせたい
+
+        //    if(s.Contains(@"a-zA-Z"))
+        //    {
+        //        return;
+        //    }
+
+        //    //四則演算の式になっていないとうまく使えないので書いている途中は何もしない
+        //    if(s.EndsWith("+") || s.EndsWith("-") || s.EndsWith("*") || s.EndsWith("/") || s.EndsWith("."))
+        //    {
+        //        return;
+        //    }
+
+        //    //ここで計算
+        //    System.Data.DataTable dt = new System.Data.DataTable( );
+
+        //    //出力するとき型があってないといけないらしいので型をとって条件分岐
+        //    Type t = dt.Compute(s , "").GetType( );
+
+        //    //分岐
+        //    if(t.ToString( ) == "System.DBNull")
+        //    {
+
+        //    }
+        //    else {
+        //        if(t.ToString( ) == "System.Int32")
+        //        {
+        //            result1 = (int)dt.Compute(s , "");
+
+        //        }
+        //        else
+        //        {
+        //            result2 = (double)dt.Compute(s , "");
+        //        }
+        //    }
+        //}
 
         //private void Wait( )
         //{
@@ -128,18 +181,6 @@ namespace HackTheWorld
         //    string [] testdata =test.Split(' ');
         //}
         //的な感じで他のも作りたい
-
-
-        //式がいくつ入ってるかを出す関数
-        public static int countfunction(string[ ] sArray)
-        {
-            int count = 0;
-            for(int i = 0; i < sArray.Length; i++)
-            {
-                if(sArray[i] == "for" || sArray[i] == "while" || sArray[i] == "if") count++;
-            }
-            return count;
-        }
 
         //ノーマルかっこと閉じかっこの数が同じかどうか(いらない気がしてきた)
         public static bool counterN(string[ ] sArray)
@@ -153,7 +194,7 @@ namespace HackTheWorld
             if(count1 == count2) return true;
             else return false;
         }
-        //中かっこと閉じかっこの数が同じかどうか
+        //中かっこと閉じかっこの数が同じかどうか(ついで)
         public static bool counterM(string[ ] sArray)
         {
             int count1 = 0, count2 = 0;
