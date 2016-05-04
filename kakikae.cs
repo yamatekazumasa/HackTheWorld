@@ -23,17 +23,18 @@ namespace HackTheWorld
             char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t','\n' };
 
             ArrayList sArray = new ArrayList( );
+            ArrayList result = new ArrayList( );
             string[ ] s2 = s1.Split(delimiterChars);
             for(int i = 0; i < s2.Length; i++)
             {
                 sArray.Add(s2[i]);
             }
             kakkoread(sArray);
-            warifuri(sArray);
+            warifuri(sArray,result);
             string str = "";
-            for(int i = 0; i < sArray.Count; i++)
+            for(int i = 0; i < result.Count; i++)
             {
-                str += (string)sArray[i];
+                str += (string)result[i];
             }
             return str;
         }
@@ -73,39 +74,43 @@ namespace HackTheWorld
 
         //そうやって得られたかっこの組から関数に飛びたい
         //forに関してはfor N{なんとかかんとか}の形を考えているので、{から二つ前の部分を見る
-        public static void warifuri(ArrayList sArray)
+        public static void warifuri(ArrayList sArray,ArrayList result)
         {
             for(int i = 0; i < constn; i++)
             {
-                if((int)kakkoset[i].X - 2 >= 0)
+                if(!kakkoinside(i))
                 {
-                    if((string)sArray[(int)kakkoset[i].X - 2] == "for")
+                    if((int)kakkoset[i].X - 2 >= 0)
                     {
-                        //コピー
-                        ArrayList forlist = new ArrayList( );
-                        for(int j = (int)kakkoset[i].X - 2; j < (int)kakkoset[i].Y; j++)
+                        if((string)sArray[(int)kakkoset[i].X - 2] == "for")
                         {
-                            forlist.Add(sArray[j]);
-                        }
-                        sArray.RemoveRange((int)kakkoset[i].X - 2 , forlist.Count);
-                        kakkoset[i].Y -= forlist.Count;
-                        for(int j = i + 1; j < constn; j++)
-                        {
-                            kakkoset[j].X -= forlist.Count;
-                            kakkoset[j].Y -= forlist.Count;
-                        }
-                        //Forに入れる
-                        sArray.Insert((int)kakkoset[i].X , For(forlist));
-                        for(int j = i + 1; j < constn; j++)
-                        {
-                            kakkoset[j].X += For(forlist).Count;
-                            kakkoset[j].Y += For(forlist).Count;
+                            //コピー
+                            ArrayList forlist = new ArrayList( );
+                            for(int j = (int)kakkoset[i].X - 2; j <= (int)kakkoset[i].Y; j++)
+                            {
+                                forlist.Add(sArray[j]);
+                            }
+
+                            //Forに入れる
+                            for(int j = 0; j < For(forlist).Count; j++)
+                            {
+                                //sArray.Insert((int)kakkoset[i].X - 2+j , For(forlist)[j]);
+                                result.Add(For(forlist)[j]);
+                            }
+
                         }
                     }
                 }
             }
         }
-
+        //kakkoset[i]が何かの内側ならtrueを返す
+        public static bool kakkoinside(int i)
+        {
+            for(int j = 0; j < constn; j++) {
+                if(kakkoset[j].X < kakkoset[i].X && kakkoset[j].Y > kakkoset[i].Y) return true;
+                    }
+            return false;
+        }
         public static ArrayList For(ArrayList sArray)
         {
             //for(sArray[0])の次は繰り返し回数としている
@@ -127,9 +132,12 @@ namespace HackTheWorld
                         {
                             expansion.Add(For(insidefor)[k]);
                         }
+                        break;
                     }
+                   
                     if((string)sArray[j] == "}") break;
                     expansion.Add(sArray[j]);
+
                 }
             }
             return expansion;
