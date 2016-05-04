@@ -21,7 +21,20 @@ namespace HackTheWorld
         private Bitmap _bmp;
         private LinkedList<Keys> _pressedKeys;
         private LinkedList<MouseButtons> _mouseButtons;
-
+        //カーソルを変えられるようにしたいけどできないよん
+       // delegate void mouseCursor(Cursor cursor);
+       //internal void setCursor(Cursor cursor)
+       // {
+       //     if (this.InvokeRequired)
+       //     {
+       //         mouseCursor d = new mouseCursor(setCursor);
+       //         this.Invoke(d, new object[] { cursor });
+       //     }
+       //     else
+       //     {
+       //         this.Cursor = cursor;
+       //     }
+       // }
         public Form1()
         {
             InitializeComponent();
@@ -62,7 +75,6 @@ namespace HackTheWorld
                 Input.Update(_pressedKeys);
                 Input.Update(_mouseButtons);
                 Input.Update(MousePosition, Location);
-
                 // プレイヤーとステージをアップデート
                 Scene.Current.Update(dt);
 
@@ -84,7 +96,7 @@ namespace HackTheWorld
                 else Refresh();
 
                 prevTime = currentTime;
-
+                
             }
 
         }

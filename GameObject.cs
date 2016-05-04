@@ -15,7 +15,7 @@ namespace HackTheWorld
         /// <summary>
         /// 生死フラグ。基本はdelete以外で弄らないように。
         /// </summary>
-        private bool _isAlive;
+        public bool _isAlive;
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
@@ -295,7 +295,7 @@ namespace HackTheWorld
         {
             return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y; 
         }
-
+  
         /// <summary>
         /// 包含判定。
         /// 渡された点を包含しているか判定する。

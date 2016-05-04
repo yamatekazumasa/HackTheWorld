@@ -51,6 +51,7 @@ namespace HackTheWorld
             public Vector Position => _position;
         }
 
+
         public class KeyBoards
         {
             char _buffer;
@@ -124,8 +125,7 @@ namespace HackTheWorld
         public static MousePosition Mouse { get; } = new MousePosition();
         public static MouseButton LeftButton { get; } = new MouseButton();
         public static MouseButton RightButton { get; } = new MouseButton();
-
         public static KeyBoards KeyBoard { get; } = new KeyBoards();
-
+        
     }
 }
