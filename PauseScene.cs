@@ -9,14 +9,12 @@ using System.Drawing;
 
 namespace HackTheWorld
 {
-    class StopedScene:Scene
+    class PauseScene : Scene
     {
         private readonly MenuItem _continueButton = new MenuItem(Image.FromFile(@"image\continue.bmp"), Image.FromFile(@"image\continue1.bmp"));
         private readonly MenuItem _closeButton = new MenuItem(Image.FromFile(@"image\close1.bmp"), Image.FromFile(@"image\close.bmp"));
-        List<MenuItem> menuItem = new List<MenuItem>();
+        private readonly List<MenuItem> _menuItem = new List<MenuItem>();
 
-        //コントロールの外観を描画するBitmapの作成
-        Bitmap bmp = new Bitmap(ScreenWidth, ScreenHeight);
         public override void Cleanup()
         {
         }
@@ -26,11 +24,11 @@ namespace HackTheWorld
             _continueButton.Position = new Vector(400,200);
             _closeButton.Size = new Vector(400,100);
             _closeButton.Position = new Vector(400, 400);
-            menuItem.Add(_continueButton);menuItem.Add(_closeButton);
+            _menuItem.Add(_continueButton);_menuItem.Add(_closeButton);
         }
         public override void Update(float dt)
         {
-            foreach (var button in menuItem)
+            foreach (var button in _menuItem)
             {
                 button.IsSelected = false;
                 if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;
@@ -41,10 +39,9 @@ namespace HackTheWorld
             }
             if (_closeButton.Clicked)
             {
-                Scene.Pop();
-                Scene.Pop();
+                Scene.Current = new TitleScene();
             }
-                foreach (var item in menuItem)
+                foreach (var item in _menuItem)
             {
                 item.Draw();
             }
