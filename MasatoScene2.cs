@@ -12,6 +12,7 @@ namespace HackTheWorld
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
         private readonly MenuItem _masato3Button = new MenuItem(Image.FromFile(@"image\masato3.jpg"));
         private CodeBox _box;
+        List<MenuItem> menuItem = new List<MenuItem>();
 
         public override void Cleanup()
         {
@@ -25,13 +26,18 @@ namespace HackTheWorld
 
             _backButton.Size = new Vector(50, 50);
             _backButton.Position = new Vector(25, 500);
-
             _masato3Button.Size = new Vector(50, 50);
             _masato3Button.Position = new Vector(75, 500);
+            menuItem.Add(_backButton);menuItem.Add(_masato3Button);
         }
 
         public override void Update(float dt)
         {
+            foreach (var button in menuItem)
+            {
+                button.IsSelected = false;
+                if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;
+            }
             if (_backButton.Clicked) Scene.Pop();
             if (_masato3Button.Clicked) Scene.Push(new MasatoScene3());
             if (Input.Sp2.Pushed && !_box.IsFocused) Scene.Pop();
@@ -47,6 +53,7 @@ namespace HackTheWorld
             _backButton.Draw();
             _masato3Button.Draw();
             GraphicsContext.DrawString(_box.GetString(), new Font("Arial", 12), Brushes.Black, new Rectangle(500, 300, 500, 300));
+            
         }
     }
 }

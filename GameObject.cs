@@ -295,7 +295,7 @@ namespace HackTheWorld
         {
             return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y; 
         }
-
+  
         /// <summary>
         /// 包含判定。
         /// 渡された点を包含しているか判定する。

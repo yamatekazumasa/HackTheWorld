@@ -114,16 +114,13 @@ namespace HackTheWorld
             }
             _menu[_cursor].IsSelected = true;
 
-
-
             GraphicsContext.Clear(Color.White);
             foreach (var item in _menu)
             {
                 item.Draw();
 
             }
-
-
+            
 
         }
     }

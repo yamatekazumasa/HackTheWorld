@@ -9,9 +9,9 @@ namespace HackTheWorld
     class MasatoScene1 : Scene
     {
         // ゲーム画面外の変数の定義
+        List<MenuItem> menuItem = new List<MenuItem>();
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
         private readonly MenuItem _resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"));
-
         // ゲーム内変数宣言
         Image _img;
         Player _player;
@@ -28,7 +28,7 @@ namespace HackTheWorld
             _backButton.Position = new Vector(25, 600);
             _resetButton.Size = new Vector(100,50);
             _resetButton.Position = new Vector(100,600);
-            
+            menuItem.Add(_backButton);menuItem.Add(_resetButton);
             // ゲーム内初期化
             // playerの初期化
             _img = Image.FromFile(@"image\masato1.jpg");
@@ -53,8 +53,14 @@ namespace HackTheWorld
             // ゲーム外処理
             if (Input.Sp2.Pushed) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
+            //ボタンの処理
+            foreach(var button in menuItem)
+            {
+                button.IsSelected = false;
+                if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;
+            }
             if (_backButton.Clicked) Scene.Pop();
-            if (_resetButton.Clicked) Startup();
+            if (_resetButton.Clicked) Startup(); if (_resetButton.Contains(Input.Mouse.Position)) Cursor.Current = Cursors.Hand;
 
 
             // ゲーム内処理
@@ -79,7 +85,7 @@ namespace HackTheWorld
             {
                 block.Draw();
             }
-
+            //ボタンの描写
             _backButton.Draw();
             _resetButton.Draw();
         }
