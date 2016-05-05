@@ -109,10 +109,9 @@ namespace HackTheWorld
 
 //=======
             //死亡
-            if (_player.X > 300)
+            if (_player.Y > ScreenHeight)
             {
                 _player.Die();
-                System.Threading.Thread.Sleep(1000);
                 Scene.Push(new ContinueScene());
             }
 
