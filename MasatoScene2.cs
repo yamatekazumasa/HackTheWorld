@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
@@ -13,7 +14,7 @@ namespace HackTheWorld
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
         private readonly MenuItem _masato3Button = new MenuItem(Image.FromFile(@"image\masato3.jpg"));
         private CodeBox _box;
-
+        private ProcessfulObject pfo;
         public override void Cleanup( )
         {
         }
@@ -41,6 +42,9 @@ namespace HackTheWorld
                 string _s = _box.GetString( );
                 str = yomitori(_s);
             }
+            pfo = new ProcessfulObject( );
+            makeprocess(pfo,str);
+
             if(_masato3Button.Clicked) Scene.Push(new MasatoScene3( ));
             if(Input.Sp2.Pushed && !_box.IsFocused) Scene.Pop( );
             if(Input.KeyBoard.IsDefined) _box.Insert(Input.KeyBoard.TypedChar);
@@ -57,7 +61,30 @@ namespace HackTheWorld
             //GraphicsContext.DrawString(_box.GetString(), new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
             GraphicsContext.DrawString(str , new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
         }
+        //プロセスを作れるか
+        public void makeprocess(ProcessfulObject pfo , string s1)
+        {
+            char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t' , '\n' };
 
+            ArrayList sArray = new ArrayList( );
+            string[ ] s2 = s1.Split(delimiterChars);
+            for(int i = 0; i < s2.Length; i++)
+            {
+                sArray.Add(s2[i]);
+            }
+            for(int i = 0; i < sArray.Count; i++)
+            {
+                switch((string)sArray[i])
+                {
+                    case "move()":
+                        pfo.SetProcesses(new Process[ ]
+                        {
+                            new Process((obj,dt)=> { obj.Size = new Vector(30, 30); }, 2.0f)
+                        });
+                        break;
+                }
+            }
+        }
 
     }
 }

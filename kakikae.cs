@@ -14,14 +14,15 @@ namespace HackTheWorld
     {
         //forとかifとかのかっこの組が配列の何番目か記録しておきたい
         //いいやり方が思いつかない
+     
         const int constn = 10;
         public static Vector[ ] kakkoset = new Vector[constn];
         static int kakkocount = 0;
 
-     
+
         public static string yomitori(string s1)
         {
-            char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t','\n' };
+            char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t' , '\n' };
 
             ArrayList sArray = new ArrayList( );
             ArrayList result = new ArrayList( );
@@ -31,11 +32,11 @@ namespace HackTheWorld
                 sArray.Add(s2[i]);
             }
             kakkoread(sArray);
-            warifuri(sArray,result);
+            warifuri(sArray , result);
             string str = "";
             for(int i = 0; i < result.Count; i++)
             {
-                str += (string)result[i];
+                str += (string)result[i] + "\n";
             }
             return str;
         }
@@ -56,7 +57,7 @@ namespace HackTheWorld
                 {
                     kakkoset[kakkocount].X = i;
                     kakko++;
-                    for(int j = i+1; j < sArray.Count; j++)
+                    for(int j = i + 1; j < sArray.Count; j++)
                     {
                         if((string)sArray[j] == "{") kakko++;
                         if((string)sArray[j] == "}") kakko--;
@@ -76,41 +77,69 @@ namespace HackTheWorld
         //そうやって得られたかっこの組から関数に飛びたい
         //forに関してはfor N{なんとかかんとか}の形を考えているので、{から二つ前の部分を見る
         //他の関数が増えたら場合分けがつくだろう
-        public static void warifuri(ArrayList sArray,ArrayList result)
+        public static void warifuri(ArrayList sArray , ArrayList result)
         {
-            for(int i = 0; i < constn; i++)
+            int k = 0;
+            while( k < sArray.Count)
             {
-                if(!kakkoinside(i))
+                //forから閉じかっこの中にいないときは素直にスルー
+                if(!intinside(k))
                 {
-                    if((int)kakkoset[i].X - 2 >= 0)
+                    result.Add(sArray[k]);
+                    k++;
+                    continue;
+                }
+                else {
+                    for(int i = 0; i < constn; i++)
                     {
-                        if((string)sArray[(int)kakkoset[i].X - 2] == "for")
+                        if(!kakkoinside(i))
                         {
-                            //コピー
-                            ArrayList forlist = new ArrayList( );
-                            for(int j = (int)kakkoset[i].X - 2; j <= (int)kakkoset[i].Y; j++)
+                            if((int)kakkoset[i].X - 2 >= 0)
                             {
-                                forlist.Add(sArray[j]);
-                            }
+                                if((string)sArray[(int)kakkoset[i].X - 2] == "for")
+                                {
+                                    //コピー
+                                    ArrayList forlist = new ArrayList( );
+                                    for(int j = (int)kakkoset[i].X - 2; j <= (int)kakkoset[i].Y; j++)
+                                    {
+                                        forlist.Add(sArray[j]);
+                                    }
 
-                            //Forに入れる
-                            for(int j = 0; j < For(forlist).Count; j++)
-                            {
-                                result.Add(For(forlist)[j]);
-                            }
+                                    //Forに入れる
+                                    for(int j = 0; j < For(forlist).Count; j++)
+                                    {
+                                        result.Add(For(forlist)[j]);
+                                        k += (int)kakkoset[i].Y - (int)kakkoset[i].X+1;
+                                    }
 
+                                }
+                            }
                         }
                     }
                 }
+
             }
         }
         //kakkoset[i]が何かの内側ならtrueを返す
         //これがないと内側が2回実行される
         public static bool kakkoinside(int i)
         {
-            for(int j = 0; j < constn; j++) {
+            for(int j = 0; j < constn; j++)
+            {
                 if(kakkoset[j].X < kakkoset[i].X && kakkoset[j].Y > kakkoset[i].Y) return true;
-                    }
+            }
+            return false;
+        }
+        //iがkakkoset[].XとYに挟まれてたらtrue
+        public static bool intinside(int i)
+        {
+            for(int j = 0; j < constn; j++)
+            {
+                if((int)kakkoset[j].X != 0 && (int)kakkoset[j].Y != 0)
+                {
+                    if(kakkoset[j].X - 2 <= i && kakkoset[j].Y >= i) return true;
+                }
+            }
             return false;
         }
         public static ArrayList For(ArrayList sArray)
@@ -125,8 +154,8 @@ namespace HackTheWorld
             ArrayList insidefor = new ArrayList( );
             for(int i = 0; i < n; i++)
             {
-                
-                
+
+
                 //[3]からかっこの中
                 for(int j = 3; j < sArray.Count; j++)
                 {
@@ -142,7 +171,7 @@ namespace HackTheWorld
                         }
                         break;
                     }
-                   
+
                     if((string)sArray[j] == "}") break;
                     expansion.Add(sArray[j]);
 
@@ -151,7 +180,7 @@ namespace HackTheWorld
             return expansion;
         }
         //結果がintになる体で作る
-        public static void FourOperations(ArrayList sArray,int i)
+        public static void FourOperations(ArrayList sArray , int i)
         {
             //とりあえず数字の計算をさせたい
             string s = (string)sArray[i];
@@ -170,7 +199,7 @@ namespace HackTheWorld
             System.Data.DataTable dt = new System.Data.DataTable( );
 
             int result = (int)dt.Compute(s , "");
-            sArray[i] = result.ToString();
+            sArray[i] = result.ToString( );
         }
         ////FourOperations(string,ref intの変数,ref doubleの変数)で使う(参照渡し)
         //public static void FourOperations(string s , ref int result1 , ref double result2)
@@ -219,8 +248,21 @@ namespace HackTheWorld
         //}
         //的な感じで他のも作りたい
 
+        //プロセスを作ろう
+        //public static void makeprocess(ProcessfulObject pfo,string s1)
+        //{
+        //    char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t' , '\n' };
 
+        //    ArrayList sArray = new ArrayList( );
+        //    string[ ] s2 = s1.Split(delimiterChars);
+        //    for(int i = 0; i < s2.Length; i++)
+        //    {
+        //        sArray.Add(s2[i]);
+        //    }
 
+        //}
+
+        //こっから下で判定してあってるかあってないか出す奴をやりたい
         //ノーマルかっこと閉じかっこの数が同じかどうか(いらない気がしてきた)
         public static bool counterN(string[ ] sArray)
         {
