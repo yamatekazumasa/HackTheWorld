@@ -35,7 +35,7 @@ namespace HackTheWorld
             s.Cleanup();
         }
 
-        public abstract void Update();
+        public abstract void Update(float dt);
         public abstract void Cleanup();
         public abstract void Startup();
 

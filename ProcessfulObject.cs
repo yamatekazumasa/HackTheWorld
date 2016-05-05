@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -12,24 +13,44 @@ namespace HackTheWorld
 {
     class ProcessfulObject : GameObject, IEnumerable
     {
-        private readonly Process[] _processes;
+        private Process[] _processes;
+        private readonly IEnumerator _routine;
+        private float _dt;
 
-        public ProcessfulObject(Process[] processes) : base(500, 300, 100, 100)
+        public ProcessfulObject() : base(500, 300)
         {
-            _processes = processes;
+            _routine = GetEnumerator();
+        }
+
+        public ProcessfulObject(int x, int y, int w, int h) : base(x, y, 0, 0, w, h)
+        {
+            _routine = GetEnumerator();
         }
 
         public IEnumerator GetEnumerator()
         {
+            Stopwatch stopwatch = new Stopwatch();
             foreach (var process in _processes)
             {
-                for (var i = 0; i < process.Frame; i++)
+                stopwatch.Restart();
+                while (stopwatch.ElapsedMilliseconds < process.MilliSeconds)
                 {
-                    process.ExecuteWith(this);
+                    process.ExecuteWith(this, _dt);
                     yield return null;
                 }
             }
 
+        }
+
+        public override void Update(float dt)
+        {
+            _dt = dt;
+            _routine.MoveNext();
+        }
+
+        public void SetProcesses(Process[] processes)
+        {
+            _processes = processes;
         }
 
         public override void Draw()
