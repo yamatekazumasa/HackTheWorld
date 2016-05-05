@@ -51,7 +51,6 @@ namespace HackTheWorld
 
 
             _box.Update( );
-            pfo.Update(dt);
 
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img , 0 , 0);
@@ -61,7 +60,7 @@ namespace HackTheWorld
             //GraphicsContext.DrawString(_box.GetString(), new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
             GraphicsContext.DrawString(str , new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
         }
-        //プロセスを作れるか
+        //プロセスを作れるかためす
         public void makeprocess(ProcessfulObject pfo , string s1)
         {
             char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t' , '\n' };
