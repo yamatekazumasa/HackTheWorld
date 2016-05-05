@@ -55,7 +55,7 @@ namespace HackTheWorld
         public virtual bool HitHeadOn(GameObject obj)
         {
             return MinX < obj.MaxX && MaxX > obj.MinX &&
-                   MinY > obj.MaxY && MinY < obj.MaxY + 1;//この行自信ないです
+                   MinY > obj.MaxY-1 && MinY <= obj.MaxY;//この行いつか書き換えたいです
         }
 
         public override void Draw()
@@ -63,6 +63,7 @@ namespace HackTheWorld
             GraphicsContext.DrawImage(_img, X, Y, Width, Height);
             GraphicsContext.FillRectangle(Brushes.Aqua, X, Y, Width, Height);
             GraphicsContext.DrawRectangle(Pens.LightBlue, X, Y, Width, Height);
+            GraphicsContext.DrawLine(Pens.LightBlue, ScreenWidth/2, ScreenHeight/2, X, Y);
         }
 
     }
