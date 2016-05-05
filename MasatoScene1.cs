@@ -37,7 +37,6 @@ namespace HackTheWorld
             // 変数の初期化
             _img = Image.FromFile(@"image\masato1.jpg");
             _player = new Player(_img);
-            _player.Initialize();
             _blocks = new List<GameObject>();
             // マップの生成
             for (int iy = 0; iy < CellNumY; iy++)
@@ -77,12 +76,14 @@ namespace HackTheWorld
 
             // 移動する前に行う計算
             _player.onGround = false;
+            _player.VX = 0;
             foreach (var block in _blocks)
             {
                 if (_player.StandOn(block))
                 {
                     _player.onGround = true;
                     if (_player.VY > block.VY) _player.VY = block.VY;
+                    if (_player.VX != block.VX) _player.VX = block.VX;
                 }
                 if (_player.HitHeadOn(block) && _player.VY < 0)
                 {
@@ -109,11 +110,11 @@ namespace HackTheWorld
             ScreenClear();
 
             // 描画
-            _player.Draw();
             foreach (var block in _blocks)
             {
                 block.Draw();
             }
+            _player.Draw();
 
             // ゲーム画面外の描画
             // ボタンの描画
