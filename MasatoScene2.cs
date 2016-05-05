@@ -51,7 +51,7 @@ namespace HackTheWorld
 
 
             _box.Update( );
-
+            pfo.Update(dt);
 
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img , 0 , 0);
