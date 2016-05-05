@@ -101,9 +101,9 @@ namespace HackTheWorld
 
             if (Input.Space.Pushed) _isFocused = true;
 
-            if (Input.LeftButton.Pushed)
+            if (Input.LeftButton.Pushed && Contains(Input.Mouse.Position))
             {
-                _isFocused = Contains(Input.Mouse.Position);
+                _isFocused = true;
                 int targetLine = (int) (Input.Mouse.Position.Y - this.MinY)/12;
                 int targetCursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
                 current.Line = targetLine < current.MaxLine ? targetLine : current.MaxLine;
