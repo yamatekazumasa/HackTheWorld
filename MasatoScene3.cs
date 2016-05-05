@@ -38,12 +38,11 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
-            if (Input.Sp2.Pushed) Scene.Pop();
+            if (Input.Sp2.Pushed || Input.Back.Pushed) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
             foreach (var button in _menuItem)
             {
-                button.IsSelected = false;
-                if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;
+                button.IsSelected = button.Contains(Input.Mouse.Position);
             }
             if (_backButton.Clicked) Scene.Pop();
 

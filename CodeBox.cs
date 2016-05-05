@@ -72,6 +72,7 @@ namespace HackTheWorld
         private bool _isDisplayed;
         private bool _isFocused;
         private readonly Font _font;
+        private int frame;
 
         public bool IsFocused => _isFocused;
 
@@ -90,6 +91,7 @@ namespace HackTheWorld
             Width = 12 *_cols;
             Height = _lineHeight * State.Current.MaxLine;
 
+            frame = 0;
         }
 
 
@@ -99,9 +101,13 @@ namespace HackTheWorld
 
             if (Input.Space.Pushed) _isFocused = true;
 
-            if (Input.LeftButton.Pushed)
+            if (Input.LeftButton.Pushed && Contains(Input.Mouse.Position))
             {
-                _isFocused = Contains(Input.Mouse.Position);
+                _isFocused = true;
+                int targetLine = (int) (Input.Mouse.Position.Y - this.MinY)/12;
+                int targetCursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
+                current.Line = targetLine < current.MaxLine ? targetLine : current.MaxLine;
+                current.Cursor = targetCursor < current.Text[current.Line].Length ? targetCursor : current.Text[current.Line].Length;
             }
 
             if (!_isFocused) return;
@@ -244,6 +250,7 @@ namespace HackTheWorld
 
             Height = _lineHeight * current.MaxLine;
 
+            frame++;
         }
 
         public string GetString()
@@ -281,8 +288,8 @@ namespace HackTheWorld
                     {
                         if (_selectedBegin.Item2 < _selectedEnd.Item2)
                         {
-                            int startX = (int) MinX + _selectedBegin.Item2*10 + 2;
-                            int startY = (int)MinY + _selectedBegin.Item1* _lineHeight;
+                            int startX = (int)MinX + _selectedBegin.Item2 * 10 + 2;
+                            int startY = (int)MinY + _selectedBegin.Item1 * _lineHeight;
                             GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, (_selectedEnd.Item2 - _selectedBegin.Item2) * 10, _lineHeight + 5);
                         }
                         else
@@ -294,12 +301,12 @@ namespace HackTheWorld
                     }
                     else if (_selectedBegin.Item1 < _selectedEnd.Item1)
                     {
-                        int startX = (int) MinX + _selectedBegin.Item2*10 + 2;
-                        int startY = (int) MinY + _selectedBegin.Item1* _lineHeight;
-                        int endX = _selectedEnd.Item2*10 + 2;
-                        int endY = (int) MinY + _selectedEnd.Item1* _lineHeight;
+                        int startX = (int)MinX + _selectedBegin.Item2 * 10 + 2;
+                        int startY = (int)MinY + _selectedBegin.Item1 * _lineHeight;
+                        int endX = _selectedEnd.Item2 * 10 + 2;
+                        int endY = (int)MinY + _selectedEnd.Item1 * _lineHeight;
                         GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, MaxX - startX, _lineHeight + 5);
-                        for (int i = _selectedBegin.Item1+1; i < _selectedEnd.Item1; i++)
+                        for (int i = _selectedBegin.Item1 + 1; i < _selectedEnd.Item1; i++)
                         {
                             GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, MinY + i * _lineHeight, Width, _lineHeight + 5);
                         }
@@ -324,7 +331,10 @@ namespace HackTheWorld
                 {
                     GraphicsContext.DrawString(State.Current.Text[i].ToString(), _font, Brushes.Black, X, Y + i * _lineHeight);
                 }
-                GraphicsContext.DrawLine(Pens.Black, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * State.Current.Line + 2, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * (State.Current.Line + 1) + 2);
+                if (frame % 120 >= 60)
+                {
+                    GraphicsContext.DrawLine(Pens.Black, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * State.Current.Line + 2, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * (State.Current.Line + 1) + 2);
+                }              
             }
         }
 
