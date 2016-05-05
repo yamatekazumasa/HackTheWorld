@@ -84,8 +84,7 @@ namespace HackTheWorld
             }
 
             // 死亡判定
-            //            if (_player.X > CellSize * 15)
-            if (_player.X > 200)
+            if (_player.X > CellSize * 15)
             {
                 _player.Die();
                 Scene.Push(new ContinueScene());
