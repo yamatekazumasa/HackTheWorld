@@ -104,15 +104,13 @@ namespace HackTheWorld
             if (Input.LeftButton.Pushed)
             {
                 _isFocused = Contains(Input.Mouse.Position);
+                int targetLine = (int) (Input.Mouse.Position.Y - this.MinY)/12;
+                int targetCursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
+                current.Line = targetLine < current.MaxLine ? targetLine : current.MaxLine;
+                current.Cursor = targetCursor < current.Text[current.Line].Length ? targetCursor : current.Text[current.Line].Length;
             }
 
             if (!_isFocused) return;
-
-            if (Input.LeftButton.Pushed)
-            {
-                current.Line =(int) (Input.Mouse.Position.Y-this.MinY) / 12;
-                current.Cursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
-            }
 
             if (Input.Up.Pushed)
             {
