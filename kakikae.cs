@@ -197,7 +197,12 @@ namespace HackTheWorld
 
             //ここで計算
             System.Data.DataTable dt = new System.Data.DataTable( );
-
+            //Dictionary<string , string> dict = new Dictionary<string , string>( );
+            //dict.Add("x" , "3");
+            //string strOriginal = "3*x+1";
+            //string str0 = "3*";
+            //string str1 = "+1";
+            //string str = str0 + dict["x"] + str1;
             int result = (int)dt.Compute(s , "");
             sArray[i] = result.ToString( );
         }
