@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static HackTheWorld.Constants;
 
-
+//よく見てgit使おう
 namespace HackTheWorld
 {
     public static class Kakikae
