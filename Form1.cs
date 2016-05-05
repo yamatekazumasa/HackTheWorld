@@ -37,7 +37,7 @@ namespace HackTheWorld
 
         }
 
-
+        //なおせない
         private void MainProcess()
         {
             _bmp = new Bitmap(ScreenWidth, ScreenHeight);
