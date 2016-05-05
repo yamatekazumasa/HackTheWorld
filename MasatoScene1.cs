@@ -32,13 +32,14 @@ namespace HackTheWorld
             _pauseButton.Size = new Vector(50,50);
             _pauseButton.Position = new Vector(125, 600);
             _menuItem.Add(_backButton);_menuItem.Add(_resetButton);_menuItem.Add(_pauseButton);
+
             // ゲーム内初期化
-            // playerの初期化
+            // 変数の初期化
             _img = Image.FromFile(@"image\masato1.jpg");
             _player = new Player(_img);
-
-            // ブロックの初期化
+            _player.Initialize();
             _blocks = new List<GameObject>();
+            // マップの生成
             for (int iy = 0; iy < CellNumY; iy++)
             {
                 for (int ix = 0; ix < CellNumX; ix++)
@@ -65,11 +66,16 @@ namespace HackTheWorld
             if (_backButton.Clicked) Scene.Pop();
             if (_resetButton.Clicked) Startup();
             if (_pauseButton.Clicked) Scene.Push(new PauseScene());
+
             // ゲーム内処理
-            if (_player.IsAlive)
+            // 死亡時処理
+            if (!_player.IsAlive)
             {
-                _player.Update(dt);
+                System.Threading.Thread.Sleep(1000);
+                Scene.Push(new ContinueScene());
             }
+
+            _player.Update(dt);
             foreach (var block in _blocks)
             {
                 if (_player.Intersects(block))
@@ -78,12 +84,11 @@ namespace HackTheWorld
                 }
                 _player.Adjust(block);
             }
-            //死亡
-            if (_player.X > 300)
+
+            // 死亡判定
+            if (_player.X > CellSize * 15)
             {
                 _player.Die();
-                System.Threading.Thread.Sleep(1000);
-                Scene.Push(new ContinueScene());
             }
 
             // 画面のクリア
@@ -95,7 +100,8 @@ namespace HackTheWorld
             {
                 block.Draw();
             }
-            //ボタンの描写
+
+            // ボタンの描画
             foreach (var item in _menuItem)
             {
                 item.Draw();
