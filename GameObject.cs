@@ -212,11 +212,15 @@ namespace HackTheWorld
             return new RectangleF(obj.X, obj.Y, obj.W, obj.H);
         }
 
+        /// <summary>
+        /// 生きていたらtrueを返す。
+        /// </summary>
+        public bool IsAlive => _isAlive;
 
         /// <summary>
         /// オブジェクトを消す。
         /// </summary>
-        public virtual void Die()
+        public void Die()
         {
             _isAlive = false;
         }
@@ -295,7 +299,7 @@ namespace HackTheWorld
         {
             return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y; 
         }
-
+  
         /// <summary>
         /// 包含判定。
         /// 渡された点を包含しているか判定する。
@@ -304,7 +308,6 @@ namespace HackTheWorld
         {
             return MinX < x && MaxX > x && MinY < y && MaxY > y;
         }
-
 
         /// <summary>
         /// 衝突判定。
@@ -340,14 +343,14 @@ namespace HackTheWorld
         /// <returns>重なっていたらオブジェクトを動かす。</returns>
         public virtual void Adjust(GameObject obj)
         {
-            if (Intersects(obj))// 上→左右→下の順に判定
+            if (Intersects(obj))
             {
                 int max = 10;// めり込み許容量。10という値は仮で、要調整。
-                if      (MaxY > obj.MinY && MaxY - obj.MinY <= +max)
+                if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
                 {
                     MaxY = obj.MinY;
                 }
-                else if (MaxX > obj.MinX && MaxX - obj.MinX <= +max)
+                else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
                 {
                     MaxX = obj.MinX;
                 }

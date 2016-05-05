@@ -17,6 +17,8 @@ namespace HackTheWorld
         Player _player;
         List<GameObject> _blocks;
         List<PBlock> _pblocks;
+        List<Enemy> _enemies;
+        List<Item> _items;
         bool _tmp_head;//仮
 
         public override void Cleanup()
@@ -39,6 +41,9 @@ namespace HackTheWorld
             // ブロックの初期化
             _blocks = new List<GameObject>();
             _pblocks = new List<PBlock>();
+            _enemies = new List<Enemy>();
+            _items = new List<Item>();
+
             for (int iy = 0; iy < CellNumY; iy++)
             {
                 for (int ix = 0; ix < CellNumX; ix++)
@@ -53,6 +58,14 @@ namespace HackTheWorld
                         GetProcess(pblock);
                         _blocks.Add(pblock);
                         _pblocks.Add(pblock);
+                    }
+                    if (Map[iy, ix] == 3)
+                    {
+                        _enemies.Add(new Enemy(CellSize * ix, CellSize * iy));
+                    }
+                    if (Map[iy, ix] == 4)
+                    {
+                        _items.Add(new Item(CellSize * ix, CellSize * iy));
                     }
                 }
             }
@@ -71,6 +84,14 @@ namespace HackTheWorld
 
 
             // ゲーム内処理
+            // 死亡時処理
+            if (!_player.IsAlive)
+            {
+                System.Threading.Thread.Sleep(1000);
+                //Scene.Push(new ContinueScene());
+                Scene.Pop();
+            }
+
             // 移動する前に行う計算
             _player.onGround = false;
             foreach (var block in _blocks)
@@ -111,10 +132,36 @@ namespace HackTheWorld
                 _player.Adjust(block);
             }
 
+            // 死亡判定
+            //if (!_player.InWindow()) _player.Die();
+            foreach (var enemy in _enemies)
+            {
+                if(_player.Intersects(enemy)) _player.Die();
+            }
+
+            // アイテム取得判定
+            for (int i = _items.Count; --i >= 0;)
+            {
+                if (_player.Intersects(_items[i]))
+                {
+                    _player.Y -= _player.Height;
+                    _player.Height *= 2;
+                    _items.RemoveAt(i);
+                }
+            }
+
             // 画面のクリア
             ScreenClear();
 
             // 描画
+            foreach (var enemy in _enemies)
+            {
+                enemy.Draw();
+            }
+            foreach (var item in _items)
+            {
+                item.Draw();
+            }
             foreach (var block in _blocks)
             {
                 block.Draw();
@@ -140,10 +187,11 @@ namespace HackTheWorld
                             new Process((obj, dt) => { ; } , 5.0f),
                             //new Process((obj, dt) => { obj.VY = -CellSize; }, 4.0f),
                             //new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
-                            new Process((obj, dt) => { obj.VY = -CellSize; }, 2.5f),
-                            new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
-                            new Process((obj, dt) => { obj.VX = -CellSize; }, 1.0f),
-                            new Process((obj, dt) => { obj.VX = 0; } , 2.0f),
+                            new Process((obj, dt) => { obj.VY = -CellSize; }, 0.1f),
+                            new Process((obj, dt) => { ; } , 4.0f),
+                            new Process((obj, dt) => { obj.VY = 0; } , 0.1f),
+                            //new Process((obj, dt) => { obj.VX = -CellSize; }, 1.0f),
+                            //new Process((obj, dt) => { obj.VX = 0; } , 2.0f),
                         });
         }
     }

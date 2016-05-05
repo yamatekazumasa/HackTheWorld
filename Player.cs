@@ -10,8 +10,11 @@ namespace HackTheWorld
     {
         private Image _img;
         public bool onGround = false;
+        public int speed = CellSize * 3;
+        public int jumpspeed = -CellSize * 11; // h=v^2/2g
+        public int gravity = CellSize * 25;
 
-        public Player(Image img)
+        public Player(Image img) : base()
         {
             this._img = img;
             this.Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
@@ -20,21 +23,15 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
             // キーで動かす部分
-            int speed = CellSize * 3;
-            if (Input.Left.Pressed)  VX = -speed;
-            if (Input.Right.Pressed) VX =  speed;
-            //if (!Input.Left.Pressed && !Input.Right.Pressed) VX = 0;
-            //if (Input.Down.Pressed)  Y += speed * dt;
-
-            // キーで操作する部分
+            if (Input.Left.Pressed) VX = -speed;
+            if (Input.Right.Pressed) VX = speed;
             if (Input.Up.Pushed && onGround)
             {
-                onGround = false;
-                VY = -CellSize * 13; // h=v^2/2g
+                //onGround = false; // 現時点では必要ない
+                VY = jumpspeed;
             }
 
             // 自動で動く部分
-            int gravity = CellSize * 25;
             VY += gravity * dt;
             Move(dt);
 
@@ -55,7 +52,7 @@ namespace HackTheWorld
         public virtual bool HitHeadOn(GameObject obj)
         {
             return MinX < obj.MaxX && MaxX > obj.MinX &&
-                   MinY > obj.MaxY-1 && MinY <= obj.MaxY;//この行いつか書き換えたいです
+                   MinY > obj.MaxY - 1 && MinY <= obj.MaxY;//この行いつか書き換えたいです
         }
 
         public override void Draw()
@@ -64,6 +61,7 @@ namespace HackTheWorld
             GraphicsContext.FillRectangle(Brushes.Aqua, X, Y, Width, Height);
             GraphicsContext.DrawRectangle(Pens.LightBlue, X, Y, Width, Height);
             GraphicsContext.DrawLine(Pens.LightBlue, ScreenWidth/2, ScreenHeight/2, X, Y);
+            if (!IsAlive) GraphicsContext.FillRectangle(Brushes.Gray, X, Y, Width, Height);
         }
 
     }
