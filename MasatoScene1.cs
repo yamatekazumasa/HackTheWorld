@@ -82,7 +82,6 @@ namespace HackTheWorld
             if (_player.X > 300)
             {
                 _player.Die();
-                System.Threading.Thread.Sleep(1000);
                 Scene.Push(new ContinueScene());
             }
 
