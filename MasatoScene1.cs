@@ -17,6 +17,7 @@ namespace HackTheWorld
         Player _player;
         List<GameObject> _blocks;
         List<PBlock> _pblocks;
+        bool _tmp_head;//仮
 
         public override void Cleanup()
         {
@@ -77,12 +78,14 @@ namespace HackTheWorld
                 if (_player.StandOn(block))
                 {
                     _player.onGround = true;
-                    if (_player.VY >  block.VY) _player.VY = block.VY;
+                    _tmp_head = false;//仮
+                    if (_player.VY > block.VY) _player.VY = block.VY;
                     if (_player.VX != block.VX) _player.VX = block.VX;
                 }
                 if (_player.HitHeadOn(block) && _player.VY < 0)
                 {
                     _player.VY = 0;
+                    _tmp_head = true;//仮
                 }
             }
             if(!_player.onGround) _player.VX = 0;
@@ -127,6 +130,7 @@ namespace HackTheWorld
         {
             GraphicsContext.Clear(Color.White);
             if (_player.onGround) GraphicsContext.FillRectangle(Brushes.BlueViolet, 1000, 200, 1200, 500); ;
+            if (_tmp_head) GraphicsContext.FillRectangle(Brushes.GreenYellow, 1000, 100, 1200, 400);
 
         }
 
@@ -136,9 +140,9 @@ namespace HackTheWorld
                             new Process((obj, dt) => { ; } , 5.0f),
                             //new Process((obj, dt) => { obj.VY = -CellSize; }, 4.0f),
                             //new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
-                            new Process((obj, dt) => { obj.VY = -CellSize; }, 3.0f),
+                            new Process((obj, dt) => { obj.VY = -CellSize; }, 2.5f),
                             new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
-                            new Process((obj, dt) => { obj.VX = -CellSize; }, 4.0f),
+                            new Process((obj, dt) => { obj.VX = -CellSize; }, 1.0f),
                             new Process((obj, dt) => { obj.VX = 0; } , 2.0f),
                         });
         }
