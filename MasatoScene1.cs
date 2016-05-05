@@ -32,30 +32,23 @@ namespace HackTheWorld
             _pauseButton.Size = new Vector(50,50);
             _pauseButton.Position = new Vector(125, 600);
             _menuItem.Add(_backButton);_menuItem.Add(_resetButton);_menuItem.Add(_pauseButton);
+
             // ゲーム内初期化
-            // playerの初期化
+            // 変数の初期化
             _img = Image.FromFile(@"image\masato1.jpg");
             _player = new Player(_img);
-//<<<<<<< HEAD
-//            _player.Initialize(ObjectType.Player);
-//            // ブロックの初期化
-//            _blocks = new List<GameObject>();
-//            for (int i=0;i<5; i+=2){
-//                GameObject b = new GameObject(Cell*i, Cell*10);
-//                b.Initialize(ObjectType.Block);
-//                _blocks.Add(b);
-
-//=======
 
             // ブロックの初期化
+            _player.Initialize();
             _blocks = new List<GameObject>();
+            // マップの生成
             for (int iy = 0; iy < CellNumY; iy++)
             {
                 for (int ix = 0; ix < CellNumX; ix++)
                 {
                     if (Map[iy, ix] == 1)
                     {
-                        _blocks.Add(new GameObject(CellSize * ix, CellSize * iy));
+                        _blocks.Add(new Block(CellSize * ix, CellSize * iy));
                     }
                 }
 
@@ -76,43 +69,48 @@ namespace HackTheWorld
             if (_backButton.Clicked) Scene.Pop();
             if (_resetButton.Clicked) Startup();
             if (_pauseButton.Clicked) Scene.Push(new PauseScene());
+
             // ゲーム内処理
-            if (_player.IsAlive)
+            // 死亡時処理
+            if (!_player.IsAlive)
             {
-                _player.Update(dt);
+                System.Threading.Thread.Sleep(1000);
+                Scene.Push(new ContinueScene());
             }
+
+            // 移動する前に行う計算
+            _player.onGround = false;
             foreach (var block in _blocks)
             {
-                if (_player.Intersects(block))
+                if (_player.StandOn(block))
+                {
+                    _player.onGround = true;
+                    if (_player.VY > block.VY) _player.VY = block.VY;
+                }
+                if (_player.HitHeadOn(block) && _player.VY < 0)
                 {
                     _player.VY = 0;
                 }
+            }
+
+            // 移動
+            _player.Update(dt);
+
+            // 調整
+            foreach (var block in _blocks)
+            {
                 _player.Adjust(block);
             }
-//<<<<<<< HEAD
-            
-//            GraphicsContext.Clear(Color.White);
-
-//            //GraphicsContext.DrawImage(_img, 0, 0);
-
-//            //ここに作成
-//            // 描画のみ
-//            for (int ix=0;ix<ScreenWidth;ix+=Cell)
-//            {
-//                GraphicsContext.DrawLine(Pens.Gray, ix, 0, ix, ScreenHeight);
-//            }
-//            for (int iy = 0; iy < ScreenHeight; iy += Cell)
-//            {
-//                GraphicsContext.DrawLine(Pens.Gray, 0, iy, ScreenWidth, iy);
-//            }
-
-
-//=======
             //死亡
             if (_player.Y > ScreenHeight)
             {
                 _player.Die();
                 Scene.Push(new ContinueScene());
+
+            // 死亡判定
+            if (_player.X > CellSize * 15)
+            {
+                _player.Die();
             }
 
             // 画面のクリア
@@ -126,7 +124,9 @@ namespace HackTheWorld
                 block.Draw();
 
             }
-            //ボタンの描写
+
+            // ゲーム画面外の描画
+            // ボタンの描画
             foreach (var item in _menuItem)
             {
                 item.Draw();
