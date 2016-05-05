@@ -21,8 +21,9 @@ namespace HackTheWorld
         {
             // キーで動かす部分
             int speed = CellSize * 3;
-            if (Input.Left.Pressed)  X -= speed * dt;
-            if (Input.Right.Pressed) X += speed * dt;
+            if (Input.Left.Pressed)  VX = -speed;
+            if (Input.Right.Pressed) VX =  speed;
+            //if (!Input.Left.Pressed && !Input.Right.Pressed) VX = 0;
             //if (Input.Down.Pressed)  Y += speed * dt;
 
             // キーで操作する部分

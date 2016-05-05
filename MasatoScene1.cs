@@ -85,6 +85,7 @@ namespace HackTheWorld
                     _player.VY = 0;
                 }
             }
+            if(!_player.onGround) _player.VX = 0;
             //foreach (var pblock in _pblocks)
             //{
             //    if (_player.StandOn(pblock) && !pblock.isWorking)
@@ -132,10 +133,10 @@ namespace HackTheWorld
         private void GetProcess(ProcessfulObject pobj)
         {
             pobj.SetProcesses(new Process[] {
-                            new Process((obj, dt) => { ; } , 1.0f),
-                            new Process((obj, dt) => { obj.VY = -CellSize; }, 4.0f),
-                            new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
-                            new Process((obj, dt) => { obj.VY = +CellSize; }, 4.0f),
+                            new Process((obj, dt) => { ; } , 5.0f),
+                            //new Process((obj, dt) => { obj.VY = -CellSize; }, 4.0f),
+                            //new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
+                            new Process((obj, dt) => { obj.VY = -CellSize; }, 3.0f),
                             new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
                             new Process((obj, dt) => { obj.VX = -CellSize; }, 4.0f),
                             new Process((obj, dt) => { obj.VX = 0; } , 2.0f),
