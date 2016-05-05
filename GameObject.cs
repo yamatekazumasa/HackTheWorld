@@ -309,7 +309,6 @@ namespace HackTheWorld
             return MinX < x && MaxX > x && MinY < y && MaxY > y;
         }
 
-
         /// <summary>
         /// 衝突判定。
         /// </summary>
@@ -347,11 +346,11 @@ namespace HackTheWorld
             if (Intersects(obj))
             {
                 int max = 10;// めり込み許容量。10という値は仮で、要調整。
-                if      (MaxY > obj.MinY && MaxY - obj.MinY <= +max)
+                if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
                 {
                     MaxY = obj.MinY;
                 }
-                else if (MaxX > obj.MinX && MaxX - obj.MinX <= +max)
+                else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
                 {
                     MaxX = obj.MinX;
                 }
