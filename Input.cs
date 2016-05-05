@@ -51,6 +51,7 @@ namespace HackTheWorld
             public Vector Position => _position;
         }
 
+
         public class KeyBoards
         {
             char _buffer;
@@ -81,6 +82,7 @@ namespace HackTheWorld
             Sp2.Append(pressedKeys.Contains(Keys.X));
             Sp3.Append(pressedKeys.Contains(Keys.C));
             A.Append(pressedKeys.Contains(Keys.A));
+            W.Append(pressedKeys.Contains(Keys.W));
             Y.Append(pressedKeys.Contains(Keys.Y));
             Enter.Append(pressedKeys.Contains(Keys.Enter));
             Space.Append(pressedKeys.Contains(Keys.Space));
@@ -111,6 +113,7 @@ namespace HackTheWorld
         public static Key Sp3 { get; } = new Key();
         public static Key A { get; } = new Key();
         public static Key Y { get; } = new Key();
+        public static Key W { get; } = new Key();
         public static Key Enter { get; } = new Key();
         public static Key Space { get; } = new Key();
         public static Key Tab { get; } = new Key();
@@ -122,8 +125,7 @@ namespace HackTheWorld
         public static MousePosition Mouse { get; } = new MousePosition();
         public static MouseButton LeftButton { get; } = new MouseButton();
         public static MouseButton RightButton { get; } = new MouseButton();
-
         public static KeyBoards KeyBoard { get; } = new KeyBoards();
-
+        
     }
 }

@@ -36,7 +36,7 @@ namespace HackTheWorld
             int gravity = CellSize * 25;
             VY += gravity * dt;
             Move(dt);
-
+           
         }
 
         /// <summary>

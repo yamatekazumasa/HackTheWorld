@@ -11,6 +11,7 @@ namespace HackTheWorld
     {
         Image _img;
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
+        private readonly List<MenuItem> _menuItem = new List<MenuItem>();
         private ProcessfulObject _pobj;
 
         public override void Cleanup()
@@ -23,6 +24,7 @@ namespace HackTheWorld
 
             _backButton.Size = new Vector(50, 50);
             _backButton.Position = new Vector(25, 500);
+            _menuItem.Add(_backButton);
             _pobj = new ProcessfulObject();
 
             _pobj.SetProcesses( new Process[] {
@@ -37,6 +39,12 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
             if (Input.Sp2.Pushed) Scene.Pop();
+            if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
+            foreach (var button in _menuItem)
+            {
+                button.IsSelected = false;
+                if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;
+            }
             if (_backButton.Clicked) Scene.Pop();
 
             _pobj.Update(dt);

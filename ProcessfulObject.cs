@@ -14,10 +14,15 @@ namespace HackTheWorld
     class ProcessfulObject : GameObject, IEnumerable
     {
         private Process[] _processes;
-        private IEnumerator _routine;
+        private readonly IEnumerator _routine;
         private float _dt;
 
-        public ProcessfulObject() : base(500, 300, 100, 100)
+        public ProcessfulObject() : base(500, 300)
+        {
+            _routine = GetEnumerator();
+        }
+
+        public ProcessfulObject(int x, int y, int w, int h) : base(x, y, 0, 0, w, h)
         {
             _routine = GetEnumerator();
         }

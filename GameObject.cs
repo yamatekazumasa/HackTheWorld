@@ -212,11 +212,15 @@ namespace HackTheWorld
             return new RectangleF(obj.X, obj.Y, obj.W, obj.H);
         }
 
+        /// <summary>
+        /// 生きていたらtrueを返す。
+        /// </summary>
+        public bool IsAlive => _isAlive;
 
         /// <summary>
         /// オブジェクトを消す。
         /// </summary>
-        public virtual void Die()
+        public void Die()
         {
             _isAlive = false;
         }
@@ -295,7 +299,7 @@ namespace HackTheWorld
         {
             return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y; 
         }
-
+  
         /// <summary>
         /// 包含判定。
         /// 渡された点を包含しているか判定する。
