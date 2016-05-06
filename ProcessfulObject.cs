@@ -13,7 +13,7 @@ namespace HackTheWorld
 {
     class ProcessfulObject : GameObject, IEnumerable
     {
-        private Process[] _processes;
+        private List<Process> _processes;
         private readonly IEnumerator _routine;
         private float _dt;
 
@@ -48,9 +48,20 @@ namespace HackTheWorld
             _routine.MoveNext();
         }
 
+
         public void SetProcesses(Process[] processes)
         {
+            _processes = processes.ToList();
+        }
+
+        public void SetProcesses(List<Process> processes)
+        {
             _processes = processes;
+        }
+
+        public void AddProcess(Process process)
+        {
+            _processes.Add(process);
         }
 
         public override void Draw()
