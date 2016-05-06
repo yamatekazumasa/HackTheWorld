@@ -54,13 +54,12 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
             // ゲーム外処理
-            if (Input.Sp2.Pushed) Scene.Pop();
+            if (Input.Sp2.Pushed || Input.Back.Pushed) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
             //ボタンの処理
             foreach (var button in _menuItem)
             {
-                button.IsSelected = false;
-                if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;
+                button.IsSelected = button.Contains(Input.Mouse.Position);
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_resetButton.Clicked) Startup();
@@ -70,33 +69,32 @@ namespace HackTheWorld
             // 死亡時処理
             if (!_player.IsAlive)
             {
-                System.Threading.Thread.Sleep(1000);
+
                 Scene.Push(new ContinueScene());
             }
 
-            // 移動する前に行う計算
-            _player.onGround = false;
-            _player.VX = 0;
+            _player.OnGround = false;
             foreach (var block in _blocks)
             {
                 if (_player.StandOn(block))
                 {
-                    _player.onGround = true;
-                    if (_player.VY > block.VY) _player.VY = block.VY;
-                    if (_player.VX != block.VX) _player.VX = block.VX;
+                    _player.OnGround = true;
+                    _player.Y += block.VY*dt;
+                    _player.X += block.VX*dt;
                 }
-                if (_player.HitHeadOn(block) && _player.VY < 0)
+                if (_player.HitHeadOn(block))
                 {
                     _player.VY = 0;
                 }
             }
 
-            // 移動
             _player.Update(dt);
-
-            // 調整
             foreach (var block in _blocks)
             {
+                if (_player.Intersects(block))
+                {
+                    _player.VY = 0;
+                }
                 _player.Adjust(block);
             }
 
@@ -104,19 +102,19 @@ namespace HackTheWorld
             if (_player.X > CellSize * 15)
             {
                 _player.Die();
+                Scene.Push(new ContinueScene());
             }
 
             // 画面のクリア
             ScreenClear();
 
             // 描画
+            _player.Draw();
             foreach (var block in _blocks)
             {
                 block.Draw();
             }
-            _player.Draw();
 
-            // ゲーム画面外の描画
             // ボタンの描画
             foreach (var item in _menuItem)
             {

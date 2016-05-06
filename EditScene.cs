@@ -6,7 +6,7 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class MasatoScene2 : Scene
+    class EditScene : Scene
     {
         Image _img;
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
@@ -37,7 +37,7 @@ namespace HackTheWorld
                 button.IsSelected = button.Contains(Input.Mouse.Position);
             }
             if (_backButton.Clicked) Scene.Pop();
-            if (_masato3Button.Clicked) Scene.Push(new MasatoScene3());
+            if (_masato3Button.Clicked) Scene.Push(new ProcessTestScene());
             if ((Input.Sp2.Pushed || Input.Back.Pushed) && !_box.IsFocused) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 

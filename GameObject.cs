@@ -331,10 +331,7 @@ namespace HackTheWorld
                    MinY > -100 && MinY < ScreenHeight + 100;
         }
 
-        public virtual bool OnGround()
-        {
-            return true;
-        }
+        public virtual bool OnGround { get; set; }
 
         /// <summary>
         /// 衝突後の調整関数。

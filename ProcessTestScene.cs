@@ -7,7 +7,7 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class MasatoScene3 : Scene
+    class ProcessTestScene : Scene
     {
         Image _img;
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
