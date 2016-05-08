@@ -268,14 +268,11 @@ namespace HackTheWorld
                 }
                 if (Input.S.Pushed)
                 {
-                    Dictionary<string, string> dict = new Dictionary<string, string>();
-
-                    string code = GetString();
-                    string date = DateTime.Now.ToString();
-                    dict.Add("type", "Block");
-                    dict.Add("code", code);
-                    dict.Add("date", date);
-                    string json = JsonConvert.SerializeObject(dict);
+                    ObjectCode obj = new ObjectCode();
+                    obj.type = "Block";
+                    obj.text = GetString();
+                    obj.date = DateTime.Now.ToString();
+                    string json = JsonConvert.SerializeObject(obj);
                     StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
                     sw.Write(json);
                     sw.Close();
