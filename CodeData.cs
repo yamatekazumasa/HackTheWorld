@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HackTheWorld
 {
-    class ObjectCode
+    class CodeData
     {
         public string type;
         public string text;

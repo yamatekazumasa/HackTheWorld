@@ -262,16 +262,13 @@ namespace HackTheWorld
                 if (Input.R.Pushed)
                 {
                     StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
-                    ObjectCode o = JsonConvert.DeserializeObject<ObjectCode>(sr.ReadToEnd());
+                    CodeData o = JsonConvert.DeserializeObject<CodeData>(sr.ReadToEnd());
                     State.Current.ReadFrom(o.text);
                     sr.Close();
                 }
                 if (Input.S.Pushed)
                 {
-                    ObjectCode obj = new ObjectCode();
-                    obj.type = "Block";
-                    obj.text = GetString();
-                    obj.date = DateTime.Now.ToString();
+                    CodeData obj = new CodeData {type = "Block", text = GetString(), date = DateTime.Now.ToString() };
                     string json = JsonConvert.SerializeObject(obj);
                     StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
                     sw.Write(json);
