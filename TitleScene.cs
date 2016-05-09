@@ -89,13 +89,13 @@ namespace HackTheWorld
                         Scene.Push(new GameScene());
                         break;
                     case 1:
-                        Scene.Push(new MasatoScene1());
+                        Scene.Push(new GameScene());
                         break;
                     case 2:
-                        Scene.Push(new MasatoScene2());
+                        Scene.Push(new EditScene());
                         break;
                     case 3:
-                        Scene.Push(new MasatoScene3());
+                        Scene.Push(new ProcessTestScene());
                         break;
                     case 4:
                         Application.Exit();

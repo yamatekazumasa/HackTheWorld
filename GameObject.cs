@@ -309,7 +309,6 @@ namespace HackTheWorld
             return MinX < x && MaxX > x && MinY < y && MaxY > y;
         }
 
-
         /// <summary>
         /// 衝突判定。
         /// </summary>
@@ -332,10 +331,7 @@ namespace HackTheWorld
                    MinY > -100 && MinY < ScreenHeight + 100;
         }
 
-        public virtual bool OnGround()
-        {
-            return true;
-        }
+        public virtual bool OnGround { get; set; }
 
         /// <summary>
         /// 衝突後の調整関数。
@@ -349,19 +345,19 @@ namespace HackTheWorld
                 int max = 10;// めり込み許容量。10という値は仮で、要調整。
                 if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
                 {
-                    this.Y -= MaxY - obj.MinY;
-                }
-                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
-                {
-                    this.Y -= MinY - obj.MaxY;
+                    MaxY = obj.MinY;
                 }
                 else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
                 {
-                    this.MinX -= MaxX - obj.MinX;
+                    MaxX = obj.MinX;
                 }
                 else if (MinX < obj.MaxX && MinX - obj.MaxX >= -max)
                 {
-                    this.MinX -= MinX - obj.MaxX;
+                    MinX = obj.MaxX;
+                }
+                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
+                {
+                    MinY = obj.MaxY;
                 }
             }
         }

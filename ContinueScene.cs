@@ -84,6 +84,11 @@ namespace HackTheWorld
             {
                 Scene.Current = new TitleScene();
             }
+
+            //背景を透明にする
+            bmp.MakeTransparent();
+            GraphicsContext.DrawImage(bmp, 0, 0);
+
             foreach (var item in _menuItem)
             {
                 item.Draw();
