@@ -7,22 +7,23 @@ namespace HackTheWorld
     {
         public Enemy(float x, float y) : base(x, y)
         {
-            Type = ObjectType.Enemy;
+            ObjectType = ObjectType.Enemy;
         }
 
         public Enemy(float x, float y, float vx, float vy) : base(x, y, vx, vy)
         {
-            Type = ObjectType.Enemy;
+            ObjectType = ObjectType.Enemy;
         }
 
         public Enemy(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h)
         {
-            Type = ObjectType.Enemy;
+            ObjectType = ObjectType.Enemy;
         }
 
         public override void Draw()
         {
-            GraphicsContext.FillRectangle(Brushes.HotPink, X, Y, Width, Height);
+            //GraphicsContext.FillRectangle(Brushes.HotPink, X, Y, Width, Height);
+            GraphicsContext.FillPie(Brushes.HotPink, X, Y, Width, Height, 0, 360);
             GraphicsContext.DrawRectangle(Pens.Magenta, X, Y, Width, Height);
         }
     }

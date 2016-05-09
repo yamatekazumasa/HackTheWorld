@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -19,7 +20,9 @@ namespace HackTheWorld
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
-        public ObjectType Type { get; set; }
+        public ObjectType ObjectType { get; set; }
+
+        //        public Type Type => GetType();
 
         #region コンストラクタ
 
@@ -108,7 +111,7 @@ namespace HackTheWorld
         public float MinX
         {
             get { return (float)_x / Scale; }
-            set { _x = (int)(value*Scale); }
+            set { _x = (int)(value * Scale); }
         }
 
         public float MinY
@@ -120,7 +123,7 @@ namespace HackTheWorld
         public float MaxX
         {
             get { return (float)(_x + _w) / Scale; }
-            set { _x = (int)(value*Scale) - _w; }
+            set { _x = (int)(value * Scale) - _w; }
         }
 
         public float MaxY
@@ -131,14 +134,14 @@ namespace HackTheWorld
 
         public float MidX
         {
-            get { return (float)(_x + _w/2) / Scale; }
-            set { _x = (int)(value * Scale) - _w/2; }
+            get { return (float)(_x + _w / 2) / Scale; }
+            set { _x = (int)(value * Scale) - _w / 2; }
         }
 
         public float MidY
         {
-            get { return (float)(_y + _h/2) / Scale; }
-            set { _y = (int)(value * Scale) - _h/2; }
+            get { return (float)(_y + _h / 2) / Scale; }
+            set { _y = (int)(value * Scale) - _h / 2; }
         }
 
         public float X
@@ -244,7 +247,7 @@ namespace HackTheWorld
         {
             Position += Velocity * dt;
         }
-        
+
         /// <summary>
         /// 角度を指定して、velocityを回転させる。
         /// </summary>
@@ -264,7 +267,7 @@ namespace HackTheWorld
         {
             this.Velocity = this.Velocity.Extend(a);
         }
-        
+
         /// <summary>
         /// 重なりの判定。
         /// 渡されたオブジェクトの矩形領域と重なっているか判定する。
@@ -295,9 +298,9 @@ namespace HackTheWorld
         /// </summary>
         public virtual bool Contains(Point p)
         {
-            return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y; 
+            return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y;
         }
-  
+
         /// <summary>
         /// 包含判定。
         /// 渡された点を包含しているか判定する。
@@ -315,7 +318,7 @@ namespace HackTheWorld
         public virtual bool CollidesWith(GameObject obj)
         {
             if (!obj._isAlive) return false;
-            if (Type == obj.Type) return false;
+            if (ObjectType == obj.ObjectType) return false;
             return Intersects(obj);
         }
 
@@ -340,33 +343,62 @@ namespace HackTheWorld
         {
             if (Intersects(obj))
             {
-                int max = 10;// めり込み許容量。10という値は仮で、要調整。
-                if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
+                int maxY = 10;// めり込み許容量。10という値は仮で、要調整。
+                int maxX = 10;// 要調整。
+                if (MaxY > obj.MinY && MaxY - obj.MinY <= maxY)
                 {
                     MaxY = obj.MinY;
                 }
-                else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
+                else if (MaxX > obj.MinX && MaxX - obj.MinX <= maxX)
                 {
                     MaxX = obj.MinX;
                 }
-                else if (MinX < obj.MaxX && MinX - obj.MaxX >= -max)
+                else if (MinX < obj.MaxX && MinX - obj.MaxX >= -maxX)
                 {
                     MinX = obj.MaxX;
                 }
-                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
+                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -maxY)
                 {
                     MinY = obj.MaxY;
                 }
                 else MaxY = obj.MinY;
             }
-        }
 
+//            if (MaxX > obj.MinX && MinX < obj.MaxX)
+//            {
+//                if (MaxY > obj.MinY && MaxY < obj.MaxY)
+//                {
+//                    MaxY = obj.MinY;
+//                    VY = 0;
+//                }
+//                if (MinY < obj.MaxY && MinY > obj.MinY)
+//                {
+//                    MinY = obj.MaxY;
+//                    VY = 0;
+//                }
+//            }
+//            if (MaxY > obj.MinY && MinY < obj.MaxY)
+//            {
+//                if (MaxX > obj.MinX && MaxX < obj.MaxX)
+//                {
+//                    MaxX = obj.MinX;
+//                    VX = 0;
+//                }
+//                if (MinX < obj.MaxX && MinX > obj.MinX)
+//                {
+//                    MinX = obj.MaxX;
+//                    VX = 0;
+//                }
+//                else MaxY = obj.MinY;
+//            }
+
+        }
 
         #endregion
 
         public virtual void Update(float dt)
         {
-            
+
         }
 
         /// <summary>
@@ -375,7 +407,7 @@ namespace HackTheWorld
         /// <param name="g">このグラフィックスコンテクストにオブジェクトを描画する。</param>
         public virtual void Draw()
         {
-            if(_isAlive)
+            if (_isAlive)
             {
                 GraphicsContext.FillRectangle(Brushes.Red, MinX, MinY, Width, Height);
             }

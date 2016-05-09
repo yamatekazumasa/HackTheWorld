@@ -7,23 +7,27 @@ namespace HackTheWorld
     {
         public Item(int x, int y) : base(x, y)
         {
-            Type = ObjectType.Item;
+            X += CellSize / 4;
+            Y += CellSize / 2;
+            W = CellSize / 2;
+            H = CellSize / 2;
+            ObjectType = ObjectType.Item;
         }
 
         public Item(int x, int y, int vx, int vy) : base(x, y, vx, vy)
         {
-            Type = ObjectType.Item;
+            ObjectType = ObjectType.Item;
         }
 
         public Item(int x, int y, int vx, int vy, int w, int h) : base(x, y, vx, vy, w, h)
         {
-            Type = ObjectType.Item;
+            ObjectType = ObjectType.Item;
         }
 
         public override void Draw()
         {
             GraphicsContext.FillRectangle(Brushes.GreenYellow, X, Y, Width, Height);
-            GraphicsContext.DrawRectangle(Pens.LawnGreen, X, Y, Width, Height);
+            GraphicsContext.DrawRectangle(Pens.ForestGreen, X, Y, Width, Height);
         }
     }
 }
