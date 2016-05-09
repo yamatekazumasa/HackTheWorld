@@ -5,17 +5,17 @@ namespace HackTheWorld
 {
     class Block : GameObject
     {
-        public Block(int x, int y) : base(x, y)
+        public Block(float x, float y) : base(x, y)
         {
             Type = ObjectType.Block;
         }
 
-        public Block(int x, int y, int vx, int vy) : base(x, y, vx, vy)
+        public Block(float x, float y, float vx, float vy) : base(x, y, vx, vy)
         {
             Type = ObjectType.Block;
         }
 
-        public Block(int x, int y, int vx, int vy, int w, int h) : base(x, y, vx, vy, w, h)
+        public Block(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h)
         {
             Type = ObjectType.Block;
         }
