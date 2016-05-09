@@ -27,6 +27,17 @@ namespace HackTheWorld
             objects = new List<GameObject>();
         }
 
+        public Stage(Stage stage)
+        {
+            rows = stage.Rows;
+            cols = stage.Cols;
+            objects = new List<GameObject>();
+            foreach (var obj in stage.objects)
+            {
+                objects.Add(obj);
+            }
+        }
+
         public Stage(int r, int c)
         {
             rows = r;
@@ -45,30 +56,32 @@ namespace HackTheWorld
 
         public static Stage Load()
         {
+            if (!File.Exists(@".\stage")) return null;
             StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
             Stage tmp = JsonConvert.DeserializeObject<Stage>(sr.ReadToEnd());
             Stage stage = new Stage(tmp.rows, tmp.cols);
             stage.objects = new List<GameObject>();
             foreach (var obj in tmp.objects)
             {
-                if (obj is ProcessfulObject)
-                {
-                    stage.Objects.Add(new ProcessfulObject(obj.X, obj.Y, obj.W, obj.H));
-                }
-                else if (obj is Block)
-                {
-                    stage.Objects.Add(new Block(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
-                }
-                else if (obj is Enemy)
-                {
-                    stage.Objects.Add(new Enemy(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
-                }
-                else
-                {
-                    stage.Objects.Add(new GameObject(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
-                }
 
-                //stage.Objects.Add((GameObject)Activator.CreateInstance(obj.GetType(), new { obj.X, obj.Y }));
+//                if (obj.ObjectType == ObjectType.Block)
+//                {
+//                    stage.Objects.Add(new ProcessfulObject(obj.X, obj.Y, obj.W, obj.H));
+//                }
+//                else if (obj is Block)
+//                {
+//                    stage.Objects.Add(new Block(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
+//                }
+//                else if (obj is Enemy)
+//                {
+//                    stage.Objects.Add(new Enemy(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
+//                }
+//                else
+//                {
+//                    stage.Objects.Add(new GameObject(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
+//                }
+
+//                stage.Objects.Add((GameObject)Activator.CreateInstance(obj.Type, new { obj.X, obj.Y }));
             }
             sr.Close();
             return stage;

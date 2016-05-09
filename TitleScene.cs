@@ -16,7 +16,6 @@ namespace HackTheWorld
         private int _cursor;
         private bool _isFocused;
 
-
         public override void Cleanup()
         {
         }

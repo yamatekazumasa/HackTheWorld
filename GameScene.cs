@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
 
@@ -48,7 +49,7 @@ namespace HackTheWorld
             // ゲーム内初期化
             // 変数の初期化
             _img = Image.FromFile(@"image\masato1.jpg");
-            _stage = _stage ?? Stage.Load();
+            _stage = _stage ?? new Stage();
             _player = new Player(_img);
             _blocks = new List<GameObject>();
             _pblocks = new List<ProcessfulObject>();
@@ -113,7 +114,8 @@ namespace HackTheWorld
                 }
                 if (Input.S.Pushed)
                 {
-                    Stage.Save(_stage);
+                    Stage.Save(new Stage(_stage));
+//                    Task.Run(() => { Stage.Save(_stage); });
                 }
             }
 

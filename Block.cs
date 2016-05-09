@@ -7,17 +7,17 @@ namespace HackTheWorld
     {
         public Block(float x, float y) : base(x, y)
         {
-            Type = ObjectType.Block;
+            ObjectType = ObjectType.Block;
         }
 
         public Block(float x, float y, float vx, float vy) : base(x, y, vx, vy)
         {
-            Type = ObjectType.Block;
+            ObjectType = ObjectType.Block;
         }
 
         public Block(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h)
         {
-            Type = ObjectType.Block;
+            ObjectType = ObjectType.Block;
         }
 
         public override void Draw()

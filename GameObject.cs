@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -19,7 +20,9 @@ namespace HackTheWorld
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
-        public ObjectType Type { get; set; }
+        public ObjectType ObjectType { get; set; }
+
+//        public Type Type => GetType();
 
         #region コンストラクタ
 
@@ -315,7 +318,7 @@ namespace HackTheWorld
         public virtual bool CollidesWith(GameObject obj)
         {
             if (!obj._isAlive) return false;
-            if (Type == obj.Type) return false;
+            if (ObjectType == obj.ObjectType) return false;
             return Intersects(obj);
         }
 
@@ -338,25 +341,49 @@ namespace HackTheWorld
         /// <returns>重なっていたらオブジェクトを動かす。</returns>
         public virtual void Adjust(GameObject obj)
         {
-            if (Intersects(obj))
+            if (MaxX > obj.MinX && MinX < obj.MaxX)
             {
-                int max = 10;// めり込み許容量。10という値は仮で、要調整。
-                if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
+                if (MaxY > obj.MinY && MaxY < obj.MaxY)
                 {
                     MaxY = obj.MinY;
+                    VY = 0;
                 }
-                else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
-                {
-                    MaxX = obj.MinX;
-                }
-                else if (MinX < obj.MaxX && MinX - obj.MaxX >= -max)
-                {
-                    MinX = obj.MaxX;
-                }
-                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
+                if (MinY < obj.MaxY && MinY > obj.MinY)
                 {
                     MinY = obj.MaxY;
+                    VY = 0;
                 }
+            }
+            if (MaxY > obj.MinY && MinY < obj.MaxY)
+            {
+                if (MaxX > obj.MinX && MaxX < obj.MaxX)
+                {
+                    MaxX = obj.MinX;
+                    VX = 0;
+                }
+                if (MinX < obj.MaxX && MinX > obj.MinX)
+                {
+                    MinX = obj.MaxX;
+                    VX = 0;
+                }
+            }
+
+
+            if (Intersects(obj))
+            {
+//                if (MaxX + VX > obj.MinX)
+//                {
+//                    MaxX = obj.MinX;
+//                }
+//                if (MinX + VX < obj.MaxX)
+//                {
+//                    MinX = obj.MaxX;
+//                }
+//                if (MinY + VY < obj.MaxY)
+//                {
+//                    MinY = obj.MaxY;
+//                    VY = 0;
+//                }
             }
         }
 
