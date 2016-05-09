@@ -22,8 +22,16 @@ namespace HackTheWorld
         List<Item> _items;
         private Stage _stage;
 
+        public GameScene(Stage stage)
+        {
+            _stage = stage;
+        }
+
         public override void Cleanup()
         {
+//            _img.Dispose();
+//            _stage = null;
+//            _player = null;
         }
 
         public override void Startup()
@@ -40,6 +48,7 @@ namespace HackTheWorld
             // ゲーム内初期化
             // 変数の初期化
             _img = Image.FromFile(@"image\masato1.jpg");
+            _stage = _stage ?? Stage.Load();
             _player = new Player(_img);
             _blocks = new List<GameObject>();
             _pblocks = new List<ProcessfulObject>();
