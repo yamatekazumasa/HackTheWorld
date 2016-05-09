@@ -48,7 +48,6 @@ namespace HackTheWorld
             _routine.MoveNext();
         }
 
-
         public void SetProcesses(Process[] processes)
         {
             _processes = processes.ToList();

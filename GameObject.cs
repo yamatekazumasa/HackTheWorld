@@ -3,7 +3,7 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class GameObject
+    public class GameObject
     {
         private int _x;
         private int _y;

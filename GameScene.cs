@@ -16,7 +16,7 @@ namespace HackTheWorld
         // ゲーム内変数宣言
         Image _img;
         Player _player;
-        List<GameObject> _blocks;
+        private Stage _stage;
 
         public override void Cleanup()
         {
@@ -37,7 +37,7 @@ namespace HackTheWorld
             // 変数の初期化
             _img = Image.FromFile(@"image\masato1.jpg");
             _player = new Player(_img);
-            _blocks = new List<GameObject>();
+            _stage = new Stage();
             // マップの生成
             for (int iy = 0; iy < CellNumY; iy++)
             {
@@ -45,7 +45,7 @@ namespace HackTheWorld
                 {
                     if (Map[iy, ix] == 1)
                     {
-                        _blocks.Add(new Block(CellSize * ix, CellSize * iy));
+                        _stage.Objects.Add(new Block(CellSize * ix, CellSize * iy));
                     }
                 }
             }
@@ -69,13 +69,12 @@ namespace HackTheWorld
             // 死亡時処理
             if (!_player.IsAlive)
             {
-
                 Scene.Push(new ContinueScene());
             }
 
             // オブジェクトの移動
             _player.OnGround = false;
-            foreach (var block in _blocks)
+            foreach (var block in _stage.Objects)
             {
                 if (_player.StandOn(block))
                 {
@@ -93,7 +92,7 @@ namespace HackTheWorld
             _player.Update(dt);
 
             // PlayerとBlockが重ならないように位置を調整
-            foreach (var block in _blocks)
+            foreach (var block in _stage.Objects)
             {
                 _player.Adjust(block);
             }
@@ -105,12 +104,25 @@ namespace HackTheWorld
                // Scene.Push(new ContinueScene()); // ここに書かないでください
             }
 
+            if (Input.Control.Pressed)
+            {
+                if (Input.R.Pushed)
+                {
+                    _stage = Stage.Load();
+                }
+                if (Input.S.Pushed)
+                {
+                    Stage.Save(_stage);
+                }
+
+            }
+
             // 画面のクリア
             ScreenClear();
 
             // 描画
             _player.Draw();
-            foreach (var block in _blocks)
+            foreach (var block in _stage.Objects)
             {
                 block.Draw();
             }

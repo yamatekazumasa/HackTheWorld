@@ -269,7 +269,7 @@ namespace HackTheWorld
                 if (Input.S.Pushed)
                 {
                     CodeData obj = new CodeData {type = "Block", text = GetString(), date = DateTime.Now.ToString() };
-                    string json = JsonConvert.SerializeObject(obj);
+                    string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
                     StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
                     sw.Write(json);
                     sw.Close();
