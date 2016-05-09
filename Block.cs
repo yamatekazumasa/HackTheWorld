@@ -7,14 +7,17 @@ namespace HackTheWorld
     {
         public Block(int x, int y) : base(x, y)
         {
+            Type = ObjectType.Block;
         }
 
         public Block(int x, int y, int vx, int vy) : base(x, y, vx, vy)
         {
+            Type = ObjectType.Block;
         }
 
         public Block(int x, int y, int vx, int vy, int w, int h) : base(x, y, vx, vy, w, h)
         {
+            Type = ObjectType.Block;
         }
 
         public override void Draw()

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -21,7 +23,7 @@ namespace HackTheWorld
             public int Line { get; set; }
             public int Cursor { get; set; }
             public int MaxLine { get; set; }
-            public List<StringBuilder> Text { get; }
+            public List<StringBuilder> Text { get; private set; }
 
             public static State Current
             {
@@ -34,7 +36,7 @@ namespace HackTheWorld
                 Line = line;
                 Cursor = cursor;
                 MaxLine = maxLine;
-                Text = new List<StringBuilder>(maxLine);
+                Text = new List<StringBuilder>();
                 for (int i = 0; i < maxLine; i++)
                 {
                     Text.Add(new StringBuilder());
@@ -60,6 +62,19 @@ namespace HackTheWorld
             public static void Redo()
             {
                 if (_state[_current + 1] != null && _current < _origin) _current = (_current + 1) % _length;
+            }
+
+            public void ReadFrom(string text)
+            {
+                string[] lines = text.Split('\n');
+                Line = 0;
+                Cursor = 0;
+                MaxLine = lines.Length;
+                Text = new List<StringBuilder>();
+                foreach (string t in lines)
+                {
+                    Text.Add(new StringBuilder(t));
+                }
             }
 
         }
@@ -244,6 +259,22 @@ namespace HackTheWorld
                     _selectedBegin = Tuple.Create(0, 0);
                     _selectedEnd = Tuple.Create(current.Line, current.Cursor);
                 }
+                if (Input.R.Pushed)
+                {
+                    StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
+                    CodeData o = JsonConvert.DeserializeObject<CodeData>(sr.ReadToEnd());
+                    State.Current.ReadFrom(o.text);
+                    sr.Close();
+                }
+                if (Input.S.Pushed)
+                {
+                    CodeData obj = new CodeData {type = "Block", text = GetString(), date = DateTime.Now.ToString() };
+                    string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+                    StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
+                    sw.Write(json);
+                    sw.Close();
+                }
+
             }
 
             if (Input.KeyBoard.IsDefined) Insert(Input.KeyBoard.TypedChar);

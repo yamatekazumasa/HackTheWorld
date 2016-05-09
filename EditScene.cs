@@ -12,7 +12,7 @@ namespace HackTheWorld
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
         private readonly MenuItem _masato3Button = new MenuItem(Image.FromFile(@"image\masato3.jpg"));
         private readonly List<MenuItem> _menuItem = new List<MenuItem>();
-        private CodeBox _box;
+        private CodeBox _codebox;
 
         public override void Cleanup()
         {
@@ -20,7 +20,7 @@ namespace HackTheWorld
 
         public override void Startup()
         {
-            _box = new CodeBox {Position = new Vector(400, 20)};
+            _codebox = new CodeBox {Position = new Vector(400, 20)};
             _img = Image.FromFile(@".\image\masato2.jpg");
 
             _backButton.Size = new Vector(50, 50);
@@ -38,19 +38,17 @@ namespace HackTheWorld
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_masato3Button.Clicked) Scene.Push(new ProcessTestScene());
-            if ((Input.Sp2.Pushed || Input.Back.Pushed) && !_box.IsFocused) Scene.Pop();
+            if ((Input.Sp2.Pushed || Input.Back.Pushed) && !_codebox.IsFocused) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
-
-            _box.Update();
-
+            _codebox.Update();
 
             GraphicsContext.Clear(Color.White);
             GraphicsContext.DrawImage(_img, 0, 0);
-            _box.Draw();
+            _codebox.Draw();
             _backButton.Draw();
             _masato3Button.Draw();
-            GraphicsContext.DrawString(_box.GetString(), new Font("Arial", 12), Brushes.Black, new Rectangle(500, 300, 500, 300));
+            GraphicsContext.DrawString(_codebox.GetString(), new Font("Arial", 12), Brushes.Black, new Rectangle(500, 300, 500, 300));
             
         }
     }

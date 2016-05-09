@@ -3,7 +3,7 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class GameObject
+    public class GameObject
     {
         private int _x;
         private int _y;
@@ -19,7 +19,7 @@ namespace HackTheWorld
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
-        private ObjectType _objectType;
+        public ObjectType Type { get; set; }
 
         #region コンストラクタ
 
@@ -189,8 +189,6 @@ namespace HackTheWorld
             set { Height = value; }
         }
 
-        public ObjectType ObjectType => _objectType;
-
         public bool Clicked => Contains(Input.Mouse.Position) && Input.LeftButton.Pushed;
 
 
@@ -317,7 +315,7 @@ namespace HackTheWorld
         public virtual bool CollidesWith(GameObject obj)
         {
             if (!obj._isAlive) return false;
-            if (_objectType == obj.ObjectType) return false;
+            if (Type == obj.Type) return false;
             return Intersects(obj);
         }
 
