@@ -152,6 +152,7 @@ namespace HackTheWorld
                     _player.Y -= CellSize / 4;
                     _player.Height += CellSize / 4;
                     _player.Width  = CellSize;
+                    _player.jumpspeed = -CellSize * 13; // h=v^2/2g
                     _stage.Objects.Remove(_items[i]);
                     _items.RemoveAt(i);
                 }
