@@ -120,6 +120,66 @@ namespace HackTheWorld
 
             }
         }
+
+        /* for文について
+         * 
+         * for 2
+         * function(3*i)　 ←function(0) function(3)を実行
+         * endfor 
+         * ↑こんな感じで
+         * 
+         * if文について
+         * 
+         * if(条件式){
+         * 　なんか;
+         * } else if(条件式){
+         * 　何かしら;
+         * }
+         * 
+         * 
+         * if i == 0 do
+         * k = 2 
+         * endif
+         * 
+         * if i == 1 do
+         * k = 3
+         * endif
+         * 
+         * if i!=0 do 
+         *   if i!=1 do
+         *   k = 0
+         *   endif
+         * endif
+         * このパターンだと「if - endif」の構造を作るだけで完了
+         * 分かりやすい 
+         * 
+         * スペース区切りの問題があるので、最初は厳密なスペースの文法に合わせた認識をさせる
+         * if i == 0 do
+         *   function
+         * endif   
+         *
+         * 
+         * 
+         * if i==0 do
+         *   function
+         * endif
+         * 
+         * 
+         * 
+         * 
+         * forを発見したらendforまでをforとする
+         * 
+         * ボタンを押すとコードを読み取る(String)
+         * 
+         * ①左辺 = 右辺 の左辺が未定義だった場合、左辺を読み取る
+         * ②for if while 追加していく
+         * ③Process作る人
+         * 
+         */
+
+
+
+
         //kakkoset[i]が何かの内側ならtrueを返す
         //これがないと内側が2回実行される
         public static bool kakkoinside(int i)
