@@ -7,10 +7,10 @@ namespace HackTheWorld
     {
         public Item(int x, int y) : base(x, y)
         {
-            W -= CellSize / 2;
-            H -= CellSize / 2;
             X += CellSize / 4;
             Y += CellSize / 2;
+            W = CellSize / 2;
+            H = CellSize / 2;
             ObjectType = ObjectType.Item;
         }
 
