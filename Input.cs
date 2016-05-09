@@ -39,11 +39,9 @@ namespace HackTheWorld
         public class MousePosition
         {
             private Vector _position;
-
             public void Append(Vector mousePosition, Vector windowPosition)
             {
                 _position = mousePosition - windowPosition - new Vector(9, 30);
-
             }
 
             public int X => (int)_position.X;
