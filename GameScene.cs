@@ -18,8 +18,16 @@ namespace HackTheWorld
         Player _player;
         private Stage _stage;
 
+        public GameScene(Stage stage)
+        {
+            _stage = stage;
+        }
+
         public override void Cleanup()
         {
+//            _img.Dispose();
+//            _stage = null;
+//            _player = null;
         }
 
         public override void Startup()
@@ -36,19 +44,8 @@ namespace HackTheWorld
             // ゲーム内初期化
             // 変数の初期化
             _img = Image.FromFile(@"image\masato1.jpg");
+            _stage = _stage ?? Stage.Load();
             _player = new Player(_img);
-            _stage = new Stage();
-            // マップの生成
-            for (int iy = 0; iy < CellNumY; iy++)
-            {
-                for (int ix = 0; ix < CellNumX; ix++)
-                {
-                    if (Map[iy, ix] == 1)
-                    {
-                        _stage.Objects.Add(new Block(CellSize * ix, CellSize * iy));
-                    }
-                }
-            }
         }
 
         public override void Update(float dt)
@@ -102,19 +99,6 @@ namespace HackTheWorld
             {
                 _player.Die();
                // Scene.Push(new ContinueScene()); // ここに書かないでください
-            }
-
-            if (Input.Control.Pressed)
-            {
-                if (Input.R.Pushed)
-                {
-                    _stage = Stage.Load();
-                }
-                if (Input.S.Pushed)
-                {
-                    Stage.Save(_stage);
-                }
-
             }
 
             // 画面のクリア
