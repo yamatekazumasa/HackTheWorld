@@ -9,10 +9,8 @@ namespace HackTheWorld
     class Player : GameObject
     {
         private Image _img;
-        public bool onGround = false;
         public int speed = CellSize * 3;
         public int jumpspeed = -CellSize * 11; // h=v^2/2g
-        public int gravity = CellSize * 25;
 
         public Player(Image img) : base()
         {
@@ -23,18 +21,16 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
             // キーで動かす部分
-            if (Input.Left.Pressed) VX = -speed;
-            if (Input.Right.Pressed) VX = speed;
-            if (Input.Up.Pushed && onGround)
-            {
-                //onGround = false; // 現時点では必要ない
-                VY = jumpspeed;
-            }
+            if (Input.Left.Pressed)  X -= speed * dt;
+            if (Input.Right.Pressed) X += speed * dt;
+//            if (Input.Left.Pressed)  VX = -speed;
+//            if (Input.Right.Pressed) VX = speed;
+//            if (Input.Left.Pressed == Input.Right.Pressed) VX = 0;
+            if (Input.Up.Pushed && OnGround) VY = jumpspeed;
 
             // 自動で動く部分
-            VY += gravity * dt;
+            VY += Gravity * dt;
             Move(dt);
-
         }
 
         /// <summary>

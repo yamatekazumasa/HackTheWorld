@@ -89,13 +89,13 @@ namespace HackTheWorld
                         Scene.Push(new GameScene());
                         break;
                     case 1:
-                        Scene.Push(new MasatoScene1());
+                        Scene.Push(new GameScene());
                         break;
                     case 2:
-                        Scene.Push(new MasatoScene2());
+                        Scene.Push(new EditScene());
                         break;
                     case 3:
-                        Scene.Push(new MasatoScene3());
+                        Scene.Push(new ProcessTestScene());
                         break;
                     case 4:
                         Application.Exit();
@@ -114,16 +114,13 @@ namespace HackTheWorld
             }
             _menu[_cursor].IsSelected = true;
 
-
-
             GraphicsContext.Clear(Color.White);
             foreach (var item in _menu)
             {
                 item.Draw();
 
             }
-
-
+            
 
         }
     }

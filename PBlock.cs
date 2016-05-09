@@ -6,14 +6,8 @@ namespace HackTheWorld
     class PBlock : ProcessfulObject
     {
         public bool isWorking = false;
-        public PBlock(int x, int y) : base()
+        public PBlock(int x, int y) : base(x, y)
         {
-            X = x;
-            Y = y;
-            VX = 0;
-            VY = 0;
-            Width = CellSize;
-            Height = CellSize;
         }
 
         public override void Update(float dt)

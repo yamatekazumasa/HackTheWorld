@@ -32,6 +32,12 @@ namespace HackTheWorld
         public static readonly int CellSize = 60;
 
         /// <summary>
+        /// 重力の大きさ。
+        /// </summary>
+        public static readonly int Gravity = CellSize * 25;
+
+
+        /// <summary>
         /// オブジェクトのタイプ。
         /// </summary>
         public enum ObjectType
