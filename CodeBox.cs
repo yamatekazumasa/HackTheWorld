@@ -56,7 +56,7 @@ namespace HackTheWorld
 
             public static void Undo()
             {
-                if (_current > 0) _current = (_current + _length - 1)%_length;
+                if (_current > 0) _current = (_current + _length - 1) % _length;
             }
 
             public static void Redo()
@@ -103,7 +103,7 @@ namespace HackTheWorld
 
             State.Current = new State(0, 0, 5);
 
-            Width = 12 *_cols;
+            Width = 12 * _cols;
             Height = _lineHeight * State.Current.MaxLine;
 
             frame = 0;
@@ -119,13 +119,17 @@ namespace HackTheWorld
             if (Input.LeftButton.Pushed && Contains(Input.Mouse.Position))
             {
                 _isFocused = true;
-                int targetLine = (int) (Input.Mouse.Position.Y - this.MinY)/12;
+                int targetLine = (int)(Input.Mouse.Position.Y - this.MinY) / 12;
                 int targetCursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
                 current.Line = targetLine < current.MaxLine ? targetLine : current.MaxLine;
                 current.Cursor = targetCursor < current.Text[current.Line].Length ? targetCursor : current.Text[current.Line].Length;
             }
-
-            if (!_isFocused) return;
+            if (Input.LeftButton.Pushed && !Contains(Input.Mouse.Position))
+            {
+                _selectedBegin = null;_selectedEnd = null;
+                _isFocused = false;
+            }
+                if (!_isFocused) return;
 
             if (Input.Up.Pushed)
             {
@@ -233,7 +237,7 @@ namespace HackTheWorld
                 current.Text[current.Line].Insert(current.Cursor, "  ");
                 current.Cursor += 2;
             }
-
+            //シフトキーでの選択
             if (Input.Shift.Pressed)
             {
                 if (_selectedBegin == null) _selectedBegin = Tuple.Create(current.Line, current.Cursor);
@@ -247,6 +251,31 @@ namespace HackTheWorld
                 _selectedBegin = null;
                 _selectedEnd = null;
             }
+            //マウスでの選択
+            if (Contains(Input.Mouse.Position))
+            {
+                if (Input.LeftButton.Pressed)
+                {
+                    if (_selectedBegin == null)
+                    {
+                        _selectedBegin = Tuple.Create(current.Line, current.Cursor);
+                    }
+                    int targetLine = (int)(Input.Mouse.Position.Y - this.MinY) / 12;
+                    int targetCursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
+                    current.Line = targetLine < current.MaxLine ? targetLine : current.MaxLine;
+                    current.Cursor = targetCursor < current.Text[current.Line].Length ? targetCursor : current.Text[current.Line].Length;
+                    if (_selectedBegin != Tuple.Create(current.Line, current.Cursor))
+                    {
+                        _selectedEnd = Tuple.Create(current.Line, current.Cursor);
+                    }
+                }
+                else if (_selectedEnd != null && (current.Line != _selectedEnd.Item1 || current.Cursor != _selectedEnd.Item2))
+                {
+                    _selectedBegin = null;
+                    _selectedEnd = null;
+                }
+            }
+
 
             if (Input.Control.Pressed)
             {
@@ -268,7 +297,7 @@ namespace HackTheWorld
                 }
                 if (Input.S.Pushed)
                 {
-                    CodeData obj = new CodeData {type = "Block", text = GetString(), date = DateTime.Now.ToString() };
+                    CodeData obj = new CodeData { type = "Block", text = GetString(), date = DateTime.Now.ToString() };
                     string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
                     StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
                     sw.Write(json);
@@ -365,7 +394,7 @@ namespace HackTheWorld
                 if (frame % 120 >= 60)
                 {
                     GraphicsContext.DrawLine(Pens.Black, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * State.Current.Line + 2, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * (State.Current.Line + 1) + 2);
-                }              
+                }
             }
         }
 

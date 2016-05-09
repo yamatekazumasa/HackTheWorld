@@ -196,6 +196,7 @@ namespace HackTheWorld
         private void ScreenClear()
         {
             GraphicsContext.Clear(Color.White);
+            GraphicsContext.DrawImage(Image.FromFile(@"image\backscreen.bmp"),0,0);
             for (int ix = 0; ix < ScreenWidth; ix += CellSize)
             {
                 GraphicsContext.DrawLine(Pens.LightGray, ix, 0, ix, ScreenHeight);

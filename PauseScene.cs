@@ -11,7 +11,8 @@ namespace HackTheWorld
 {
     class PauseScene : Scene
     {
-        private readonly MenuItem _continueButton = new MenuItem(Image.FromFile(@"image\continue.bmp"), Image.FromFile(@"image\continue1.bmp"));
+        private int _cursor;
+        private MenuItem _continueButton;
         private readonly MenuItem _closeButton = new MenuItem(Image.FromFile(@"image\close1.bmp"), Image.FromFile(@"image\close.bmp"));
         private readonly List<MenuItem> _menuItem = new List<MenuItem>();
 
@@ -20,18 +21,48 @@ namespace HackTheWorld
         }
         public override void Startup()
         {
-            _continueButton.Size = new Vector(400, 100);
-            _continueButton.Position = new Vector(400,200);
-            _closeButton.Size = new Vector(400,100);
+            _continueButton = new MenuItem(Image.FromFile(@"image\continue.bmp"), Image.FromFile(@"image\continue1.bmp"))
+            {
+                Size = new Vector(400, 100),
+                Position = new Vector(400, 200)
+            };
+            _closeButton.Size = new Vector(400, 100);
             _closeButton.Position = new Vector(400, 400);
-            _menuItem.Add(_continueButton);_menuItem.Add(_closeButton);
+            _menuItem.Add(_continueButton); _menuItem.Add(_closeButton);
         }
         public override void Update(float dt)
+
         {
-            foreach (var button in _menuItem)
+            if (Input.Down.Pushed || Input.Up.Pushed)
             {
-                button.IsSelected = false;
-                if (button.Contains(Input.Mouse.Position)) button.IsSelected = true;
+                _cursor = (_cursor + 1) % 2;
+            }
+
+            for (int i = 0; i < _menuItem.Count; i++)
+            {
+                _menuItem[i].IsSelected = false;
+                if (_cursor == i) _menuItem[i].IsSelected = true;
+                if (_menuItem[i].Contains(Input.Mouse.Position))
+                {
+                    _cursor = -1;
+                    _menuItem[i].IsSelected = true;
+                }
+            }
+
+            //Zを押したときの処理
+            if (Input.Sp1.Pushed)
+            {
+                switch (_cursor)
+                {
+                    case -1:
+                        break;
+                    case 0:
+                        Scene.Pop();
+                        break;
+                    case 1:
+                        Scene.Current = new TitleScene();
+                        break;
+                }
             }
             if (_continueButton.Clicked)
             {
@@ -41,7 +72,7 @@ namespace HackTheWorld
             {
                 Scene.Current = new TitleScene();
             }
-                foreach (var item in _menuItem)
+            foreach (var item in _menuItem)
             {
                 item.Draw();
             }

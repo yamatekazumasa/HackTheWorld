@@ -27,7 +27,7 @@ namespace HackTheWorld
 //            if (Input.Right.Pressed) VX = speed;
 //            if (Input.Left.Pressed == Input.Right.Pressed) VX = 0;
             if (Input.Up.Pushed && OnGround) VY = jumpspeed;
-
+            
             // 自動で動く部分
             VY += Gravity * dt;
             Move(dt);

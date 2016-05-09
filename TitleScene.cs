@@ -14,7 +14,6 @@ namespace HackTheWorld
         private Image[] _menuImages;
         private MenuItem[] _menu;
         private int _cursor;
-        private bool _isFocused;
 
         public override void Cleanup()
         {
@@ -40,32 +39,24 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
 
-            _isFocused = false;
-
-
             if (_menu[0].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 0;
             }
             if (_menu[1].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 1;
             }
             if (_menu[2].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 2;
             }
             if (_menu[3].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 3;
             }
             if (_menu[4].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 4;
             }
 
@@ -80,7 +71,7 @@ namespace HackTheWorld
                 _cursor = (_cursor + 4) % 5;
             }
 
-            if (Input.Sp1.Pushed || (Input.LeftButton.Pushed && _isFocused))
+            if (Input.Sp1.Pushed || (Input.LeftButton.Pushed && _menu[_cursor].Contains(Input.Mouse.Position)))
             {
                 switch (_cursor)
                 {
