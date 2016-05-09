@@ -8,9 +8,9 @@ namespace HackTheWorld
 {
     class EditScene : Scene
     {
-        private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
-        private readonly MenuItem _startButton = new MenuItem(Image.FromFile(@"image\masato3.jpg"));
-        private readonly List<MenuItem> _menuItem = new List<MenuItem>();
+        private MenuItem _backButton;
+        private MenuItem _startButton;
+        private List<MenuItem> _menuItem;
         private CodeBox _codebox;
         private Stage _stage;
 
@@ -21,12 +21,15 @@ namespace HackTheWorld
         public override void Startup()
         {
             _codebox = new CodeBox {Position = new Vector(400, 20)};
-
-            _backButton.Size = new Vector(50, 50);
-            _backButton.Position = new Vector(25, 500);
-            _startButton.Size = new Vector(50, 50);
-            _startButton.Position = new Vector(75, 500);
-            _menuItem.Add(_backButton);_menuItem.Add(_startButton);
+            _backButton = new MenuItem(Image.FromFile(@"image\back.png")) {
+                Size = new Vector(50, 50),
+                Position = new Vector(25, 500)
+            };
+            _startButton = new MenuItem(Image.FromFile(@"image\masato3.jpg")) {
+                Size = new Vector(50, 50),
+                Position = new Vector(75, 500)
+            };
+            _menuItem = new List<MenuItem> {_backButton, _startButton};
 
             _stage = new Stage();
         }

@@ -11,6 +11,7 @@ namespace HackTheWorld
         public static int[,] Map = 
         {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 ,0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 ,0},
             {0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 ,0},
             {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
             {0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 0, 0 ,0},
@@ -25,6 +26,6 @@ namespace HackTheWorld
         /// ゲーム画面のマスの個数。
         /// </summary>
         public static readonly int CellNumX = 16;
-        public static readonly int CellNumY = 9;
+        public static readonly int CellNumY = 10;
     }
 }

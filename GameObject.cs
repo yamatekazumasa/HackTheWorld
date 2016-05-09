@@ -22,7 +22,7 @@ namespace HackTheWorld
         /// </summary>
         public ObjectType ObjectType { get; set; }
 
-        //        public Type Type => GetType();
+        public Type Type => GetType();
 
         #region コンストラクタ
 

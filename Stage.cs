@@ -12,37 +12,22 @@ namespace HackTheWorld
 {
     public class Stage
     {
-        private List<GameObject> objects;
-        private int rows;
-        private int cols;
-
-        public int Rows => rows;
-        public int Cols => cols;
-        public List<GameObject> Objects { get { return objects; } set { objects = value; } }
+        public int Rows { get; set; }
+        public int Cols { get; set; }
+        public List<GameObject> Objects { get; set; }
 
         public Stage()
         {
-            rows = 9;
-            cols = 16;
-            objects = new List<GameObject>();
-        }
-
-        public Stage(Stage stage)
-        {
-            rows = stage.Rows;
-            cols = stage.Cols;
-            objects = new List<GameObject>();
-            foreach (var obj in stage.objects)
-            {
-                objects.Add(obj);
-            }
+            Rows = 9;
+            Cols = 16;
+            Objects = new List<GameObject>();
         }
 
         public Stage(int r, int c)
         {
-            rows = r;
-            cols = c;
-            objects = new List<GameObject>();
+            Rows = r;
+            Cols = c;
+            Objects = new List<GameObject>();
         }
 
         public static void Save(Stage stage)
@@ -59,9 +44,9 @@ namespace HackTheWorld
             if (!File.Exists(@".\stage")) return null;
             StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
             Stage tmp = JsonConvert.DeserializeObject<Stage>(sr.ReadToEnd());
-            Stage stage = new Stage(tmp.rows, tmp.cols);
-            stage.objects = new List<GameObject>();
-            foreach (var obj in tmp.objects)
+            Stage stage = new Stage(tmp.Rows, tmp.Cols);
+            stage.Objects = new List<GameObject>();
+            foreach (var obj in tmp.Objects)
             {
 
 //                if (obj.ObjectType == ObjectType.Block)
@@ -78,10 +63,10 @@ namespace HackTheWorld
 //                }
 //                else
 //                {
-//                    stage.Objects.Add(new GameObject(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
+                    stage.Objects.Add(new GameObject(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
 //                }
 
-//                stage.Objects.Add((GameObject)Activator.CreateInstance(obj.Type, new { obj.X, obj.Y }));
+//                stage.Objects.Add((GameObject)Activator.CreateInstance(obj.Type, new { obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H }));
             }
             sr.Close();
             return stage;

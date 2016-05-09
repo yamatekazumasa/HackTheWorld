@@ -10,27 +10,33 @@ namespace HackTheWorld
     class GameScene : Scene
     {
         // ゲーム画面外の変数の定義
-        private readonly List<MenuItem> _menuItem = new List<MenuItem>();
-        private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"), Image.FromFile(@"image\back1.bmp"));
-        private readonly MenuItem _resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"), Image.FromFile(@"image\reset1.bmp"));
-        private readonly MenuItem _pauseButton = new MenuItem(Image.FromFile(@"image\stop.jpg"), Image.FromFile(@"image\stop1.bmp"));
+        private List<MenuItem> _menuItem;
+        private MenuItem _backButton;
+        private MenuItem _resetButton;
+        private MenuItem _pauseButton;
         // ゲーム内変数宣言
-        Image _img;
-        Player _player;
-        List<GameObject> _blocks;
-        List<ProcessfulObject> _pblocks;
-        List<Enemy> _enemies;
-        List<Item> _items;
+        private Player _player;
+        private List<GameObject> _blocks;
+        private List<ProcessfulObject> _pblocks;
+        private List<Enemy> _enemies;
+        private List<Item> _items;
         private Stage _stage;
 
         public GameScene(Stage stage)
         {
-            _stage = stage;
+            _stage = new Stage {
+                Rows = stage.Rows,
+                Cols = stage.Cols,
+                Objects = new List<GameObject>()
+            };
+            foreach (var obj in stage.Objects)
+            {
+                _stage.Objects.Add(obj);
+            }
         }
 
         public override void Cleanup()
         {
-//            _img.Dispose();
 //            _stage = null;
 //            _player = null;
         }
@@ -38,19 +44,24 @@ namespace HackTheWorld
         public override void Startup()
         {
             // ゲーム画面外初期化
-            _backButton.Size = new Vector(50, 50);
-            _backButton.Position = new Vector(25, 600);
-            _resetButton.Size = new Vector(50, 50);
-            _resetButton.Position = new Vector(75, 600);
-            _pauseButton.Size = new Vector(50, 50);
-            _pauseButton.Position = new Vector(125, 600);
-            _menuItem.Add(_backButton); _menuItem.Add(_resetButton); _menuItem.Add(_pauseButton);
+            _backButton = new MenuItem(Image.FromFile(@"image\back.png"), Image.FromFile(@"image\back1.bmp")) {
+                Size = new Vector(50, 50),
+                Position = new Vector(25, 600)
+            };
+            _resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"), Image.FromFile(@"image\reset1.bmp")) {
+                Size = new Vector(50, 50),
+                Position = new Vector(75, 600)
+            };
+            _pauseButton = new MenuItem(Image.FromFile(@"image\stop.jpg"), Image.FromFile(@"image\stop1.bmp")) {
+                Size = new Vector(50, 50),
+                Position = new Vector(125, 600)
+            };
+            _menuItem = new List<MenuItem> {_backButton, _resetButton, _pauseButton};
 
             // ゲーム内初期化
             // 変数の初期化
-            _img = Image.FromFile(@"image\masato1.jpg");
             _stage = _stage ?? new Stage();
-            _player = new Player(_img);
+            _player = new Player();
             _blocks = new List<GameObject>();
             _pblocks = new List<ProcessfulObject>();
             _enemies = new List<Enemy>();
@@ -72,7 +83,7 @@ namespace HackTheWorld
                     {
                         var pblock = new PBlock(CellSize * ix, CellSize * iy);
                         GetProcess(pblock);
-                        _stage.Objects.Add(pblock);
+//                        _stage.Objects.Add(pblock);
                         _blocks.Add(pblock);
                         _pblocks.Add(pblock);
                     }
@@ -114,7 +125,7 @@ namespace HackTheWorld
                 }
                 if (Input.S.Pushed)
                 {
-                    Stage.Save(new Stage(_stage));
+                    Stage.Save(_stage);
 //                    Task.Run(() => { Stage.Save(_stage); });
                 }
             }
@@ -180,10 +191,7 @@ namespace HackTheWorld
             DebugWrite();
 
             // 描画
-            foreach (var obj in _stage.Objects)
-            {
-                obj.Draw();
-            }
+            _stage.Objects.ForEach(obj => obj.Draw());
             _player.Draw();
 
             // ボタンの描画

@@ -12,10 +12,10 @@ namespace HackTheWorld
         public int speed = CellSize * 3;
         public int jumpspeed = -CellSize * 11; // h=v^2/2g
 
-        public Player(Image img) : base()
+        public Player()
         {
-            this._img = img;
-            this.Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
+            _img = Image.FromFile(@"image\masato1.jpg");
+            Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
         }
 
         public override void Update(float dt)
