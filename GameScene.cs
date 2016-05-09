@@ -124,6 +124,14 @@ namespace HackTheWorld
         private void ScreenClear()
         {
             GraphicsContext.Clear(Color.White);
+            for (int ix = 0; ix < ScreenWidth; ix += CellSize)
+            {
+                GraphicsContext.DrawLine(Pens.LightGray, ix, 0, ix, ScreenHeight);
+            }
+            for (int iy = 0; iy < ScreenHeight; iy += CellSize)
+            {
+                GraphicsContext.DrawLine(Pens.LightGray, 0, iy, ScreenWidth, iy);
+            }
         }
     }
 }
