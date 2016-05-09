@@ -35,14 +35,14 @@ namespace HackTheWorld
         public static void Save(Stage stage)
         {
             string json = JsonConvert.SerializeObject(stage, Formatting.Indented);
-            StreamWriter sw = new StreamWriter(@".\stage.json", false, Encoding.GetEncoding("utf-8"));
+            StreamWriter sw = new StreamWriter(@".\stage\test.json", false, Encoding.GetEncoding("utf-8"));
             sw.Write(json);
             sw.Close();
         }
 
         public static Stage Load()
         {
-            StreamReader sr = new StreamReader(@".\stage.json", Encoding.GetEncoding("utf-8"));
+            StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
             Stage stage = JsonConvert.DeserializeObject<Stage>(sr.ReadToEnd());
             sr.Close();
             return stage;
