@@ -74,9 +74,10 @@ namespace HackTheWorld
                         _stage.Objects.Add(enemy);
                         _enemies.Add(enemy);
                     }
-                    if (Map[iy, ix] == 3)
+                    if (Map[iy, ix] % 10 == 3)
                     {
                         var item = new Item(CellSize * ix, CellSize * iy);
+                        item.number = Map[iy, ix] / 10;
                         _stage.Objects.Add(item);
                         _items.Add(item);
                     }
@@ -155,9 +156,7 @@ namespace HackTheWorld
             {
                 if (_player.Intersects(_items[i]))
                 {
-                    _player.Y -= CellSize / 4;
-                    _player.Height += CellSize / 4;
-                    _player.Width  = CellSize;
+                    _items[i].Effect(_player,_stage.Objects);
                     _stage.Objects.Remove(_items[i]);
                     _items.RemoveAt(i);
                 }
