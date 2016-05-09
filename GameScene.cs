@@ -56,7 +56,7 @@ namespace HackTheWorld
             // ゲーム外処理
             if (Input.Sp2.Pushed || Input.Back.Pushed) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
-            //ボタンの処理
+            // ボタンの処理
             foreach (var button in _menuItem)
             {
                 button.IsSelected = button.Contains(Input.Mouse.Position);
@@ -69,7 +69,6 @@ namespace HackTheWorld
             // 死亡時処理
             if (!_player.IsAlive)
             {
-
                 Scene.Push(new ContinueScene());
             }
 
@@ -116,9 +115,9 @@ namespace HackTheWorld
             }
 
             // ボタンの描画
-            foreach (var item in _menuItem)
+            foreach (var menuitem in _menuItem)
             {
-                item.Draw();
+                menuitem.Draw();
             }
         }
 
