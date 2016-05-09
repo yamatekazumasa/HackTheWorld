@@ -17,6 +17,7 @@ namespace HackTheWorld
         Image _img;
         Player _player;
         List<GameObject> _blocks;
+        List<ProcessfulObject> _pblocks;
 
         public override void Cleanup()
         {
@@ -38,6 +39,8 @@ namespace HackTheWorld
             _img = Image.FromFile(@"image\masato1.jpg");
             _player = new Player(_img);
             _blocks = new List<GameObject>();
+            _pblocks = new List<ProcessfulObject>();
+
             // マップの生成
             for (int iy = 0; iy < CellNumY; iy++)
             {
@@ -46,6 +49,13 @@ namespace HackTheWorld
                     if (Map[iy, ix] == 1)
                     {
                         _blocks.Add(new Block(CellSize * ix, CellSize * iy));
+                    }
+                    if (Map[iy, ix] == 2)
+                    {
+                        var pblock = new PBlock(CellSize * ix, CellSize * iy);
+                        GetProcess(pblock);
+                        _blocks.Add(pblock);
+                        _pblocks.Add(pblock);
                     }
                 }
             }
@@ -90,6 +100,10 @@ namespace HackTheWorld
             }
 
             _player.Update(dt);
+            foreach (var pblock in _pblocks)
+            {
+                pblock.Update(dt);
+            }
 
             // PlayerとBlockが重ならないように位置を調整
             foreach (var block in _blocks)
@@ -132,6 +146,29 @@ namespace HackTheWorld
             {
                 GraphicsContext.DrawLine(Pens.LightGray, 0, iy, ScreenWidth, iy);
             }
+        }
+
+        private void GetProcess(ProcessfulObject pobj)
+        {
+            pobj.SetProcesses(new Process[] {
+                            new Process((obj, dt) => { ; } , 3.0f),
+
+                            new Process((obj, dt) => { obj.VY = -CellSize; }, 3.0f),
+                            new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
+
+                            new Process((obj, dt) => { obj.VY = +CellSize; }, 1.0f),
+                            new Process((obj, dt) => { ; } , 2.0f),
+                            new Process((obj, dt) => { obj.VY = 0; } , 0.01f),
+
+                            new Process((obj, dt) => { obj.VX = -CellSize; }, 1.0f),
+                            new Process((obj, dt) => { obj.VX = 0; } , 2.0f),
+
+                            new Process((obj, dt) => { ; } , 2.0f),
+                            new Process((obj, dt) => { obj.Y -= dt*CellSize; }, 3.0f),
+                            new Process((obj, dt) => { obj.Y += dt*CellSize; }, 3.0f),
+                            new Process((obj, dt) => { obj.X += dt*CellSize; }, 3.0f),
+                            new Process((obj, dt) => { obj.X -= dt*CellSize; }, 3.0f),
+                        });
         }
     }
 }

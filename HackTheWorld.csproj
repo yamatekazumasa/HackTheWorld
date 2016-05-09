@@ -81,6 +81,7 @@
     <Compile Include="GameScene.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="MenuItem.cs" />
+    <Compile Include="PBlock.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="ProcessfulObject.cs" />
