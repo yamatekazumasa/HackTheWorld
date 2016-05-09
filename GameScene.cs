@@ -73,12 +73,14 @@ namespace HackTheWorld
                 Scene.Push(new ContinueScene());
             }
 
+            // オブジェクトの移動
             _player.OnGround = false;
             foreach (var block in _blocks)
             {
                 if (_player.StandOn(block))
                 {
                     _player.OnGround = true;
+                    if (_player.VY > 0) _player.VY = 0; //速度正なら、という条件は必要です
                     _player.Y += block.VY*dt;
                     _player.X += block.VX*dt;
                 }
@@ -89,12 +91,10 @@ namespace HackTheWorld
             }
 
             _player.Update(dt);
+
+            // PlayerとBlockが重ならないように位置を調整
             foreach (var block in _blocks)
             {
-                if (_player.Intersects(block))
-                {
-                    _player.VY = 0;
-                }
                 _player.Adjust(block);
             }
 
@@ -102,7 +102,7 @@ namespace HackTheWorld
             if (_player.X > CellSize * 15)
             {
                 _player.Die();
-                Scene.Push(new ContinueScene());
+               // Scene.Push(new ContinueScene()); // ここに書かないでください
             }
 
             // 画面のクリア
