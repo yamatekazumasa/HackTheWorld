@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -21,7 +23,7 @@ namespace HackTheWorld
             public int Line { get; set; }
             public int Cursor { get; set; }
             public int MaxLine { get; set; }
-            public List<StringBuilder> Text { get; }
+            public List<StringBuilder> Text { get; private set; }
 
             public static State Current
             {
@@ -34,7 +36,7 @@ namespace HackTheWorld
                 Line = line;
                 Cursor = cursor;
                 MaxLine = maxLine;
-                Text = new List<StringBuilder>(maxLine);
+                Text = new List<StringBuilder>();
                 for (int i = 0; i < maxLine; i++)
                 {
                     Text.Add(new StringBuilder());
@@ -54,12 +56,25 @@ namespace HackTheWorld
 
             public static void Undo()
             {
-                if (_current > 0) _current = (_current + _length - 1)%_length;
+                if (_current > 0) _current = (_current + _length - 1) % _length;
             }
 
             public static void Redo()
             {
                 if (_state[_current + 1] != null && _current < _origin) _current = (_current + 1) % _length;
+            }
+
+            public void ReadFrom(string text)
+            {
+                string[] lines = text.Split('\n');
+                Line = 0;
+                Cursor = 0;
+                MaxLine = lines.Length;
+                Text = new List<StringBuilder>();
+                foreach (string t in lines)
+                {
+                    Text.Add(new StringBuilder(t));
+                }
             }
 
         }
@@ -88,7 +103,7 @@ namespace HackTheWorld
 
             State.Current = new State(0, 0, 5);
 
-            Width = 12 *_cols;
+            Width = 12 * _cols;
             Height = _lineHeight * State.Current.MaxLine;
 
             frame = 0;
@@ -104,13 +119,17 @@ namespace HackTheWorld
             if (Input.LeftButton.Pushed && Contains(Input.Mouse.Position))
             {
                 _isFocused = true;
-                int targetLine = (int) (Input.Mouse.Position.Y - this.MinY)/12;
+                int targetLine = (int)(Input.Mouse.Position.Y - this.MinY) / 12;
                 int targetCursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
                 current.Line = targetLine < current.MaxLine ? targetLine : current.MaxLine;
                 current.Cursor = targetCursor < current.Text[current.Line].Length ? targetCursor : current.Text[current.Line].Length;
             }
-
-            if (!_isFocused) return;
+            if (Input.LeftButton.Pushed && !Contains(Input.Mouse.Position))
+            {
+                _selectedBegin = null;_selectedEnd = null;
+                _isFocused = false;
+            }
+                if (!_isFocused) return;
 
             if (Input.Up.Pushed)
             {
@@ -218,7 +237,7 @@ namespace HackTheWorld
                 current.Text[current.Line].Insert(current.Cursor, "  ");
                 current.Cursor += 2;
             }
-
+            //シフトキーでの選択
             if (Input.Shift.Pressed)
             {
                 if (_selectedBegin == null) _selectedBegin = Tuple.Create(current.Line, current.Cursor);
@@ -232,6 +251,31 @@ namespace HackTheWorld
                 _selectedBegin = null;
                 _selectedEnd = null;
             }
+            //マウスでの選択
+            if (Contains(Input.Mouse.Position))
+            {
+                if (Input.LeftButton.Pressed)
+                {
+                    if (_selectedBegin == null)
+                    {
+                        _selectedBegin = Tuple.Create(current.Line, current.Cursor);
+                    }
+                    int targetLine = (int)(Input.Mouse.Position.Y - this.MinY) / 12;
+                    int targetCursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
+                    current.Line = targetLine < current.MaxLine ? targetLine : current.MaxLine;
+                    current.Cursor = targetCursor < current.Text[current.Line].Length ? targetCursor : current.Text[current.Line].Length;
+                    if (_selectedBegin != Tuple.Create(current.Line, current.Cursor))
+                    {
+                        _selectedEnd = Tuple.Create(current.Line, current.Cursor);
+                    }
+                }
+                else if (_selectedEnd != null && (current.Line != _selectedEnd.Item1 || current.Cursor != _selectedEnd.Item2))
+                {
+                    _selectedBegin = null;
+                    _selectedEnd = null;
+                }
+            }
+
 
             if (Input.Control.Pressed)
             {
@@ -244,6 +288,22 @@ namespace HackTheWorld
                     _selectedBegin = Tuple.Create(0, 0);
                     _selectedEnd = Tuple.Create(current.Line, current.Cursor);
                 }
+                if (Input.R.Pushed)
+                {
+                    StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
+                    CodeData o = JsonConvert.DeserializeObject<CodeData>(sr.ReadToEnd());
+                    State.Current.ReadFrom(o.text);
+                    sr.Close();
+                }
+                if (Input.S.Pushed)
+                {
+                    CodeData obj = new CodeData { type = "Block", text = GetString(), date = DateTime.Now.ToString() };
+                    string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+                    StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
+                    sw.Write(json);
+                    sw.Close();
+                }
+
             }
 
             if (Input.KeyBoard.IsDefined) Insert(Input.KeyBoard.TypedChar);
@@ -334,7 +394,7 @@ namespace HackTheWorld
                 if (frame % 120 >= 60)
                 {
                     GraphicsContext.DrawLine(Pens.Black, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * State.Current.Line + 2, X + 10 * State.Current.Cursor + 2, Y + _lineHeight * (State.Current.Line + 1) + 2);
-                }              
+                }
             }
         }
 

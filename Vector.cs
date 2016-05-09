@@ -58,6 +58,16 @@ namespace HackTheWorld
             return new Vector(a.X / b, a.Y / b);
         }
 
+        public static bool operator ==(Vector a, Vector b)
+        {
+            return a.X == b.X && a.Y == b.Y;
+        }
+
+        public static bool operator !=(Vector a, Vector b)
+        {
+            return a.X != b.X || a.Y != b.Y;
+        }
+
         public static implicit operator Size(Vector v)
         {
             return new Size((int)v.X, (int)v.Y);
