@@ -157,14 +157,22 @@ namespace HackTheWorld
          * if i == 0 do
          *   function
          * endif   
-         *
          * 
-         * 
+         * ↓これはまだ良い
          * if i==0 do
          *   function
          * endif
          * 
          * 
+         * while文について
+         * 
+         * while(buttonClicked() == true){  ←条件式中身はif文を流用できそう
+         *   function();
+         * }
+         * 
+         * while  do
+         *   function
+         * endwhile
          * 
          * 
          * forを発見したらendforまでをforとする

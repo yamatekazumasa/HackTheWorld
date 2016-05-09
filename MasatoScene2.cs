@@ -79,9 +79,20 @@ namespace HackTheWorld
                     case "move()":
                         pfo.SetProcesses(new Process[ ]
                         {
-                            new Process((obj,dt)=> { obj.Size = new Vector(30, 30); }, 2.0f)
+                            new Process((obj,dt)=> { obj.Size = new Vector(30, 30); }, 2.0f) //doubleをfloatにするときに2.0fじゃないと認識しない または(float)をつける
                         });
                         break;
+                      
+                   /* 
+                     move()だけなら良いけど、引数が来た時にどうするか
+                     「move(x,y)」と書かせて、moveを読み取ってx,yをVector型で保存
+                     
+                    case "move":
+                        最初...xとyを読み取る
+                        x,yをVector型にする
+                        AddProcess((obj,dt)=> { obj.Size = new Vector(x, y)}, sec)が来てくれることを信じて待つ
+                        
+                    */
                 }
             }
         }
