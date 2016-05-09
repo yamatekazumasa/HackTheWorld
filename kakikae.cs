@@ -22,7 +22,7 @@ namespace HackTheWorld
 
         public static string yomitori(string s1)
         {
-            char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t' , '\n' };
+            char[ ] delimiterChars = { ' ' , ':' , '\t' , '\n' };
 
             ArrayList sArray = new ArrayList( );
             ArrayList result = new ArrayList( );
@@ -164,7 +164,7 @@ namespace HackTheWorld
          * endif
          * 
          * 
-         * while文について
+         * while文について(これちょっと保留)
          * 
          * while(buttonClicked() == true){  ←条件式中身はif文を流用できそう
          *   function();
@@ -177,12 +177,14 @@ namespace HackTheWorld
          * 
          * forを発見したらendforまでをforとする
          * 
-         * ボタンを押すとコードを読み取る(String)
+         * ボタンを押すとコードを読み取る(GetString to ArrayList)
          * 
-         * ①左辺 = 右辺 の左辺が未定義だった場合、左辺を読み取る
-         * ②for if while 追加していく
-         * ③Process作る人
-         * 
+         * ①左辺 = 右辺 の左辺が未定義だった場合、左辺を読み取る(ArrayList -> extracting various)
+         * ②for if while 追加していく(ArrayList -> ArrayList・改)
+         * ここまででProcessにしやすい文構造になっててほしい
+         * ----変換の壁----
+         * ③Process作る人 (ArrayList・改 -> Process) ←variousをいちいちチェック(無ければエラー)
+         * ----出力の壁----
          */
 
 
