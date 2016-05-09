@@ -36,7 +36,7 @@ namespace HackTheWorld
         /// </summary>
         /// <param name="x">初期x座標。</param>
         /// <param name="y">初期y座標。</param>
-        public GameObject(int x, int y) : this()
+        public GameObject(float x, float y) : this()
         {
             X = x;
             Y = y;
@@ -49,7 +49,7 @@ namespace HackTheWorld
         /// <param name="y">初期y座標。</param>
         /// <param name="vx">初期速度のx方向成分。</param>
         /// <param name="vy">初期速度のy方向成分。</param>
-        public GameObject(int x, int y, int vx, int vy) : this(x, y)
+        public GameObject(float x, float y, float vx, float vy) : this(x, y)
         {
             VX = vx;
             VY = vy;
@@ -64,7 +64,7 @@ namespace HackTheWorld
         /// <param name="vy">初期速度のy方向成分。</param>
         /// <param name="w">幅。</param>
         /// <param name="h">高さ。</param>
-        public GameObject(int x, int y, int vx, int vy, int w, int h) : this(x, y, vx, vy)
+        public GameObject(float x, float y, float vx, float vy, float w, float h) : this(x, y, vx, vy)
         {
             Width = w;
             Height = h;

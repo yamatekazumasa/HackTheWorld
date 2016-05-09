@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using static HackTheWorld.Constants;
+
 
 namespace HackTheWorld
 {
@@ -44,7 +46,20 @@ namespace HackTheWorld
         public static Stage Load()
         {
             StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
-            Stage stage = JsonConvert.DeserializeObject<Stage>(sr.ReadToEnd());
+            Stage tmp = JsonConvert.DeserializeObject<Stage>(sr.ReadToEnd());
+            Stage stage = new Stage(tmp.rows, tmp.cols);
+            stage.objects = new List<GameObject>();
+            foreach (var obj in tmp.objects)
+            {
+                if (obj.Type == ObjectType.Block)
+                {
+                    stage.Objects.Add(new Block(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
+                }
+                else
+                {
+                    stage.Objects.Add(new GameObject(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
+                }
+            }
             sr.Close();
             return stage;
         }
