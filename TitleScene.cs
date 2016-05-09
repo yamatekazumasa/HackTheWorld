@@ -86,10 +86,10 @@ namespace HackTheWorld
                 switch (_cursor)
                 {
                     case 0:
-                        Scene.Push(new GameScene());
+                        Scene.Push(new GameScene(new Stage()));
                         break;
                     case 1:
-                        Scene.Push(new GameScene());
+                        Scene.Push(new GameScene(new Stage()));
                         break;
                     case 2:
                         Scene.Push(new EditScene());

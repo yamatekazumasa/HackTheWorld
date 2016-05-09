@@ -9,14 +9,17 @@ namespace HackTheWorld
         public int number = 0;
         public Item(int x, int y) : base(x, y)
         {
+            Type = ObjectType.Item;
         }
 
         public Item(int x, int y, int vx, int vy) : base(x, y, vx, vy)
         {
+            Type = ObjectType.Item;
         }
 
         public Item(int x, int y, int vx, int vy, int w, int h) : base(x, y, vx, vy, w, h)
         {
+            Type = ObjectType.Item;
         }
 
         public virtual void Effect(Player player, List<GameObject> list)

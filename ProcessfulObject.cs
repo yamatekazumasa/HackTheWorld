@@ -21,11 +21,15 @@ namespace HackTheWorld
         {
             _routine = GetEnumerator();
         }
-        public ProcessfulObject(int x, int y) : base(x, y)
+        public ProcessfulObject(float x, float y) : base(x, y)
         {
             _routine = GetEnumerator();
         }
-        public ProcessfulObject(int x, int y, int w, int h) : base(x, y, 0, 0, w, h)
+        public ProcessfulObject(float x, float y, float w, float h) : base(x, y, 0, 0, w, h)
+        {
+            _routine = GetEnumerator();
+        }
+        public ProcessfulObject(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h)
         {
             _routine = GetEnumerator();
         }

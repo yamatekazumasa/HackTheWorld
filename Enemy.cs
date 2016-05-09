@@ -5,16 +5,19 @@ namespace HackTheWorld
 {
     class Enemy : GameObject
     {
-        public Enemy(int x, int y) : base(x, y)
+        public Enemy(float x, float y) : base(x, y)
         {
+            Type = ObjectType.Enemy;
         }
 
-        public Enemy(int x, int y, int vx, int vy) : base(x, y, vx, vy)
+        public Enemy(float x, float y, float vx, float vy) : base(x, y, vx, vy)
         {
+            Type = ObjectType.Enemy;
         }
 
-        public Enemy(int x, int y, int vx, int vy, int w, int h) : base(x, y, vx, vy, w, h)
+        public Enemy(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h)
         {
+            Type = ObjectType.Enemy;
         }
 
         public override void Draw()
