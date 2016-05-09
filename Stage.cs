@@ -51,14 +51,24 @@ namespace HackTheWorld
             stage.objects = new List<GameObject>();
             foreach (var obj in tmp.objects)
             {
-                if (obj.Type == ObjectType.Block)
+                if (obj is ProcessfulObject)
+                {
+                    stage.Objects.Add(new ProcessfulObject(obj.X, obj.Y, obj.W, obj.H));
+                }
+                else if (obj is Block)
                 {
                     stage.Objects.Add(new Block(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
+                }
+                else if (obj is Enemy)
+                {
+                    stage.Objects.Add(new Enemy(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
                 }
                 else
                 {
                     stage.Objects.Add(new GameObject(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
                 }
+
+                //stage.Objects.Add((GameObject)Activator.CreateInstance(obj.GetType(), new { obj.X, obj.Y }));
             }
             sr.Close();
             return stage;
