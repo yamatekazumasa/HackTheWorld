@@ -161,6 +161,7 @@ namespace HackTheWorld
                     _player.Y -= CellSize / 4;
                     _player.Height += CellSize / 4;
                     _player.Width  = CellSize;
+                    _player.jumpspeed = -CellSize * 13; // h=v^2/2g
                     _stage.Objects.Remove(_items[i]);
                     _items.RemoveAt(i);
                 }
@@ -174,6 +175,7 @@ namespace HackTheWorld
 
             // 画面のクリア
             ScreenClear();
+            DebugWrite();
 
             // 描画
             foreach (var obj in _stage.Objects)
@@ -200,6 +202,19 @@ namespace HackTheWorld
             {
                 GraphicsContext.DrawLine(Pens.LightGray, 0, iy, ScreenWidth, iy);
             }
+        }
+
+        private void DebugWrite()
+        {
+            string PX = " X: " + ((int)(_player.X * 1000 / CellSize)).ToString("D6") + "#";
+            string PY = " Y: " + ((int)(_player.Y * 1000 / CellSize)).ToString("D6") + "#";
+            string PVX = "VX: " + ((int)(_player.VX * 1000 / CellSize)).ToString("D6") + "#";
+            string PVY = "VY: " + ((int)(_player.VY * 1000 / CellSize)).ToString("D6") + "#";
+            Font font = new Font("Courier New", 12);
+            GraphicsContext.DrawString(PX, font, Brushes.Black, ScreenWidth - 180, 100);
+            GraphicsContext.DrawString(PY, font, Brushes.Black, ScreenWidth - 180, 120);
+            GraphicsContext.DrawString(PVX, font, Brushes.Black, ScreenWidth - 180, 140);
+            GraphicsContext.DrawString(PVY, font, Brushes.Black, ScreenWidth - 180, 160);
         }
 
         private void GetProcess(ProcessfulObject pobj)

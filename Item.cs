@@ -7,6 +7,10 @@ namespace HackTheWorld
     {
         public Item(int x, int y) : base(x, y)
         {
+            W -= CellSize / 2;
+            H -= CellSize / 2;
+            X += CellSize / 4;
+            Y += CellSize / 2;
             Type = ObjectType.Item;
         }
 
@@ -23,7 +27,7 @@ namespace HackTheWorld
         public override void Draw()
         {
             GraphicsContext.FillRectangle(Brushes.GreenYellow, X, Y, Width, Height);
-            GraphicsContext.DrawRectangle(Pens.LawnGreen, X, Y, Width, Height);
+            GraphicsContext.DrawRectangle(Pens.ForestGreen, X, Y, Width, Height);
         }
     }
 }
