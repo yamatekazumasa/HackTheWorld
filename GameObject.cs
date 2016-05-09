@@ -340,23 +340,25 @@ namespace HackTheWorld
         {
             if (Intersects(obj))
             {
-                int max = 10;// めり込み許容量。10という値は仮で、要調整。
-                if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
+                int maxY = 10;// めり込み許容量。10という値は仮で、要調整。
+                int maxX = 10;// 要調整。
+                if (MaxY > obj.MinY && MaxY - obj.MinY <= maxY)
                 {
                     MaxY = obj.MinY;
                 }
-                else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
+                else if (MaxX > obj.MinX && MaxX - obj.MinX <= maxX)
                 {
                     MaxX = obj.MinX;
                 }
-                else if (MinX < obj.MaxX && MinX - obj.MaxX >= -max)
+                else if (MinX < obj.MaxX && MinX - obj.MaxX >= -maxX)
                 {
                     MinX = obj.MaxX;
                 }
-                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
+                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -maxY)
                 {
                     MinY = obj.MaxY;
                 }
+                else MaxY = obj.MinY;
             }
         }
 
