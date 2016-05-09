@@ -35,6 +35,7 @@ namespace HackTheWorld
         public static void Save(Stage stage)
         {
             string json = JsonConvert.SerializeObject(stage, Formatting.Indented);
+            if (!Directory.Exists(@".\stage")) Directory.CreateDirectory(@".\stage");
             StreamWriter sw = new StreamWriter(@".\stage\test.json", false, Encoding.GetEncoding("utf-8"));
             sw.Write(json);
             sw.Close();
