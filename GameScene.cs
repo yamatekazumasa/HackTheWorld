@@ -18,6 +18,8 @@ namespace HackTheWorld
         Player _player;
         List<GameObject> _blocks;
         List<ProcessfulObject> _pblocks;
+        List<Enemy> _enemies;
+        List<Item> _items;
         private Stage _stage;
 
         public override void Cleanup()
@@ -41,6 +43,8 @@ namespace HackTheWorld
             _player = new Player(_img);
             _blocks = new List<GameObject>();
             _pblocks = new List<ProcessfulObject>();
+            _enemies = new List<Enemy>();
+            _items = new List<Item>();
             _stage = new Stage();
             
             // マップの生成
@@ -50,14 +54,29 @@ namespace HackTheWorld
                 {
                     if (Map[iy, ix] == 1)
                     {
-                        _stage.Objects.Add(new Block(CellSize * ix, CellSize * iy));
+                        var block = new Block(CellSize * ix, CellSize * iy);
+                        _stage.Objects.Add(block);
+                        _blocks.Add(block);
                     }
-                    if (Map[iy, ix] == 2)
+                    if (Map[iy, ix] == 11)
                     {
                         var pblock = new PBlock(CellSize * ix, CellSize * iy);
                         GetProcess(pblock);
+                        _stage.Objects.Add(pblock);
                         _blocks.Add(pblock);
                         _pblocks.Add(pblock);
+                    }
+                    if (Map[iy, ix] == 2)
+                    {
+                        var enemy = new Enemy(CellSize * ix, CellSize * iy);
+                        _stage.Objects.Add(enemy);
+                        _enemies.Add(enemy);
+                    }
+                    if (Map[iy, ix] == 3)
+                    {
+                        var item = new Item(CellSize * ix, CellSize * iy);
+                        _stage.Objects.Add(item);
+                        _items.Add(item);
                     }
                 }
             }
@@ -76,6 +95,18 @@ namespace HackTheWorld
             if (_backButton.Clicked) Scene.Pop();
             if (_resetButton.Clicked) Startup();
             if (_pauseButton.Clicked) Scene.Push(new PauseScene());
+            // セーブ・ロード
+            if (Input.Control.Pressed)
+            {
+                if (Input.R.Pushed)
+                {
+                    _stage = Stage.Load();
+                }
+                if (Input.S.Pushed)
+                {
+                    Stage.Save(_stage);
+                }
+            }
 
             // ゲーム内処理
             // 死亡時処理
@@ -86,7 +117,7 @@ namespace HackTheWorld
 
             // オブジェクトの移動
             _player.OnGround = false;
-            foreach (var block in _stage.Objects)
+            foreach (var block in _blocks)
             {
                 if (_player.StandOn(block))
                 {
@@ -108,40 +139,39 @@ namespace HackTheWorld
             }
 
             // PlayerとBlockが重ならないように位置を調整
-            foreach (var block in _stage.Objects)
+            foreach (var block in _blocks)
             {
                 _player.Adjust(block);
             }
 
-            // 死亡判定
-            if (_player.X > CellSize * 15)
+            // アイテム取得判定
+            for (int i = _items.Count; --i >= 0;)
             {
-                _player.Die();
-               // Scene.Push(new ContinueScene()); // ここに書かないでください
+                if (_player.Intersects(_items[i]))
+                {
+                    _player.Y -= CellSize / 4;
+                    _player.Height += CellSize / 4;
+                    _player.Width  = CellSize;
+                    _stage.Objects.Remove(_items[i]);
+                    _items.RemoveAt(i);
+                }
             }
 
-            if (Input.Control.Pressed)
+            // 死亡判定
+            foreach (var enemy in _enemies)
             {
-                if (Input.R.Pushed)
-                {
-                    _stage = Stage.Load();
-                }
-                if (Input.S.Pushed)
-                {
-                    Stage.Save(_stage);
-                }
-
+                if (_player.Intersects(enemy)) _player.Die();
             }
 
             // 画面のクリア
             ScreenClear();
 
             // 描画
-            _player.Draw();
-            foreach (var block in _stage.Objects)
+            foreach (var obj in _stage.Objects)
             {
-                block.Draw();
+                obj.Draw();
             }
+            _player.Draw();
 
             // ボタンの描画
             foreach (var menuitem in _menuItem)
