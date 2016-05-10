@@ -5,24 +5,31 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using static HackTheWorld.Constants;
 
-//よく見てgit使おう
-//てすと
+
 namespace HackTheWorld
 {
     public static class Kakikae
     {
         //forとかifとかのかっこの組が配列の何番目か記録しておきたい
         //いいやり方が思いつかない
-     
-        const int constn = 10;
-        public static Vector[ ] kakkoset = new Vector[constn];
-        static int kakkocount = 0;
 
+        //const int constn = 10;
+        //public static Vector[ ] kakkoset = new Vector[constn];
+        //static int kakkocount = 0;
 
+        //arraylistのなかにvectorをもとう
+       public static ArrayList forArray=new ArrayList();
+        public static ArrayList ifArray=new ArrayList();
+        //個別に作るけどまとまってたほうが何かと便利
+        public static ArrayList funcArray=new ArrayList();
         public static string yomitori(string s1)
         {
+            forArray.Clear( );
+            ifArray.Clear( );
+            funcArray.Clear( );
             char[ ] delimiterChars = { ' ' , ':' , '\t' , '\n' };
 
             ArrayList sArray = new ArrayList( );
@@ -39,6 +46,7 @@ namespace HackTheWorld
             {
                 str += (string)result[i] + "\n";
             }
+            MessageBox.Show(str);
             return str;
         }
         //かっこの組を出す
@@ -48,24 +56,39 @@ namespace HackTheWorld
             int kakko = 0;
             for(int i = 0; i < sArray.Count; i++)
             {
-                //関数の数を数える(今はforだけ)
-                if((string)sArray[i] == "for") countfunction++;
+                //関数の数を数える(今はforとifだけ)
+                if((string)sArray[i] == "for" || (string)sArray[i] == "if") countfunction++;
             }
             //初めのほうから順番に見ていく
             for(int i = 0; i < sArray.Count; i++)
             {
-                if((string)sArray[i] == "{")
+                if((string)sArray[i] == "for")
                 {
-                    kakkoset[kakkocount].X = i;
                     kakko++;
                     for(int j = i + 1; j < sArray.Count; j++)
                     {
-                        if((string)sArray[j] == "{") kakko++;
-                        if((string)sArray[j] == "}") kakko--;
+                        if((string)sArray[j] == "for" || (string)sArray[i] == "if") kakko++;
+                        if((string)sArray[j] == "endfor") kakko--;
                         if(kakko == 0)
                         {
-                            kakkoset[kakkocount].Y = j;
-                            kakkocount++;
+                            forArray.Add(new Vector(i , j));
+                            funcArray.Add(new Vector(i , j));
+                            countfunction--;
+                            break;
+                        }
+                    }
+                }
+                if((string)sArray[i] == "if")
+                {
+                    kakko++;
+                    for(int j = i + 1; j < sArray.Count; j++)
+                    {
+                        if((string)sArray[j] == "for" || (string)sArray[i] == "if") kakko++;
+                        if((string)sArray[j] == "endif") kakko--;
+                        if(kakko == 0)
+                        {
+                            ifArray.Add(new Vector(i , j));
+                            funcArray.Add(new Vector(i , j));
                             countfunction--;
                             break;
                         }
@@ -81,7 +104,7 @@ namespace HackTheWorld
         public static void warifuri(ArrayList sArray , ArrayList result)
         {
             int k = 0;
-            while( k < sArray.Count)
+            while(k < sArray.Count)
             {
                 //forから閉じかっこの中にいないときは素直にスルー
                 if(!intinside(k))
@@ -90,31 +113,48 @@ namespace HackTheWorld
                     k++;
                     continue;
                 }
-                else {
-                    for(int i = 0; i < constn; i++)
+                else
+                {
+                    for(int i = 0; i < funcArray.Count; i++)
                     {
                         if(!kakkoinside(i))
                         {
-                            if((int)kakkoset[i].X - 2 >= 0)
+                            Vector tmpi = (Vector)funcArray[i];
+                            if((string)sArray[(int)tmpi.X] == "for")
                             {
-                                if((string)sArray[(int)kakkoset[i].X - 2] == "for")
+                                //コピー
+                                ArrayList forlist = new ArrayList( );
+                                for(int j = (int)tmpi.X; j <= (int)tmpi.Y; j++)
                                 {
-                                    //コピー
-                                    ArrayList forlist = new ArrayList( );
-                                    for(int j = (int)kakkoset[i].X - 2; j <= (int)kakkoset[i].Y; j++)
-                                    {
-                                        forlist.Add(sArray[j]);
-                                    }
-
-                                    //Forに入れる
-                                    for(int j = 0; j < For(forlist).Count; j++)
-                                    {
-                                        result.Add(For(forlist)[j]);
-                                        k += (int)kakkoset[i].Y - (int)kakkoset[i].X+1;
-                                    }
-
+                                    forlist.Add(sArray[j]);
                                 }
+
+                                //Forに入れる
+                                for(int j = 0; j < For(forlist).Count; j++)
+                                {
+                                    result.Add(For(forlist)[j]);
+                                    k += (int)tmpi.Y - (int)tmpi.X + 1;
+                                }
+
                             }
+                            //if((string)sArray[(int)tmpi.X] == "if")
+                            //{
+                            //    //コピー
+                            //    ArrayList iflist = new ArrayList( );
+                            //    for(int j = (int)tmpi.X; j <= (int)tmpi.Y; j++)
+                            //    {
+                            //        iflist.Add(sArray[j]);
+                            //    }
+
+                            //    //Forに入れる
+                            //    for(int j = 0; j < If(iflist).Count; j++)
+                            //    {
+                            //        result.Add(If(iflist)[j]);
+                            //        k += (int)tmpi.Y - (int)tmpi.X + 1;
+                            //    }
+
+                            //}
+
                         }
                     }
                 }
@@ -191,24 +231,31 @@ namespace HackTheWorld
 
 
 
-        //kakkoset[i]が何かの内側ならtrueを返す
+        //funcArray[i]が何かの内側ならtrueを返す
         //これがないと内側が2回実行される
         public static bool kakkoinside(int i)
         {
-            for(int j = 0; j < constn; j++)
-            {
-                if(kakkoset[j].X < kakkoset[i].X && kakkoset[j].Y > kakkoset[i].Y) return true;
-            }
+            Vector tmpi = (Vector)funcArray[i];
+                for(int j = 0; j < funcArray.Count; j++)
+                {
+                    Vector tmpj = (Vector)funcArray[j];
+                    if(tmpj.X < tmpi.X && tmpj.Y > tmpi.Y) return true;
+                }
+            
             return false;
         }
-        //iがkakkoset[].XとYに挟まれてたらtrue
+        //iがfuncArrayの中のvectorのXとYに挟まれてたらtrue
         public static bool intinside(int i)
         {
-            for(int j = 0; j < constn; j++)
+            if(funcArray != null)
             {
-                if((int)kakkoset[j].X != 0 && (int)kakkoset[j].Y != 0)
+                for(int j = 0; j < funcArray.Count; j++)
                 {
-                    if(kakkoset[j].X - 2 <= i && kakkoset[j].Y >= i) return true;
+                    Vector tmpj = (Vector)funcArray[j];
+                    if((int)tmpj.Y != 0)
+                    {
+                        if(tmpj.X <= i && tmpj.Y >= i) return true;
+                    }
                 }
             }
             return false;
@@ -217,6 +264,7 @@ namespace HackTheWorld
         {
             //[1]が数字かどうか
             int inttest = 0;
+            //[1]がintじゃないなら四則演算のほうに回す
             if(!int.TryParse((string)sArray[1] , out inttest)) FourOperations(sArray , 1);
 
             //for(sArray[0])の次は繰り返し回数としている
@@ -225,10 +273,8 @@ namespace HackTheWorld
             ArrayList insidefor = new ArrayList( );
             for(int i = 0; i < n; i++)
             {
-
-
-                //[3]からかっこの中
-                for(int j = 3; j < sArray.Count; j++)
+                //[2]からかっこの中
+                for(int j = 2; j < sArray.Count; j++)
                 {
                     if((string)sArray[j] == "for")
                     {
@@ -243,7 +289,7 @@ namespace HackTheWorld
                         break;
                     }
 
-                    if((string)sArray[j] == "}") break;
+                    if((string)sArray[j] == "endfor") break;
                     expansion.Add(sArray[j]);
 
                 }
