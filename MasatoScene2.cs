@@ -13,12 +13,15 @@ namespace HackTheWorld
         Image _img;
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"));
         private readonly MenuItem _masato3Button = new MenuItem(Image.FromFile(@"image\masato3.jpg"));
+        private MenuItem _runButton;
         private CodeBox _box;
         private ProcessfulObject pfo;
+        private bool _run;
+        private string str;
         public override void Cleanup( )
         {
         }
-    
+
 
         public override void Startup( )
         {
@@ -31,17 +34,34 @@ namespace HackTheWorld
 
             _masato3Button.Size = new Vector(50 , 50);
             _masato3Button.Position = new Vector(75 , 500);
+
+            _runButton = new MenuItem(Image.FromFile(@"image\masato3.jpg"))
+            {
+                Size = new Vector(50 , 50),
+            Position = new Vector(125 , 500)
+        };
+            _run = false;
+            str = "";
         }
 
         public override void Update(float dt)
         {
-            //if (_backButton.Clicked) Scene.Pop();
-            string str = "";
-            if(_backButton.Clicked)
+            if(_backButton.Clicked) Scene.Pop( );
+            
+            if(_runButton.Clicked)
             {
-                //文字列をkakikae.csにもってく
-                string _s = _box.GetString( );
-                str = yomitori(_s);
+                if(_run == false)
+                {
+                    //文字列をkakikae.csにもってく
+                    _run = true;
+                    string _s = _box.GetString( );
+                    str = yomitori(_s);
+                }
+                else
+                {
+                    _run = false;
+                    str = "";
+                }
             }
             pfo = new ProcessfulObject( );
             makeprocess(pfo,str);
@@ -54,12 +74,16 @@ namespace HackTheWorld
             _box.Update( );
 
             GraphicsContext.Clear(Color.White);
-            GraphicsContext.DrawImage(_img , 0 , 0);
+            if(_run)
+            {
+                GraphicsContext.DrawString(str , new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
+            }
+                GraphicsContext.DrawImage(_img , 0 , 0);
             _box.Draw( );
             _backButton.Draw( );
             _masato3Button.Draw( );
+            _runButton.Draw( );
             //GraphicsContext.DrawString(_box.GetString(), new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
-            GraphicsContext.DrawString(str , new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
         }
         //プロセスを作れるかためす
         public void makeprocess(ProcessfulObject pfo , string s1)

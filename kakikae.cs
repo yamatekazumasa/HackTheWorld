@@ -47,7 +47,8 @@ namespace HackTheWorld
             string str = "";
             for(int i = 0; i < result.Count; i++)
             {
-                str += (string)result[i];
+                str += (string)result[i]+"\n";
+                Tuple<int , int> t = Tuple.Create<int , int>(1, 2);
             }
             MessageBox.Show(str);
             return str;
@@ -75,6 +76,7 @@ namespace HackTheWorld
                         if(kakko == 0)
                         {
                             forArray.Add(new Vector(i , j));
+                            //forArray.Add(Tuple.Create(i, j));
                             funcArray.Add(new Vector(i , j));
                             countfunction--;
                             break;
@@ -180,6 +182,10 @@ namespace HackTheWorld
          * endfor 
          * ↑こんな感じで
          * 
+         * for i = 1 to 3
+         * 
+         * for(i=0;i<5;i++)
+         * 
          * if文について
          * 
          * if(条件式){
@@ -187,7 +193,8 @@ namespace HackTheWorld
          * } else if(条件式){
          * 　何かしら;
          * }
-         * 
+         * やっぱelseいる
+         * 正規表現
          * 
          * if i == 0 do
          * k = 2 
@@ -328,7 +335,7 @@ namespace HackTheWorld
             {
                 return;
             }
-
+            
             //ここで計算
             System.Data.DataTable dt = new System.Data.DataTable( );
             //Dictionary<string , string> dict = new Dictionary<string , string>( );
