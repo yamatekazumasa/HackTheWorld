@@ -47,7 +47,7 @@ namespace HackTheWorld
             string str = "";
             for(int i = 0; i < result.Count; i++)
             {
-                str += (string)result[i] + "\n";
+                str += (string)result[i];
             }
             MessageBox.Show(str);
             return str;
@@ -107,6 +107,7 @@ namespace HackTheWorld
         //他の関数が増えたら場合分けが増えるだろう
         public static void warifuri(ArrayList sArray , ArrayList result)
         {
+            int i = 0;
             int k = 0;
             while(k < sArray.Count)
             {
@@ -119,7 +120,7 @@ namespace HackTheWorld
                 }
                 else
                 {
-                    for(int i = 0; i < funcArray.Count; i++)
+                    while(true)
                     {
                         //関数のの中か否か
                         if(!kakkoinside(i))
@@ -134,14 +135,18 @@ namespace HackTheWorld
                                 {
                                     forlist.Add(sArray[j]);
                                 }
-
-                                //Forに入れる
-                                for(int j = 0; j < For(forlist).Count; j++)
+                                if(boolfor(forlist))
                                 {
-                                    result.Add(For(forlist)[j]);
-                                    k += (int)tmpi.Y - (int)tmpi.X + 1;
+                                    //Forに入れる
+                                    for(int j = 0; j < For(forlist).Count; j++)
+                                    {
+                                        result.Add(For(forlist)[j]);
+                                      
+                                    }
+                                    k += (int)tmpi.Y - (int)tmpi.X+1;
+                                    i++;
+                                    break;
                                 }
-
                             }
                             //if((string)sArray[(int)tmpi.X] == "if")
                             //{
@@ -268,18 +273,13 @@ namespace HackTheWorld
         }
         public static ArrayList For(ArrayList sArray)
         {
-            //[1]が数字かどうか
-            int inttest = 0;
-            //[1]がintじゃないなら四則演算のほうに回す
-            if(!int.TryParse((string)sArray[1] , out inttest)) FourOperations(sArray , 1);
-
             //for(sArray[0])の次は繰り返し回数としている
             int n = int.Parse((string)sArray[1]);
             ArrayList expansion = new ArrayList( );
             ArrayList insidefor = new ArrayList( );
             for(int i = 0; i < n; i++)
             {
-                //[2]から繰り返したいものが始まる
+                //[2]から繰り返し
                 for(int j = 2; j < sArray.Count; j++)
                 {
                     if((string)sArray[j] == "for")
@@ -305,8 +305,12 @@ namespace HackTheWorld
         //For()に突っ込んでいいのか判断するためのbool
         public static bool boolfor(ArrayList sArray)
         {
+            //[1]が数字かどうか
+            int inttest = 0;
+            //[1]がintじゃないなら四則演算のほうに回す
+
             if(!sArray.Contains("for") || !sArray.Contains("endfor")) return false;
-            
+            if(!int.TryParse((string)sArray[1] , out inttest)) return false;
             return true;
         }
         //結果がintになる体で作る
