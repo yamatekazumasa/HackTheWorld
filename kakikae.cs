@@ -20,16 +20,19 @@ namespace HackTheWorld
         //public static Vector[ ] kakkoset = new Vector[constn];
         //static int kakkocount = 0;
 
-        //arraylistのなかにvectorをもとう
+        //arraylistのなかにvectorをもたせる
        public static ArrayList forArray=new ArrayList();
         public static ArrayList ifArray=new ArrayList();
-        //個別に作るけどまとまってたほうが何かと便利
+        //個別に作るけど(インデントのため)まとまってたほうが何かと便利
         public static ArrayList funcArray=new ArrayList();
+        static bool mismatch = false;
         public static string yomitori(string s1)
         {
+            //連続で入力してデバックしたいからいる奴ら
             forArray.Clear( );
             ifArray.Clear( );
             funcArray.Clear( );
+
             char[ ] delimiterChars = { ' ' , ':' , '\t' , '\n' };
 
             ArrayList sArray = new ArrayList( );
@@ -77,6 +80,7 @@ namespace HackTheWorld
                             break;
                         }
                     }
+                    mismatch = true;
                 }
                 if((string)sArray[i] == "if")
                 {
@@ -93,20 +97,20 @@ namespace HackTheWorld
                             break;
                         }
                     }
+                    mismatch = true;
                 }
                 if(countfunction == 0) break;
             }
         }
 
-        //そうやって得られたかっこの組から関数に飛びたい
-        //forに関してはfor N{なんとかかんとか}の形を考えているので、{から二つ前の部分を見る
-        //他の関数が増えたら場合分けがつくだろう
+        //そうやって得られたfunctionの位置から各々の関数にとびたい
+        //他の関数が増えたら場合分けが増えるだろう
         public static void warifuri(ArrayList sArray , ArrayList result)
         {
             int k = 0;
             while(k < sArray.Count)
             {
-                //forから閉じかっこの中にいないときは素直にスルー
+                //funcArrayのvectorのXとYの中にいないときは素直にスルー
                 if(!intinside(k))
                 {
                     result.Add(sArray[k]);
@@ -117,12 +121,14 @@ namespace HackTheWorld
                 {
                     for(int i = 0; i < funcArray.Count; i++)
                     {
+                        //関数のの中か否か
                         if(!kakkoinside(i))
                         {
                             Vector tmpi = (Vector)funcArray[i];
                             if((string)sArray[(int)tmpi.X] == "for")
                             {
                                 //コピー
+                                //ぶっちゃけcopyの関数のがいい説ある
                                 ArrayList forlist = new ArrayList( );
                                 for(int j = (int)tmpi.X; j <= (int)tmpi.Y; j++)
                                 {
@@ -273,7 +279,7 @@ namespace HackTheWorld
             ArrayList insidefor = new ArrayList( );
             for(int i = 0; i < n; i++)
             {
-                //[2]からかっこの中
+                //[2]から繰り返したいものが始まる
                 for(int j = 2; j < sArray.Count; j++)
                 {
                     if((string)sArray[j] == "for")
@@ -295,6 +301,13 @@ namespace HackTheWorld
                 }
             }
             return expansion;
+        }
+        //For()に突っ込んでいいのか判断するためのbool
+        public static bool boolfor(ArrayList sArray)
+        {
+            if(!sArray.Contains("for") || !sArray.Contains("endfor")) return false;
+            
+            return true;
         }
         //結果がintになる体で作る
         public static void FourOperations(ArrayList sArray , int i)
