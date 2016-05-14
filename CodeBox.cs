@@ -341,14 +341,48 @@ namespace HackTheWorld
                             string str;
                             if (_selectedBegin.Item1 == _selectedEnd.Item1)
                             {
-                                if(_selectedBegin.Item2 < _selectedEnd.Item2)
-                                    str = current.Text[_selectedBegin.Item1].ToString().Substring(_selectedBegin.Item2, _selectedEnd.Item2 - _selectedBegin.Item2);
-                                else
-                                    str = current.Text[_selectedBegin.Item1].ToString().Substring(_selectedEnd.Item2, _selectedBegin.Item2 - _selectedEnd.Item2);
+                                str = current.Text[SelectedBegin.Item1].ToString().Substring(SelectedBegin.Item2, SelectedEnd.Item2 - SelectedBegin.Item2);
                             }
-                            else if (true)
+                            else
                             {
-                                str = "";
+                                str = current.Text[SelectedBegin.Item1].ToString().Substring(SelectedBegin.Item2, current.Text[SelectedBegin.Item1].Length - SelectedBegin.Item2) + "\n";
+                                for (int i = SelectedBegin.Item1 + 1; i < SelectedEnd.Item1; i++)
+                                {
+                                    str += current.Text[i] + "\n";
+                                }
+                                str += current.Text[SelectedEnd.Item1].ToString().Substring(0, SelectedEnd.Item2);
+                            }
+                            Clipboard.SetDataObject(str);
+                        }));
+                    }
+                }
+                if (Input.X.Pushed)
+                {
+                    if (_selectedEnd != null)
+                    {
+                        State.Record(current);
+                        current = State.Current;
+                        WindowContext.Invoke((Action)(() => {
+                            string str;
+                            if (_selectedBegin.Item1 == _selectedEnd.Item1)
+                            {
+                                str = current.Text[SelectedBegin.Item1].ToString().Substring(SelectedBegin.Item2, SelectedEnd.Item2 - SelectedBegin.Item2);
+                                current.Text[SelectedBegin.Item1].Remove(SelectedBegin.Item2, SelectedEnd.Item2 - SelectedBegin.Item2);
+                            }
+                            else
+                            {
+                                str = current.Text[SelectedBegin.Item1].ToString().Substring(SelectedBegin.Item2, current.Text[SelectedBegin.Item1].Length - SelectedBegin.Item2) + "\n";
+                                for (int i = SelectedBegin.Item1 + 1; i < SelectedEnd.Item1; i++)
+                                {
+                                    str += current.Text[i] + "\n";
+                                }
+                                str += current.Text[SelectedEnd.Item1].ToString().Substring(0, SelectedEnd.Item2);
+                                current.Text[SelectedBegin.Item1].Remove(SelectedBegin.Item2, current.Text[SelectedBegin.Item1].Length - SelectedBegin.Item2);
+                                current.Text.RemoveRange(SelectedBegin.Item1 + 1, SelectedEnd.Item1 - 1);
+                                current.Text[SelectedBegin.Item1 + 1].Remove(0, SelectedEnd.Item2);
+                                current.MaxLine -= SelectedEnd.Item1 - SelectedBegin.Item1;
+                                current.Line = SelectedBegin.Item1;
+                                current.Cursor = SelectedBegin.Item2;
                             }
                             Clipboard.SetDataObject(str);
                         }));
@@ -356,18 +390,18 @@ namespace HackTheWorld
                 }
                 if (Input.V.Pushed)
                 {
+                    State.Record(current);
+                    current = State.Current;
                     WindowContext.Invoke((Action)(() => {
                         var str = Clipboard.GetText().Split('\n');
-                        int startLine = current.Line;
-                        current.MaxLine += str.Length - 1;
                         current.Text[current.Line].Insert(current.Cursor, str[0]);
-//                        for (int i = 1; i < str.Length; i++)
-//                        {
-//                            current.Text.Insert(startLine + i, new StringBuilder(str[i]));
-//                        }
-                        //                    current.MaxLine += str.Length;
-                        //                    current.Line += str.Length;
-                        //                    current.Cursor = str[str.Length - 1].Length - 1;
+                        for (int i = 1; i < str.Length; i++)
+                        {
+                            current.Text.Insert(current.Line + i, new StringBuilder(str[i]));
+                        }
+                        current.MaxLine += str.Length - 1;
+                        current.Line += str.Length - 1;
+                        current.Cursor = str[str.Length - 1].Length;
                     }));
                 }
 
