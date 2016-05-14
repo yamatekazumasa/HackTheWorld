@@ -16,6 +16,14 @@ namespace HackTheWorld
         public int Cols { get; set; }
         public List<GameObject> Objects { get; set; }
 
+        private Player _player;
+        private List<GameObject> _blocks;
+        private List<ProcessfulObject> _pblocks;
+        private List<Enemy> _enemies;
+        private List<Item> _items;
+        private Stage _stage;
+
+
         public Stage()
         {
             Rows = 9;
@@ -30,6 +38,7 @@ namespace HackTheWorld
             Objects = new List<GameObject>();
         }
 
+        // 本来ならゲーム内にはない処理
         public static void Save(Stage stage)
         {
             string json = JsonConvert.SerializeObject(stage, Formatting.Indented);
@@ -41,32 +50,39 @@ namespace HackTheWorld
 
         public static Stage Load()
         {
-            if (!File.Exists(@".\stage")) return null;
+            if (!File.Exists(@".\stage\test.json")) return null;
             StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
             Stage tmp = JsonConvert.DeserializeObject<Stage>(sr.ReadToEnd());
             Stage stage = new Stage(tmp.Rows, tmp.Cols);
             stage.Objects = new List<GameObject>();
             foreach (var obj in tmp.Objects)
             {
+                switch (obj.ObjectType)
+                {
+                    case ObjectType.Block:
+                        {
+                            Block b = new Block(obj.X, obj.Y);
+                            stage._blocks.Add(b);
+                            break;
+                        }
+                    case ObjectType.Enemy:
+                        {
+                            Enemy e = new Enemy(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H);
+                            stage._enemies.Add(e);
+                            break;
+                        }
+                    case ObjectType.Item:
+                    {
+                        Item i = new Item(obj.X, obj.Y, 0, 0, obj.W, obj.H);
+                        stage._items.Add(i);
+                        break;
+                    }
 
-//                if (obj.ObjectType == ObjectType.Block)
-//                {
-//                    stage.Objects.Add(new ProcessfulObject(obj.X, obj.Y, obj.W, obj.H));
-//                }
-//                else if (obj is Block)
-//                {
-//                    stage.Objects.Add(new Block(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
-//                }
-//                else if (obj is Enemy)
-//                {
-//                    stage.Objects.Add(new Enemy(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
-//                }
-//                else
-//                {
-                    stage.Objects.Add(new GameObject(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
-//                }
 
-//                stage.Objects.Add((GameObject)Activator.CreateInstance(obj.Type, new { obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H }));
+                }
+
+                stage.Objects.Add(new GameObject(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
+
             }
             sr.Close();
             return stage;

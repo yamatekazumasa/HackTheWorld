@@ -219,21 +219,21 @@ namespace HackTheWorld
                     _selectedBegin = 0;
                     _selectedEnd = current.Text.Length;
                 }
-//                if (Input.R.Pushed)
-//                {
-//                    StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
-//                    CodeData o = JsonConvert.DeserializeObject<CodeData>(sr.ReadToEnd());
-//                    State.Current.ReadFrom(o.text);
-//                    sr.Close();
-//                }
-//                if (Input.S.Pushed)
-//                {
-//                    CodeData obj = new CodeData { type = "Block", text = GetString(), date = DateTime.Now.ToString() };
-//                    string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
-//                    StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
-//                    sw.Write(json);
-//                    sw.Close();
-//                }
+                if (Input.R.Pushed)
+                {
+                    StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
+                    CodeData o = JsonConvert.DeserializeObject<CodeData>(sr.ReadToEnd());
+                    State.Current.ReadFrom(o.text);
+                    sr.Close();
+                }
+                if (Input.S.Pushed)
+                {
+                    CodeData obj = new CodeData { type = "Block", text = GetString(), date = DateTime.Now.ToString() };
+                    string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+                    StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
+                    sw.Write(json);
+                    sw.Close();
+                }
                 if (Input.C.Pushed)
                 {
                     if (_selectedEnd != -1)
