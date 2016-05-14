@@ -241,7 +241,7 @@ namespace HackTheWorld
         /// <summary>
         /// 初期化用。
         /// </summary>
-        public void Initialize()
+        public virtual void Initialize()
         {
             _isAlive = true;
             Size = new Vector(CellSize, CellSize);

@@ -9,7 +9,7 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    [JsonObject("stage")]
+    [JsonObject(MemberSerialization.OptIn)]
     public class Stage
     {
 
@@ -22,7 +22,7 @@ namespace HackTheWorld
 
         private Player _player;
         private List<Block> _blocks;
-        private List<ProcessfulObject> _pblocks;
+        private List<EditableObject> _pblocks;
         private List<Enemy> _enemies;
         private List<Item> _items;
         private Stage _stage;
@@ -69,26 +69,25 @@ namespace HackTheWorld
                         {
                             Block b = new Block(obj.X, obj.Y);
                             stage._blocks.Add(b);
+                            stage.Objects.Add(b);
                             break;
                         }
                     case ObjectType.Enemy:
                         {
                             Enemy e = new Enemy(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H);
                             stage._enemies.Add(e);
+                            stage.Objects.Add(e);
                             break;
                         }
                     case ObjectType.Item:
                     {
                         Item i = new Item(obj.X, obj.Y, 0, 0, obj.W, obj.H);
                         stage._items.Add(i);
+                        stage.Objects.Add(i);
                         break;
                     }
 
-
                 }
-
-                stage.Objects.Add(new GameObject(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H));
-
             }
             sr.Close();
             return stage;

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -25,10 +26,13 @@ namespace HackTheWorld
             public int Cursor { get; set; }
             [JsonProperty("maxline", Order = 1)]
             public int MaxLine { get; set; }
-            [JsonProperty("text", Order = 2)]
+            [JsonProperty("name", Order = 2)]
+            [JsonConverter(typeof(StringEnumConverter))]
+            public ObjectType Name { get; set; }
+            [JsonProperty("text", Order = 3)]
             public StringBuilder Text { get; private set; }
-            [JsonProperty("updatedAt", Order = 3)]
-            public DateTime UpdatedAt;
+            [JsonProperty("updatedAt", Order = 4)]
+            public DateTime UpdatedAt { get; set; }
 
             public string[] Lines => Text.ToString().Split('\n');
 
@@ -61,6 +65,7 @@ namespace HackTheWorld
             {
                 Cursor = cursor;
                 MaxLine = maxLine;
+                Name = ObjectType.Block;
                 Text = new StringBuilder();
                 for (int i = 0; i < maxLine - 1; i++) Text.Append('\n');
             }
@@ -97,23 +102,24 @@ namespace HackTheWorld
         private int _lineHeight;
         private int _cols;
         private string _clip;
-        private bool _isDisplayed;
         private bool _isFocused;
         private readonly Font _font;
         private int frame;
+        private GameObject _subject;
 
         public bool IsFocused => _isFocused;
+        public void Focus() { _isFocused = true; }
 
         public bool TextSelected => _selectedEnd != -1;
 
-        public CodeBox()
+        public CodeBox(GameObject obj)
         {
             _cols = 40;
             _lineHeight = 12;
-            _isDisplayed = true;
             _isFocused = false;
             _selectedBegin = -1;
             _selectedEnd = -1;
+            _subject = obj;
             _font = new Font("Courier New", 12);
 
             State.Current = new State(0, 5);
@@ -132,7 +138,7 @@ namespace HackTheWorld
 
             if (Input.Space.Pushed) _isFocused = true;
 
-            if (Input.LeftButton.Pushed && !Contains(Input.Mouse.Position))
+            if (Input.LeftButton.Pushed && !Contains(Input.Mouse.Position) && !_subject.Contains(Input.Mouse.Position))
             {
                 _isFocused = false;
             }
@@ -320,11 +326,14 @@ namespace HackTheWorld
 
         public override void Draw()
         {
-            if (_isDisplayed)
+            if (_isFocused)
             {
-                if (_isFocused) GraphicsContext.FillRectangle(Brushes.White, this);
-                else GraphicsContext.FillRectangle(Brushes.LightGray, this);
-                GraphicsContext.DrawRectangle(Pens.DarkGray, this);
+                if (_isFocused) GraphicsContext.FillRectangle(Brushes.Azure, this);
+                else GraphicsContext.FillRectangle(Brushes.DarkSeaGreen, this);
+                GraphicsContext.DrawRectangle(Pens.ForestGreen, this);
+                GraphicsContext.FillRectangle(Brushes.LightGreen, X, Y - 20, W, 20);
+                GraphicsContext.DrawRectangle(Pens.ForestGreen, X, Y - 20, W, 20);
+                GraphicsContext.DrawString(State.Current.Name.ToString(), _font, Brushes.Black, X, Y - 20);
 
                 string[] lines = State.Current.Text.ToString().Split('\n');
                 var pos = State.Current.CursorPosition;

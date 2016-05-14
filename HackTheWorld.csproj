@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
-    <Compile Include="CodeData.cs" />
     <Compile Include="ContinueScene.cs" />
     <Compile Include="EditScene.cs" />
     <Compile Include="Enemy.cs" />
@@ -92,7 +91,7 @@
     <Compile Include="PBlock.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Process.cs" />
-    <Compile Include="ProcessfulObject.cs" />
+    <Compile Include="EditableObject.cs" />
     <Compile Include="ProcessTestScene.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

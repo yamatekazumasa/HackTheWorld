@@ -11,27 +11,26 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class ProcessfulObject : GameObject, IEnumerable
+    class EditableObject : GameObject, IEnumerable
     {
         private List<Process> _processes;
-        private readonly IEnumerator _routine;
+        private IEnumerator _routine;
         private float _dt;
+        private CodeBox _codebox;
 
-        public ProcessfulObject() : base(500, 300)
+        public bool IsFocused => _codebox.IsFocused;
+        public bool IsExecutable => _processes != null;
+
+        public EditableObject() : base(500, 300) { }
+        public EditableObject(float x, float y) : base(x, y) { }
+        public EditableObject(float x, float y, float w, float h) : base(x, y, 0, 0, w, h) { }
+        public EditableObject(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h) { }
+
+        public override void Initialize()
         {
+            base.Initialize();
             _routine = GetEnumerator();
-        }
-        public ProcessfulObject(float x, float y) : base(x, y)
-        {
-            _routine = GetEnumerator();
-        }
-        public ProcessfulObject(float x, float y, float w, float h) : base(x, y, 0, 0, w, h)
-        {
-            _routine = GetEnumerator();
-        }
-        public ProcessfulObject(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h)
-        {
-            _routine = GetEnumerator();
+            _codebox = new CodeBox(this) {Position = Position + new Vector(100, 50)};
         }
 
         public IEnumerator GetEnumerator()
@@ -49,10 +48,18 @@ namespace HackTheWorld
 
         }
 
+        public void Compile()
+        {
+            string str = _codebox.GetString();
+            // ここにstring型をProcess型に変換する処理を書く。
+        }
+
         public override void Update(float dt)
         {
             _dt = dt;
-            _routine.MoveNext();
+            if (IsExecutable) _routine.MoveNext();
+            if (Clicked) _codebox.Focus();
+            _codebox.Update();
         }
 
         public void SetProcesses(Process[] processes)
@@ -73,6 +80,8 @@ namespace HackTheWorld
         public override void Draw()
         {
             GraphicsContext.FillRectangle(Brushes.Turquoise, MinX, MinY, Width, Height);
+            _codebox.Draw();
         }
+
     }
 }

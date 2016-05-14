@@ -3,7 +3,7 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class PBlock : ProcessfulObject
+    class PBlock : EditableObject
     {
         public bool isWorking = false;
         public PBlock(int x, int y) : base(x, y)

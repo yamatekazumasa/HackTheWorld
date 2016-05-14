@@ -12,7 +12,7 @@ namespace HackTheWorld
         Image _img;
         private MenuItem _backButton;
         private List<MenuItem> _menuItem;
-        private ProcessfulObject _pobj;
+        private EditableObject _pobj;
 
         public override void Cleanup()
         {
@@ -27,7 +27,7 @@ namespace HackTheWorld
                 Position = new Vector(25, 500)
             };
             _menuItem = new List<MenuItem> {_backButton};
-            _pobj = new ProcessfulObject();
+            _pobj = new EditableObject();
 
             _pobj.SetProcesses( new Process[] {
                 new Process((obj, dt) => { obj.Size = new Vector(10, 10); } , 1.0f),

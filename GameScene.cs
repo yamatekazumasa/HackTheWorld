@@ -17,7 +17,7 @@ namespace HackTheWorld
         // ゲーム内変数宣言
         private Player _player;
         private List<GameObject> _blocks;
-        private List<ProcessfulObject> _pblocks;
+        private List<EditableObject> _pblocks;
         private List<Enemy> _enemies;
         private List<Item> _items;
         private Stage _stage;
@@ -63,7 +63,7 @@ namespace HackTheWorld
             _stage = _stage ?? new Stage();
             _player = new Player();
             _blocks = new List<GameObject>();
-            _pblocks = new List<ProcessfulObject>();
+            _pblocks = new List<EditableObject>();
             _enemies = new List<Enemy>();
             _items = new List<Item>();
             _stage = new Stage();
@@ -227,7 +227,7 @@ namespace HackTheWorld
             GraphicsContext.DrawString(PVY, font, Brushes.Black, ScreenWidth - 180, 160);
         }
 
-        private void GetProcess(ProcessfulObject pobj)
+        private void GetProcess(EditableObject pobj)
         {
             pobj.SetProcesses(new Process[] {
                             new Process((obj, dt) => { ; } , 3.0f),
