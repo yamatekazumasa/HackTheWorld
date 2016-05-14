@@ -267,10 +267,10 @@ namespace HackTheWorld
                             }
                             int length = _selectedEnd - _selectedBegin;
                             char[] c = new char[length];
-                            current.Text.CopyTo(_selectedBegin, c, 0, length);
-                            current.Text.Remove(_selectedBegin, length);
                             current.Cursor = _selectedBegin;
                             current.MaxLine -= State.Position(_selectedEnd).Item1 - State.Position(_selectedEnd).Item1;
+                            current.Text.CopyTo(_selectedBegin, c, 0, length);
+                            current.Text.Remove(_selectedBegin, length);
                             _selectedBegin = -1;
                             _selectedEnd = -1;
                             Clipboard.SetDataObject(new string(c));
