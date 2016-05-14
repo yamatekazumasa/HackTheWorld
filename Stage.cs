@@ -7,22 +7,25 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
-
 namespace HackTheWorld
 {
+    [JsonObject("stage")]
     public class Stage
     {
+
+        [JsonProperty("rows")]
         public int Rows { get; set; }
+        [JsonProperty("cols")]
         public int Cols { get; set; }
+        [JsonProperty("objects")]
         public List<GameObject> Objects { get; set; }
 
         private Player _player;
-        private List<GameObject> _blocks;
+        private List<Block> _blocks;
         private List<ProcessfulObject> _pblocks;
         private List<Enemy> _enemies;
         private List<Item> _items;
         private Stage _stage;
-
 
         public Stage()
         {
@@ -54,6 +57,9 @@ namespace HackTheWorld
             StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
             Stage tmp = JsonConvert.DeserializeObject<Stage>(sr.ReadToEnd());
             Stage stage = new Stage(tmp.Rows, tmp.Cols);
+            stage._blocks = new List<Block>();
+            stage._enemies = new List<Enemy>();
+            stage._items = new List<Item>();
             stage.Objects = new List<GameObject>();
             foreach (var obj in tmp.Objects)
             {

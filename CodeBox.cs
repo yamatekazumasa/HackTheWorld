@@ -13,6 +13,7 @@ namespace HackTheWorld
 {
     class CodeBox : GameObject
     {
+        [JsonObject(MemberSerialization.OptIn)]
         class State
         {
             private static State[] _state = new State[50];
@@ -20,9 +21,14 @@ namespace HackTheWorld
             private static int _current;
             private static readonly int _length = 50;
 
+            [JsonProperty("cursor", Order = 0)]
             public int Cursor { get; set; }
+            [JsonProperty("maxline", Order = 1)]
             public int MaxLine { get; set; }
+            [JsonProperty("text", Order = 2)]
             public StringBuilder Text { get; private set; }
+            [JsonProperty("updatedAt", Order = 3)]
+            public DateTime UpdatedAt;
 
             public string[] Lines => Text.ToString().Split('\n');
 
@@ -64,6 +70,7 @@ namespace HackTheWorld
                 _current = (_current + 1) % _length;
                 _origin = _current;
                 _state[_current] = new State(s.Cursor, s.MaxLine) {Text = new StringBuilder(s.Text.ToString())};
+                _state[_current].UpdatedAt = DateTime.Now;
             }
 
             public static void Undo()
@@ -222,14 +229,12 @@ namespace HackTheWorld
                 if (Input.R.Pushed)
                 {
                     StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
-                    CodeData o = JsonConvert.DeserializeObject<CodeData>(sr.ReadToEnd());
-                    State.Current.ReadFrom(o.text);
+                    State.Current = JsonConvert.DeserializeObject<State>(sr.ReadToEnd());
                     sr.Close();
                 }
                 if (Input.S.Pushed)
                 {
-                    CodeData obj = new CodeData { type = "Block", text = GetString(), date = DateTime.Now.ToString() };
-                    string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+                    string json = JsonConvert.SerializeObject(current, Formatting.Indented);
                     StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
                     sw.Write(json);
                     sw.Close();

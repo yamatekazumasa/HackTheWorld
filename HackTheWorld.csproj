@@ -56,6 +56,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,7 +74,6 @@
     <Compile Include="EditScene.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Item.cs" />
-    <Compile Include="ObjectData.cs" />
     <Compile Include="PauseScene.cs" />
     <Compile Include="CodeBox.cs" />
     <Compile Include="Constants.cs" />

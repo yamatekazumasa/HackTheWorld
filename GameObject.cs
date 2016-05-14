@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class GameObject
     {
         private int _x;
@@ -20,6 +23,8 @@ namespace HackTheWorld
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
+        [JsonProperty("type")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public ObjectType ObjectType { get; set; }
 
         #region コンストラクタ
@@ -142,36 +147,42 @@ namespace HackTheWorld
             set { _y = (int)(value * Scale) - _h / 2; }
         }
 
+        [JsonProperty("x")]
         public float X
         {
             get { return MinX; }
             set { MinX = value; }
         }
 
+        [JsonProperty("y")]
         public float Y
         {
             get { return MinY; }
             set { MinY = value; }
         }
 
+        [JsonProperty("vx")]
         public float VX
         {
             get { return (float)_vx / Scale; }
             set { _vx = (int)(value * Scale); }
         }
 
+        [JsonProperty("vy")]
         public float VY
         {
             get { return (float)_vy / Scale; }
             set { _vy = (int)(value * Scale); }
         }
 
+        [JsonProperty("width")]
         public float Width
         {
             get { return (float)_w / Scale; }
             set { _w = (int)(value * Scale); }
         }
 
+        [JsonProperty("height")]
         public float Height
         {
             get { return (float)_h / Scale; }
