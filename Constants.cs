@@ -46,6 +46,7 @@ namespace HackTheWorld
         }
 
         public static Graphics GraphicsContext;
+        public static Form WindowContext;
 
     }
 }

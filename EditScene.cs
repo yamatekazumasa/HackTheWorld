@@ -42,7 +42,7 @@ namespace HackTheWorld
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_startButton.Clicked) Scene.Push(new GameScene(_stage));
-            if ((Input.Sp2.Pushed || Input.Back.Pushed) && !_codebox.IsFocused) Scene.Pop();
+            if ((Input.X.Pushed || Input.Back.Pushed) && !_codebox.IsFocused) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
             _codebox.Update();

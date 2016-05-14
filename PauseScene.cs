@@ -53,7 +53,7 @@ namespace HackTheWorld
             }
 
             //Zを押したときの処理
-            if (Input.Sp1.Pushed)
+            if (Input.Z.Pushed)
             {
                 switch (_cursor)
                 {

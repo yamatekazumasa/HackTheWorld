@@ -40,7 +40,7 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
-            if (Input.Sp2.Pushed || Input.Back.Pushed) Scene.Pop();
+            if (Input.X.Pushed || Input.Back.Pushed) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
             foreach (var button in _menuItem)
             {

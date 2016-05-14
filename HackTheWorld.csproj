@@ -73,6 +73,7 @@
     <Compile Include="EditScene.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="ObjectData.cs" />
     <Compile Include="PauseScene.cs" />
     <Compile Include="CodeBox.cs" />
     <Compile Include="Constants.cs" />

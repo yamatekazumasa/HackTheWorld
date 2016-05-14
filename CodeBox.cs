@@ -81,6 +81,48 @@ namespace HackTheWorld
 
         private Tuple<int, int> _selectedBegin;
         private Tuple<int, int> _selectedEnd;
+
+        public Tuple<int, int> SelectedBegin
+        {
+//            set
+//            {
+//                if (_selectedBegin.Item1 < _selectedEnd.Item1 || (_selectedBegin.Item1 == _selectedEnd.Item1 && _selectedBegin.Item2 < _selectedEnd.Item2))
+//                {
+//                    _selectedBegin = value;
+//                }
+//                else _selectedEnd = value;
+//            }
+            get
+            {
+                if (_selectedBegin.Item1 < _selectedEnd.Item1 || (_selectedBegin.Item1 == _selectedEnd.Item1 && _selectedBegin.Item2 < _selectedEnd.Item2))
+                {
+                    return _selectedBegin;
+                }
+                return _selectedEnd;
+            }
+        }
+
+        public Tuple<int, int> SelectedEnd
+        {
+//            set
+//            {
+//                if (_selectedBegin.Item1 < _selectedEnd.Item1 || (_selectedBegin.Item1 == _selectedEnd.Item1 && _selectedBegin.Item2 < _selectedEnd.Item2))
+//                {
+//                    _selectedEnd = value;
+//                }
+//                else _selectedBegin = value;
+//            }
+            get
+            {
+                if (_selectedBegin.Item1 < _selectedEnd.Item1 || (_selectedBegin.Item1 == _selectedEnd.Item1 && _selectedBegin.Item2 < _selectedEnd.Item2))
+                {
+                    return _selectedEnd;
+                }
+                return _selectedBegin;
+            }
+        }
+
+
         private int _lineHeight;
         private int _cols;
         private string _clip;
@@ -91,7 +133,7 @@ namespace HackTheWorld
 
         public bool IsFocused => _isFocused;
 
-        public bool TextSelected => _selectedBegin != null && _selectedEnd != null;
+        public bool TextSelected => _selectedEnd != null;
 
         public CodeBox()
         {
@@ -116,20 +158,21 @@ namespace HackTheWorld
 
             if (Input.Space.Pushed) _isFocused = true;
 
-            if (Input.LeftButton.Pushed && Contains(Input.Mouse.Position))
+            if (Input.LeftButton.Pushed && !Contains(Input.Mouse.Position))
+            {
+                _isFocused = false;
+            }
+
+            if (Input.LeftButton.Pressed && Contains(Input.Mouse.Position))
             {
                 _isFocused = true;
-                int targetLine = (int)(Input.Mouse.Position.Y - this.MinY) / 12;
+                int targetLine = (int)(Input.Mouse.Position.Y - this.MinY) / _lineHeight;
                 int targetCursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
                 current.Line = targetLine < current.MaxLine ? targetLine : current.MaxLine;
                 current.Cursor = targetCursor < current.Text[current.Line].Length ? targetCursor : current.Text[current.Line].Length;
             }
-            if (Input.LeftButton.Pushed && !Contains(Input.Mouse.Position))
-            {
-                _selectedBegin = null;_selectedEnd = null;
-                _isFocused = false;
-            }
-                if (!_isFocused) return;
+
+            if (!_isFocused) return;
 
             if (Input.Up.Pushed)
             {
@@ -237,11 +280,18 @@ namespace HackTheWorld
                 current.Text[current.Line].Insert(current.Cursor, "  ");
                 current.Cursor += 2;
             }
-            //シフトキーでの選択
-            if (Input.Shift.Pressed)
+
+            if (Input.Shift.Pressed) //シフトキーでの選択
             {
                 if (_selectedBegin == null) _selectedBegin = Tuple.Create(current.Line, current.Cursor);
                 if (Input.Up.Pushed || Input.Down.Pushed || Input.Right.Pushed || Input.Left.Pushed)
+                {
+                    _selectedEnd = Tuple.Create(current.Line, current.Cursor);
+                }
+            } else if (Input.LeftButton.Pressed && Contains(Input.Mouse.Position)) //マウスでの選択
+            {
+                if (_selectedBegin == null) _selectedBegin = Tuple.Create(current.Line, current.Cursor);
+                if (_selectedBegin.Item1 != current.Line || _selectedBegin.Item2 != current.Cursor)
                 {
                     _selectedEnd = Tuple.Create(current.Line, current.Cursor);
                 }
@@ -251,35 +301,15 @@ namespace HackTheWorld
                 _selectedBegin = null;
                 _selectedEnd = null;
             }
-            //マウスでの選択
-            if (Contains(Input.Mouse.Position))
+            if (Input.LeftButton.Pushed && Contains(Input.Mouse.Position))
             {
-                if (Input.LeftButton.Pressed)
-                {
-                    if (_selectedBegin == null)
-                    {
-                        _selectedBegin = Tuple.Create(current.Line, current.Cursor);
-                    }
-                    int targetLine = (int)(Input.Mouse.Position.Y - this.MinY) / 12;
-                    int targetCursor = (int)(Input.Mouse.Position.X - this.MinX) / 10;
-                    current.Line = targetLine < current.MaxLine ? targetLine : current.MaxLine;
-                    current.Cursor = targetCursor < current.Text[current.Line].Length ? targetCursor : current.Text[current.Line].Length;
-                    if (_selectedBegin != Tuple.Create(current.Line, current.Cursor))
-                    {
-                        _selectedEnd = Tuple.Create(current.Line, current.Cursor);
-                    }
-                }
-                else if (_selectedEnd != null && (current.Line != _selectedEnd.Item1 || current.Cursor != _selectedEnd.Item2))
-                {
-                    _selectedBegin = null;
-                    _selectedEnd = null;
-                }
+                _selectedBegin = null;
+                _selectedEnd = null;
             }
-
 
             if (Input.Control.Pressed)
             {
-                if (Input.Sp1.Pushed) State.Undo();
+                if (Input.Z.Pushed) State.Undo();
                 if (Input.Y.Pushed) State.Redo();
                 if (Input.A.Pushed)
                 {
@@ -302,6 +332,43 @@ namespace HackTheWorld
                     StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
                     sw.Write(json);
                     sw.Close();
+                }
+                if (Input.C.Pushed)
+                {
+                    if (_selectedEnd != null)
+                    {
+                        WindowContext.Invoke((Action)(() => {
+                            string str;
+                            if (_selectedBegin.Item1 == _selectedEnd.Item1)
+                            {
+                                if(_selectedBegin.Item2 < _selectedEnd.Item2)
+                                    str = current.Text[_selectedBegin.Item1].ToString().Substring(_selectedBegin.Item2, _selectedEnd.Item2 - _selectedBegin.Item2);
+                                else
+                                    str = current.Text[_selectedBegin.Item1].ToString().Substring(_selectedEnd.Item2, _selectedBegin.Item2 - _selectedEnd.Item2);
+                            }
+                            else if (true)
+                            {
+                                str = "";
+                            }
+                            Clipboard.SetDataObject(str);
+                        }));
+                    }
+                }
+                if (Input.V.Pushed)
+                {
+                    WindowContext.Invoke((Action)(() => {
+                        var str = Clipboard.GetText().Split('\n');
+                        int startLine = current.Line;
+                        current.MaxLine += str.Length - 1;
+                        current.Text[current.Line].Insert(current.Cursor, str[0]);
+//                        for (int i = 1; i < str.Length; i++)
+//                        {
+//                            current.Text.Insert(startLine + i, new StringBuilder(str[i]));
+//                        }
+                        //                    current.MaxLine += str.Length;
+                        //                    current.Line += str.Length;
+                        //                    current.Cursor = str[str.Length - 1].Length - 1;
+                    }));
                 }
 
             }
@@ -344,47 +411,24 @@ namespace HackTheWorld
                 // 選択範囲の描画
                 if (TextSelected)
                 {
-                    if (_selectedBegin.Item1 == _selectedEnd.Item1)
+                    if (SelectedBegin.Item1 == SelectedEnd.Item1)
                     {
-                        if (_selectedBegin.Item2 < _selectedEnd.Item2)
-                        {
-                            int startX = (int)MinX + _selectedBegin.Item2 * 10 + 2;
-                            int startY = (int)MinY + _selectedBegin.Item1 * _lineHeight;
-                            GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, (_selectedEnd.Item2 - _selectedBegin.Item2) * 10, _lineHeight + 5);
-                        }
-                        else
-                        {
-                            int startX = (int)MinX + _selectedEnd.Item2 * 10 + 2;
-                            int startY = (int)MinY + _selectedEnd.Item1 * _lineHeight;
-                            GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, (_selectedBegin.Item2 - _selectedEnd.Item2) * 10, _lineHeight + 5);
-                        }
-                    }
-                    else if (_selectedBegin.Item1 < _selectedEnd.Item1)
-                    {
-                        int startX = (int)MinX + _selectedBegin.Item2 * 10 + 2;
-                        int startY = (int)MinY + _selectedBegin.Item1 * _lineHeight;
-                        int endX = _selectedEnd.Item2 * 10 + 2;
-                        int endY = (int)MinY + _selectedEnd.Item1 * _lineHeight;
-                        GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, MaxX - startX, _lineHeight + 5);
-                        for (int i = _selectedBegin.Item1 + 1; i < _selectedEnd.Item1; i++)
-                        {
-                            GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, MinY + i * _lineHeight, Width, _lineHeight + 5);
-                        }
-                        GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, endY, endX, _lineHeight + 5);
+                            int startX = (int)MinX + SelectedBegin.Item2 * 10 + 2;
+                            int startY = (int)MinY + SelectedBegin.Item1 * _lineHeight;
+                            GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, (SelectedEnd.Item2 - SelectedBegin.Item2) * 10, _lineHeight + 5);
                     }
                     else
                     {
-                        int startX = (int)MinX + _selectedEnd.Item2 * 10 + 2;
-                        int startY = (int)MinY + _selectedEnd.Item1 * _lineHeight;
-                        int endX = _selectedBegin.Item2 * 10 + 2;
-                        int endY = (int)MinY + _selectedBegin.Item1 * _lineHeight;
+                        int startX = (int)MinX + SelectedBegin.Item2 * 10 + 2;
+                        int startY = (int)MinY + SelectedBegin.Item1 * _lineHeight;
+                        int endX = SelectedEnd.Item2 * 10 + 2;
+                        int endY = (int)MinY + SelectedEnd.Item1 * _lineHeight;
                         GraphicsContext.FillRectangle(Brushes.LightBlue, startX, startY, MaxX - startX, _lineHeight + 5);
-                        for (int i = _selectedEnd.Item1 + 1; i < _selectedBegin.Item1; i++)
+                        for (int i = SelectedBegin.Item1 + 1; i < SelectedEnd.Item1; i++)
                         {
                             GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, MinY + i * _lineHeight, Width, _lineHeight + 5);
                         }
                         GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, endY, endX, _lineHeight + 5);
-
                     }
                 }
                 for (int i = 0; i < State.Current.MaxLine; i++)

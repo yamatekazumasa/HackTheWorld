@@ -84,8 +84,8 @@ namespace HackTheWorld
                         var pblock = new PBlock(CellSize * ix, CellSize * iy);
                         GetProcess(pblock);
 //                        _stage.Objects.Add(pblock);
-                        _blocks.Add(pblock);
-                        _pblocks.Add(pblock);
+//                        _blocks.Add(pblock);
+//                        _pblocks.Add(pblock);
                     }
                     if (Map[iy, ix] == 2)
                     {
@@ -106,7 +106,7 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
             // ゲーム外処理
-            if (Input.Sp2.Pushed || Input.Back.Pushed) Scene.Pop();
+            if (Input.X.Pushed || Input.Back.Pushed) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
             // ボタンの処理
             foreach (var button in _menuItem)
@@ -126,7 +126,6 @@ namespace HackTheWorld
                 if (Input.S.Pushed)
                 {
                     Stage.Save(_stage);
-//                    Task.Run(() => { Stage.Save(_stage); });
                 }
             }
 

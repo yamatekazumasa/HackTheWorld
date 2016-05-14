@@ -71,7 +71,7 @@ namespace HackTheWorld
                 _cursor = (_cursor + 4) % 5;
             }
 
-            if (Input.Sp1.Pushed || (Input.LeftButton.Pushed && _menu[_cursor].Contains(Input.Mouse.Position)))
+            if (Input.Z.Pushed || (Input.LeftButton.Pushed && _menu[_cursor].Contains(Input.Mouse.Position)))
             {
                 switch (_cursor)
                 {
@@ -93,7 +93,7 @@ namespace HackTheWorld
                 }
             }
 
-            if (Input.Sp2.Pushed)
+            if (Input.X.Pushed)
             {
                 _cursor = 4;
             }
