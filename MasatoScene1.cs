@@ -12,11 +12,12 @@ namespace HackTheWorld
         private readonly List<MenuItem> _menuItem = new List<MenuItem>();
         private readonly MenuItem _backButton = new MenuItem(Image.FromFile(@"image\back.png"), Image.FromFile(@"image\back1.bmp"));
         private readonly MenuItem _resetButton = new MenuItem(Image.FromFile(@"image\reset.jpg"), Image.FromFile(@"image\reset1.bmp"));
-        private readonly MenuItem _pauseButton = new MenuItem(Image.FromFile(@"image\stop.jpg"),Image.FromFile(@"image\stop1.bmp"));
+        private readonly MenuItem _pauseButton = new MenuItem(Image.FromFile(@"image\stop.jpg"), Image.FromFile(@"image\stop1.bmp"));
         // ゲーム内変数宣言
         Image _img;
         Player _player;
         List<GameObject> _blocks;
+        List<GameObject> _items;
 
         public override void Cleanup()
         {
@@ -27,11 +28,11 @@ namespace HackTheWorld
             // ゲーム画面外初期化
             _backButton.Size = new Vector(50, 50);
             _backButton.Position = new Vector(25, 600);
-            _resetButton.Size = new Vector(50,50);
-            _resetButton.Position = new Vector(75,600);
-            _pauseButton.Size = new Vector(50,50);
+            _resetButton.Size = new Vector(50, 50);
+            _resetButton.Position = new Vector(75, 600);
+            _pauseButton.Size = new Vector(50, 50);
             _pauseButton.Position = new Vector(125, 600);
-            _menuItem.Add(_backButton);_menuItem.Add(_resetButton);_menuItem.Add(_pauseButton);
+            _menuItem.Add(_backButton); _menuItem.Add(_resetButton); _menuItem.Add(_pauseButton);
 
             // ゲーム内初期化
             // 変数の初期化
@@ -41,6 +42,8 @@ namespace HackTheWorld
             // ブロックの初期化
             _player.Initialize();
             _blocks = new List<GameObject>();
+            //アイテムの初期化
+            _items = new List<GameObject>();
             // マップの生成
             for (int iy = 0; iy < CellNumY; iy++)
             {
@@ -49,6 +52,10 @@ namespace HackTheWorld
                     if (Map[iy, ix] == 1)
                     {
                         _blocks.Add(new Block(CellSize * ix, CellSize * iy));
+                    }
+                    if (Map[iy, ix] == 2)
+                    {
+                        _items.Add(new Item(CellSize * ix, CellSize * iy));
                     }
                 }
 
@@ -106,12 +113,12 @@ namespace HackTheWorld
             {
                 _player.Die();
                 Scene.Push(new ContinueScene());
-
-            // 死亡判定
-            if (_player.X > CellSize * 15)
-            {
-                _player.Die();
             }
+            //// 死亡判定
+            //if (_player.Y > ScreenHeight)
+            //{
+            //    _player.Die();
+            //}
 
             // 画面のクリア
             ScreenClear();
@@ -122,7 +129,18 @@ namespace HackTheWorld
             foreach (var block in _blocks)
             {
                 block.Draw();
-
+            }
+            foreach(var item in _items)
+            {
+                item.Draw();
+            }
+            for(int x=0; x < ScreenWidth; x += CellSize)
+            {
+                GraphicsContext.DrawLine(Pens.Gray, x, 0, x, ScreenHeight);
+            }
+            for (int y = 0; y < ScreenHeight; y += CellSize)
+            {
+                GraphicsContext.DrawLine(Pens.Gray, 0, y, ScreenWidth, y);
             }
 
             // ゲーム画面外の描画
