@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
+using System.Text.RegularExpressions;
 
 
 namespace HackTheWorld
@@ -20,7 +21,7 @@ namespace HackTheWorld
         //public static Vector[ ] kakkoset = new Vector[constn];
         //static int kakkocount = 0;
 
-        //arraylistのなかにvectorをもたせる
+        //arraylistのなかにTuple<int,int>をもたせる
        public static ArrayList forArray=new ArrayList();
         public static ArrayList ifArray=new ArrayList();
         //個別に作るけど(インデントのため)まとまってたほうが何かと便利
@@ -33,18 +34,26 @@ namespace HackTheWorld
             ifArray.Clear( );
             funcArray.Clear( );
 
-            char[ ] delimiterChars = { ' ' , ':' , '\t' , '\n' };
+            //char[ ] delimiterChars = { ' ' , ':' , '\t' , '\n' };
+            char[ ] delimiterChars = { '\n' };
 
             ArrayList sArray = new ArrayList( );
             ArrayList result = new ArrayList( );
+            string str = "";
+
             string[ ] s2 = s1.Split(delimiterChars);
             for(int i = 0; i < s2.Length; i++)
             {
                 sArray.Add(s2[i]);
             }
             kakkoread(sArray);
+            if(mismatch)
+            {
+                MessageBox.Show("関数の始まりと終わりの対応が乱れてる");
+                return str;
+            }
             warifuri(sArray , result);
-            string str = "";
+
             for(int i = 0; i < result.Count; i++)
             {
                 str += (string)result[i]+"\n";
@@ -60,46 +69,46 @@ namespace HackTheWorld
             int kakko = 0;
             for(int i = 0; i < sArray.Count; i++)
             {
+                
                 //関数の数を数える(今はforとifだけ)
-                if((string)sArray[i] == "for" || (string)sArray[i] == "if") countfunction++;
+                if(sArray[i].ToString().StartsWith("for")|| sArray[i].ToString().StartsWith("if")) countfunction++;
             }
             //初めのほうから順番に見ていく
             for(int i = 0; i < sArray.Count; i++)
             {
-                if((string)sArray[i] == "for")
+                if(sArray[i].ToString().StartsWith("for"))
                 {
                     kakko++;
                     for(int j = i + 1; j < sArray.Count; j++)
                     {
-                        if((string)sArray[j] == "for" || (string)sArray[i] == "if") kakko++;
-                        if((string)sArray[j] == "endfor") kakko--;
+                        if(sArray[j].ToString().StartsWith("for") || sArray[j].ToString( ).StartsWith("if")) kakko++;
+                        if(sArray[j].ToString().StartsWith("endfor")) kakko--;
                         if(kakko == 0)
                         {
-                            forArray.Add(new Vector(i , j));
-                            //forArray.Add(Tuple.Create(i, j));
-                            funcArray.Add(new Vector(i , j));
+                            forArray.Add(new Tuple<int,int>(i,j));
+                            funcArray.Add(new Tuple<int , int>(i , j));
                             countfunction--;
                             break;
                         }
                     }
-                    mismatch = true;
+                   if(countfunction!=0) mismatch = true;
                 }
-                if((string)sArray[i] == "if")
+                if(sArray[i].ToString().StartsWith("if"))
                 {
                     kakko++;
                     for(int j = i + 1; j < sArray.Count; j++)
                     {
-                        if((string)sArray[j] == "for" || (string)sArray[i] == "if") kakko++;
-                        if((string)sArray[j] == "endif") kakko--;
+                        if(sArray[j].ToString( ).StartsWith("for") || sArray[j].ToString( ).StartsWith("if")) kakko++;
+                        if(sArray[j].ToString( ).StartsWith("endif")) kakko--;
                         if(kakko == 0)
                         {
-                            ifArray.Add(new Vector(i , j));
-                            funcArray.Add(new Vector(i , j));
+                            ifArray.Add(new Tuple<int , int>(i , j));
+                            funcArray.Add(new Tuple<int , int>(i , j));
                             countfunction--;
                             break;
                         }
                     }
-                    mismatch = true;
+                    if(countfunction != 0) mismatch = true;
                 }
                 if(countfunction == 0) break;
             }
@@ -113,7 +122,7 @@ namespace HackTheWorld
             int k = 0;
             while(k < sArray.Count)
             {
-                //funcArrayのvectorのXとYの中にいないときは素直にスルー
+                //funcArrayのTupleのitem1とitem2の中にいないときは素直にスルー
                 if(!intinside(k))
                 {
                     result.Add(sArray[k]);
@@ -127,13 +136,13 @@ namespace HackTheWorld
                         //関数のの中か否か
                         if(!kakkoinside(i))
                         {
-                            Vector tmpi = (Vector)funcArray[i];
-                            if((string)sArray[(int)tmpi.X] == "for")
+                            Tuple<int,int> tmpi = (Tuple<int,int>)funcArray[i];
+                            if(sArray[tmpi.Item1].ToString().StartsWith("for"))
                             {
                                 //コピー
                                 //ぶっちゃけcopyの関数のがいい説ある
                                 ArrayList forlist = new ArrayList( );
-                                for(int j = (int)tmpi.X; j <= (int)tmpi.Y; j++)
+                                for(int j = tmpi.Item1; j <= tmpi.Item2; j++)
                                 {
                                     forlist.Add(sArray[j]);
                                 }
@@ -145,9 +154,14 @@ namespace HackTheWorld
                                         result.Add(For(forlist)[j]);
                                       
                                     }
-                                    k += (int)tmpi.Y - (int)tmpi.X+1;
+                                    k += tmpi.Item2 - tmpi.Item1+1;
                                     i++;
                                     break;
+                                }
+                                else
+                                {
+                                    MessageBox.Show("forとendforはいるけど\n文の中身が違う");
+                                    return;
                                 }
                             }
                             //if((string)sArray[(int)tmpi.X] == "if")
@@ -253,72 +267,92 @@ namespace HackTheWorld
         //これがないと内側が2回実行される
         public static bool kakkoinside(int i)
         {
-            Vector tmpi = (Vector)funcArray[i];
+            Tuple<int,int> tmpi = (Tuple<int,int>)funcArray[i];
                 for(int j = 0; j < funcArray.Count; j++)
                 {
-                    Vector tmpj = (Vector)funcArray[j];
-                    if(tmpj.X < tmpi.X && tmpj.Y > tmpi.Y) return true;
+                    Tuple<int,int> tmpj = (Tuple<int,int>)funcArray[j];
+                    if(tmpj.Item1 < tmpi.Item1 && tmpj.Item2 > tmpi.Item2) return true;
                 }
             
             return false;
         }
-        //iがfuncArrayの中のvectorのXとYに挟まれてたらtrue
+        //iがfuncArrayの中のTupleの中身に挟まれてたらtrue
         public static bool intinside(int i)
         {
             if(funcArray != null)
             {
                 for(int j = 0; j < funcArray.Count; j++)
                 {
-                    Vector tmpj = (Vector)funcArray[j];
-                    if((int)tmpj.Y != 0)
+                    Tuple<int,int> tmpj = (Tuple<int,int>)funcArray[j];
+                    if(tmpj.Item2 != 0)
                     {
-                        if(tmpj.X <= i && tmpj.Y >= i) return true;
+                        if(tmpj.Item1 <= i && tmpj.Item2 >= i) return true;
                     }
                 }
             }
             return false;
         }
-        public static ArrayList For(ArrayList sArray)
-        {
-            //for(sArray[0])の次は繰り返し回数としている
-            int n = int.Parse((string)sArray[1]);
-            ArrayList expansion = new ArrayList( );
-            ArrayList insidefor = new ArrayList( );
-            for(int i = 0; i < n; i++)
-            {
-                //[2]から繰り返し
-                for(int j = 2; j < sArray.Count; j++)
-                {
-                    if((string)sArray[j] == "for")
-                    {
-                        for(int k = j; k < sArray.Count; k++)
-                        {
-                            insidefor.Add(sArray[k]);
-                        }
-                        for(int k = 0; k < For(insidefor).Count; k++)
-                        {
-                            expansion.Add(For(insidefor)[k]);
-                        }
-                        break;
-                    }
 
-                    if((string)sArray[j] == "endfor") break;
-                    expansion.Add(sArray[j]);
-
-                }
-            }
-            return expansion;
-        }
         //For()に突っ込んでいいのか判断するためのbool
         public static bool boolfor(ArrayList sArray)
         {
-            //[1]が数字かどうか
-            int inttest = 0;
-            //[1]がintじゃないなら四則演算のほうに回す
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0] , @"for\s*\d+")) return true;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0] , @"for\s*\w+\s*=\s*\d+\s*to\s*\d+")) return true;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0] , @"for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)")) return true;
+            return false;
+        }
+        public static ArrayList For(ArrayList sArray)
+        {
+            int type = 0;
+            //sArray[0]はforから始まっていて繰り返し回数を指定している行
+            //どんな書き方をしているかの正規表現を用いた場合分けをしたい
+            //いちいち間に\s*(0個以上の空白文字を示す)を入れて間に空白が入っても読めるようにする
+            //typeを3つ作ることにする
 
-            if(!sArray.Contains("for") || !sArray.Contains("endfor")) return false;
-            if(!int.TryParse((string)sArray[1] , out inttest)) return false;
-            return true;
+            //for 2とかをtype1とする
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0] , @"for\s*\d+")) type = 1;
+            //for i=0 to 3がtype2
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0] , @"for\s*\w+\s*=\s*\d+\s*to\s*\d+")) type = 2;
+            //for(i=0;i<5;i++)がtype3
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0] , @"for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)")) type = 3;
+
+            ArrayList expansion = new ArrayList( );
+            ArrayList insidefor = new ArrayList( );
+
+            
+            if(type == 1)
+            {
+                Regex re1 = new Regex(@"for\s*(?<repeat>\d+)");
+                Match m1 = re1.Match((string)sArray[0]);
+                int n = int.Parse(m1.Groups["repeat"].Value);
+
+                for(int i = 0; i < n; i++)
+                {
+                    //[1]から繰り返し
+                    for(int j = 1; j < sArray.Count; j++)
+                    {
+                        if((string)sArray[j] == "for")
+                        {
+                            for(int k = j; k < sArray.Count; k++)
+                            {
+                                insidefor.Add(sArray[k]);
+                            }
+                            for(int k = 0; k < For(insidefor).Count; k++)
+                            {
+                                expansion.Add(For(insidefor)[k]);
+                            }
+                            break;
+                        }
+
+                        if((string)sArray[j] == "endfor") break;
+                        expansion.Add(sArray[j]);
+
+                    }
+                }
+                return expansion;
+            }
+            expansion.Add("なんかキモい");
+            return expansion;
         }
         //結果がintになる体で作る
         public static void FourOperations(ArrayList sArray , int i)
