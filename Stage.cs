@@ -21,7 +21,7 @@ namespace HackTheWorld
         public List<GameObject> Objects { get; set; }
         public Player Player { get; set; }
         public List<Block> Blocks { get; set; }
-        public List<PBlock> PBlocks { get; set; }
+        public List<IEditable> EditableObjects { get; set; }
         public List<Enemy> Enemies { get; set; }
         public List<Item> Items { get; set; }
 
@@ -32,7 +32,7 @@ namespace HackTheWorld
             Objects = new List<GameObject>();
             Player = new Player();
             Blocks = new List<Block>();
-            PBlocks = new List<PBlock>();
+            EditableObjects = new List<IEditable>();
             Enemies = new List<Enemy>();
             Items = new List<Item>();
         }
@@ -44,7 +44,7 @@ namespace HackTheWorld
             Objects = new List<GameObject>();
             Player = new Player();
             Blocks = new List<Block>();
-            PBlocks = new List<PBlock>();
+            EditableObjects = new List<IEditable>();
             Enemies = new List<Enemy>();
             Items = new List<Item>();
         }
@@ -71,9 +71,19 @@ namespace HackTheWorld
                 {
                     case ObjectType.Block:
                         {
-                            Block b = new Block(obj.X, obj.Y);
-                            stage.Blocks.Add(b);
-                            stage.Objects.Add(b);
+                            if (obj.IsEditable)
+                            {
+                                var b = new PBlock(obj.X, obj.Y);
+                                stage.Blocks.Add(b);
+                                stage.EditableObjects.Add(b);
+                                stage.Objects.Add(b);
+                            }
+                            else
+                            {
+                                Block b = new Block(obj.X, obj.Y);
+                                stage.Blocks.Add(b);
+                                stage.Objects.Add(b);
+                            }
                             break;
                         }
                     case ObjectType.Enemy:
@@ -88,6 +98,13 @@ namespace HackTheWorld
                         Item i = new Item(obj.X, obj.Y, 0, 0, obj.W, obj.H);
                         stage.Items.Add(i);
                         stage.Objects.Add(i);
+                        break;
+                    }
+                    case ObjectType.Player:
+                    {
+                        var p = new Player();
+                        stage.Player = p;
+                        stage.Objects.Add(p);
                         break;
                     }
 
@@ -134,8 +151,8 @@ namespace HackTheWorld
                             new Process((obj, dt) => { obj.X -= dt*CellSize; }, 3.0f),
                         });
                         stage.Objects.Add(pblock);
-                        //stage.Blocks.Add(pblock);
-                        stage.PBlocks.Add(pblock);
+                        stage.Blocks.Add(pblock);
+                        stage.EditableObjects.Add(pblock);
                     }
                     if (Map[iy, ix] == 2)
                     {
@@ -151,6 +168,10 @@ namespace HackTheWorld
                     }
                 }
             }
+            var player = new Player();
+            stage.Player = player;
+            stage.Objects.Add(player);
+
             return stage;
         }
 

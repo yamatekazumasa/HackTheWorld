@@ -21,6 +21,10 @@ namespace HackTheWorld
         /// </summary>
         private bool _isAlive;
         /// <summary>
+        /// エディット可能か。
+        /// </summary>
+        protected bool _isEditable;
+        /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
         [JsonProperty("type", Order = 0)]
@@ -226,6 +230,12 @@ namespace HackTheWorld
         /// 生きていたらtrueを返す。
         /// </summary>
         public bool IsAlive => _isAlive;
+
+        /// <summary>
+        /// 編集可能なら true を返す。
+        /// </summary>
+        [JsonProperty("editable", Order = 11)]
+        public bool IsEditable => _isEditable;
 
         /// <summary>
         /// オブジェクトを消す。

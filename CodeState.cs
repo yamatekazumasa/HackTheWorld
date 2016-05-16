@@ -9,7 +9,7 @@ using Newtonsoft.Json.Converters;
 namespace HackTheWorld
 {
     [JsonObject(MemberSerialization.OptIn)]
-    class CodeState
+    public class CodeState
     {
         [JsonProperty("cursor", Order = 0)]
         public int Cursor { get; set; }

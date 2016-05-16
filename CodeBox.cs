@@ -12,7 +12,7 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class CodeBox : GameObject
+    public class CodeBox : GameObject
     {
         private int _selectedBegin;
         private int _selectedEnd;
@@ -268,7 +268,7 @@ namespace HackTheWorld
 
         public override void Draw()
         {
-            if (_isFocused)
+            if (_isFocused && Scene.Current is EditScene)
             {
                 if (_isFocused) GraphicsContext.FillRectangle(Brushes.Azure, this);
                 else GraphicsContext.FillRectangle(Brushes.DarkSeaGreen, this);

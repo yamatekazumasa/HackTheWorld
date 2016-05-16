@@ -18,7 +18,7 @@ namespace HackTheWorld
         private List<GameObject> _objects;
         private Player _player;
         private List<Block> _blocks;
-        private List<PBlock> _pblocks;
+        private List<IEditable> _editableObjects;
         private List<Enemy> _enemies;
         private List<Item> _items;
 
@@ -28,7 +28,7 @@ namespace HackTheWorld
             _objects = stage.Objects;
             _player = stage.Player;
             _blocks = stage.Blocks;
-            _pblocks = stage.PBlocks;
+            _editableObjects = stage.EditableObjects;
             _enemies = stage.Enemies;
             _items = stage.Items;
         }
@@ -38,7 +38,7 @@ namespace HackTheWorld
             _objects = stage.Objects;
             _player =  stage.Player;
             _blocks = stage.Blocks;
-            _pblocks = stage.PBlocks;
+            _editableObjects = stage.EditableObjects;
             _enemies = stage.Enemies;
             _items = stage.Items;
         }
@@ -66,7 +66,7 @@ namespace HackTheWorld
             };
             _menuItem = new List<MenuItem> {_backButton, _resetButton, _pauseButton};
 
-            foreach (var o in _pblocks) if (!o.CanExecute) o.Compile();
+            foreach (var o in _editableObjects) if (!o.CanExecute()) o.Compile();
 
         }
 
@@ -90,7 +90,7 @@ namespace HackTheWorld
                     _objects = stage.Objects;
                     _player = stage.Player;
                     _blocks = stage.Blocks;
-                    _pblocks = stage.PBlocks;
+                    _editableObjects = stage.EditableObjects;
                     _enemies = stage.Enemies;
                     _items = stage.Items;
                 }
@@ -100,7 +100,7 @@ namespace HackTheWorld
                         Objects = _objects,
                         Player = _player,
                         Blocks = _blocks,
-                        PBlocks = _pblocks,
+                        EditableObjects = _editableObjects,
                         Enemies = _enemies,
                         Items = _items
                     };
@@ -135,9 +135,9 @@ namespace HackTheWorld
             }
 
             _player.Update(dt);
-            foreach (var pblock in _pblocks)
+            foreach (var obj in _editableObjects)
             {
-                pblock.Update(dt);
+                obj.Update(dt);
             }
 
             // PlayerとBlockが重ならないように位置を調整
@@ -172,7 +172,6 @@ namespace HackTheWorld
 
             // 描画
             _objects.ForEach(obj => obj.Draw());
-            _player.Draw();
 
             // ボタンの描画
             foreach (var menuitem in _menuItem)

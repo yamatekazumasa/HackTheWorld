@@ -14,6 +14,7 @@ namespace HackTheWorld
 
         public Player()
         {
+            ObjectType = ObjectType.Player;
             _img = Image.FromFile(@"image\masato1.jpg");
             Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
         }
