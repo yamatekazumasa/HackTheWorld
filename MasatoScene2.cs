@@ -64,7 +64,7 @@ namespace HackTheWorld
                 }
             }
             pfo = new ProcessfulObject( );
-            makeprocess(pfo,str);
+            //makeprocess(pfo,str);
 
             if(_masato3Button.Clicked) Scene.Push(new MasatoScene3( ));
             if(Input.Sp2.Pushed && !_box.IsFocused) Scene.Pop( );
@@ -86,40 +86,48 @@ namespace HackTheWorld
             //GraphicsContext.DrawString(_box.GetString(), new Font("Arial" , 12) , Brushes.Black , new Rectangle(500 , 300 , 500 , 300));
         }
         //プロセスを作れるかためす
-        public void makeprocess(ProcessfulObject pfo , string s1)
-        {
-            char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t' , '\n' };
 
-            ArrayList sArray = new ArrayList( );
-            string[ ] s2 = s1.Split(delimiterChars);
-            for(int i = 0; i < s2.Length; i++)
-            {
-                sArray.Add(s2[i]);
-            }
-            for(int i = 0; i < sArray.Count; i++)
-            {
-                switch((string)sArray[i])
-                {
-                    case "move()":
-                        pfo.SetProcesses(new Process[ ]
-                        {
-                            new Process((obj,dt)=> { obj.Size = new Vector(30, 30); }, 2.0f) //doubleをfloatにするときに2.0fじゃないと認識しない または(float)をつける
-                        });
-                        break;
+
+        //古いやつ
+        //public void makeprocess(ProcessfulObject pfo , string s1)
+        //{
+        //    char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t' , '\n' };
+
+        //    ArrayList sArray = new ArrayList( );
+        //    string[ ] s2 = s1.Split(delimiterChars);
+        //    for(int i = 0; i < s2.Length; i++)
+        //    {
+        //        sArray.Add(s2[i]);
+        //    }
+        //    for(int i = 0; i < sArray.Count; i++)
+        //    {
+        //        switch((string)sArray[i])
+        //        {
+        //            case "move()":
+        //                pfo.SetProcesses(new Process[ ]
+        //                {
+        //                    new Process((obj,dt)=> { obj.Size = new Vector(30, 30); }, 2.0f) //doubleをfloatにするときに2.0fじゃないと認識しない または(float)をつける
+        //                });
+        //                break;
                       
-                   /* 
-                     move()だけなら良いけど、引数が来た時にどうするか
-                     「move(x,y)」と書かせて、moveを読み取ってx,yをVector型で保存
+        //           /* 
+        //             move()だけなら良いけど、引数が来た時にどうするか
+        //             「move(x,y)」と書かせて、moveを読み取ってx,yをVector型で保存
                      
-                    case "move":
-                        最初...xとyを読み取る
-                        x,yをVector型にする
-                        AddProcess((obj,dt)=> { obj.Size = new Vector(x, y)}, sec)が来てくれることを信じて待つ
+        //            case "move":
+        //                最初...xとyを読み取る
+        //                x,yをVector型にする
+        //                AddProcess((obj,dt)=> { obj.Size = new Vector(x, y)}, sec)が来てくれることを信じて待つ
                         
-                    */
-                }
-            }
-        }
+        //            */
+        //        }
+        //    }
+        //}
 
+        //yokoheiが作り始めたやつ
+        public void makeprocess(ProcessfulObject pobj, ArrayList sArray)
+        {
+
+        }
     }
 }
