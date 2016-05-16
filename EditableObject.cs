@@ -49,8 +49,9 @@ namespace HackTheWorld
         public void Compile()
         {
             // ここにstring型をProcess型に変換する処理を書く。
-            // string str = _codebox.GetString();
+            string str = _codebox.GetString();
             // SetProcesses(new Process[] {});
+            if (str.Contains("this.X += 1")) X += CellSize;
             _routine = GetEnumerator();
         }
 
