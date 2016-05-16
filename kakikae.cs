@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace HackTheWorld
 {
+    //ぺいぺい
     public static class Kakikae
     {
         //forとかifとかのかっこの組が配列の何番目か記録しておきたい
