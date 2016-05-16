@@ -62,7 +62,7 @@ namespace HackTheWorld
             for(int i = 0; i < result.Count; i++)
             {
                 str += (string)result[i] + "\n";
-                Tuple<int , int> t = Tuple.Create<int , int>(1 , 2);
+                //Tuple<int , int> t = Tuple.Create<int , int>(1 , 2);
             }
             MessageBox.Show(str);
             return str;
