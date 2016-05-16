@@ -23,7 +23,7 @@ namespace HackTheWorld
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
-        [JsonProperty("type")]
+        [JsonProperty("type", Order = 0)]
         [JsonConverter(typeof(StringEnumConverter))]
         public ObjectType ObjectType { get; set; }
 
@@ -147,42 +147,42 @@ namespace HackTheWorld
             set { _y = (int)(value * Scale) - _h / 2; }
         }
 
-        [JsonProperty("x")]
+        [JsonProperty("x", Order = 1)]
         public float X
         {
             get { return MinX; }
             set { MinX = value; }
         }
 
-        [JsonProperty("y")]
+        [JsonProperty("y", Order = 2)]
         public float Y
         {
             get { return MinY; }
             set { MinY = value; }
         }
 
-        [JsonProperty("vx")]
+        [JsonProperty("vx", Order = 3)]
         public float VX
         {
             get { return (float)_vx / Scale; }
             set { _vx = (int)(value * Scale); }
         }
 
-        [JsonProperty("vy")]
+        [JsonProperty("vy", Order = 4)]
         public float VY
         {
             get { return (float)_vy / Scale; }
             set { _vy = (int)(value * Scale); }
         }
 
-        [JsonProperty("width")]
+        [JsonProperty("width", Order = 5)]
         public float Width
         {
             get { return (float)_w / Scale; }
             set { _w = (int)(value * Scale); }
         }
 
-        [JsonProperty("height")]
+        [JsonProperty("height", Order = 6)]
         public float Height
         {
             get { return (float)_h / Scale; }

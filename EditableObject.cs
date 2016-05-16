@@ -7,10 +7,12 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    [JsonObject(MemberSerialization.OptIn)]
     class EditableObject : GameObject, IEnumerable
     {
         private List<Process> _processes;
@@ -20,6 +22,8 @@ namespace HackTheWorld
 
         public bool IsFocused => _codebox.IsFocused;
         public bool IsExecutable => _processes != null;
+        [JsonProperty("code", Order = 10)]
+        public string Code => _codebox.Current.Text.ToString();
 
         public EditableObject() : base(500, 300) { }
         public EditableObject(float x, float y) : base(x, y) { }
@@ -29,7 +33,6 @@ namespace HackTheWorld
         public override void Initialize()
         {
             base.Initialize();
-            _routine = GetEnumerator();
             _codebox = new CodeBox(this) {Position = Position + new Vector(100, 50)};
         }
 
@@ -52,6 +55,8 @@ namespace HackTheWorld
         {
             string str = _codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
+            SetProcesses(new Process[] {});
+            _routine = GetEnumerator();
         }
 
         public override void Update(float dt)

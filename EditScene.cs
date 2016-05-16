@@ -32,6 +32,7 @@ namespace HackTheWorld
 
             _stage = new Stage();
             _pobj = new EditableObject(8*CellSize, 6*CellSize);
+            _stage.Objects.Add(_pobj);
         }
 
         public override void Update(float dt)
@@ -44,6 +45,18 @@ namespace HackTheWorld
             if (_startButton.Clicked) Scene.Push(new GameScene(_stage));
             if ((Input.X.Pushed || Input.Back.Pushed) && !_pobj.IsFocused) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
+
+            if (Input.Control.Pressed)
+            {
+                if (Input.R.Pushed)
+                {
+                    _stage = Stage.Load();
+                }
+                if (Input.S.Pushed)
+                {
+                    Stage.Save(_stage);
+                }
+            }
 
             _pobj.Update(dt);
 

@@ -14,103 +14,24 @@ namespace HackTheWorld
 {
     class CodeBox : GameObject
     {
-        [JsonObject(MemberSerialization.OptIn)]
-        class State
-        {
-            private static State[] _state = new State[50];
-            private static int _origin;
-            private static int _current;
-            private static readonly int _length = 50;
-
-            [JsonProperty("cursor", Order = 0)]
-            public int Cursor { get; set; }
-            [JsonProperty("maxline", Order = 1)]
-            public int MaxLine { get; set; }
-            [JsonProperty("name", Order = 2)]
-            [JsonConverter(typeof(StringEnumConverter))]
-            public ObjectType Name { get; set; }
-            [JsonProperty("text", Order = 3)]
-            public StringBuilder Text { get; private set; }
-            [JsonProperty("updatedAt", Order = 4)]
-            public DateTime UpdatedAt { get; set; }
-
-            public string[] Lines => Text.ToString().Split('\n');
-
-            public Tuple<int, int> CursorPosition
-            {
-                get
-                {
-                    string[] lines = Text.ToString().Split('\n');
-                    int line, sum;
-                    for (sum = line = 0; sum + lines[line].Length < Current.Cursor; sum += lines[line++].Length + 1) { }
-                    return Tuple.Create(line, Cursor - sum);
-                }
-            }
-
-            public static Tuple<int, int> Position(int cursor)
-            {
-                string[] lines = Current.Text.ToString().Split('\n');
-                int line, sum;
-                for (sum = line = 0; sum + lines[line].Length < cursor; sum += lines[line++].Length + 1) { }
-                return Tuple.Create(line, cursor - sum);
-            }
-
-            public static State Current
-            {
-                get { return _state[_current]; }
-                set { _state[_current] = value; }
-            }
-
-            public State(int cursor, int maxLine)
-            {
-                Cursor = cursor;
-                MaxLine = maxLine;
-                Name = ObjectType.Block;
-                Text = new StringBuilder();
-                for (int i = 0; i < maxLine - 1; i++) Text.Append('\n');
-            }
-
-            public static void Record(State s)
-            {
-                _current = (_current + 1) % _length;
-                _origin = _current;
-                _state[_current] = new State(s.Cursor, s.MaxLine) {Text = new StringBuilder(s.Text.ToString())};
-                _state[_current].UpdatedAt = DateTime.Now;
-            }
-
-            public static void Undo()
-            {
-                if (_current > 0) _current = (_current + _length - 1) % _length;
-            }
-
-            public static void Redo()
-            {
-                if (_state[_current + 1] != null && _current < _origin) _current = (_current + 1) % _length;
-            }
-
-            public void ReadFrom(string text)
-            {
-                Cursor = 0;
-                MaxLine = text.Split('\n').Length;
-                Text = new StringBuilder(text);
-            }
-
-        }
-
         private int _selectedBegin;
         private int _selectedEnd;
         private int _lineHeight;
         private int _cols;
-        private string _clip;
         private bool _isFocused;
         private readonly Font _font;
-        private int frame;
-        private GameObject _subject;
+        private int _frame;
+        private readonly GameObject _subject;
+        private readonly CodeState[] _history;
+        private int _origin;
+        private int _current;
+        private readonly int _length = 50;
 
         public bool IsFocused => _isFocused;
         public void Focus() { _isFocused = true; }
 
         public bool TextSelected => _selectedEnd != -1;
+        public CodeState Current => _history[_current];
 
         public CodeBox(GameObject obj)
         {
@@ -120,19 +41,20 @@ namespace HackTheWorld
             _selectedBegin = -1;
             _selectedEnd = -1;
             _subject = obj;
+            _history = new CodeState[50];
             _font = new Font("Courier New", 12);
 
-            State.Current = new State(0, 5);
+            _history[_current] = new CodeState(0, 5);
 
             Width = 12 * _cols;
-            Height = _lineHeight * State.Current.MaxLine;
+            Height = _lineHeight * _history[_current].MaxLine;
 
-            frame = 0;
+            _frame = 0;
         }
 
         public void Update()
         {
-            var current = State.Current;
+            var current = _history[_current];
             var lines = current.Lines;
             var pos = current.CursorPosition;
 
@@ -181,31 +103,31 @@ namespace HackTheWorld
 
             if (Input.Enter.Pushed)
             {
-                State.Record(current);
-                current = State.Current;
+                Record(current);
+                current = _history[_current];
                 current.Text.Insert(current.Cursor++, '\n');
                 current.MaxLine++;
             }
             if (Input.Back.Pushed && current.Cursor > 0)
             {
-                State.Record(current);
-                current = State.Current;
+                Record(current);
+                current = _history[_current];
                 bool isLineFeedCode = current.Text.ToString()[current.Cursor - 1] == '\n';
                 current.Text.Remove(--current.Cursor, 1);
                 if (isLineFeedCode) current.MaxLine--;
             }
             if (Input.Delete.Pushed && current.Cursor < current.Text.Length)
             {
-                State.Record(current);
-                current = State.Current;
+                Record(current);
+                current = _history[_current];
                 bool isLineFeedCode = current.Text.ToString()[current.Cursor] == '\n';
                 current.Text.Remove(current.Cursor, 1);
                 if (isLineFeedCode) current.MaxLine--;
             }
             if (Input.Tab.Pushed)
             {
-                State.Record(current);
-                current = State.Current;
+                Record(current);
+                current = _history[_current];
                 current.Text.Insert(current.Cursor, "  ");
                 current.Cursor += 2;
             }
@@ -224,8 +146,8 @@ namespace HackTheWorld
 
             if (Input.Control.Pressed)
             {
-                if (Input.Z.Pushed) State.Undo();
-                if (Input.Y.Pushed) State.Redo();
+                if (Input.Z.Pushed) Undo();
+                if (Input.Y.Pushed) Redo();
                 if (Input.A.Pushed)
                 {
                     current.Cursor = current.Text.Length;
@@ -235,7 +157,7 @@ namespace HackTheWorld
                 if (Input.R.Pushed)
                 {
                     StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
-                    State.Current = JsonConvert.DeserializeObject<State>(sr.ReadToEnd());
+                    _history[_current] = JsonConvert.DeserializeObject<CodeState>(sr.ReadToEnd());
                     sr.Close();
                 }
                 if (Input.S.Pushed)
@@ -267,8 +189,8 @@ namespace HackTheWorld
                 {
                     if (_selectedEnd != -1)
                     {
-                        State.Record(current);
-                        current = State.Current;
+                        Record(current);
+                        current = _history[_current];
                         WindowContext.Invoke((Action)(() => {
                             if (_selectedBegin > _selectedEnd)
                             {
@@ -279,7 +201,7 @@ namespace HackTheWorld
                             int length = _selectedEnd - _selectedBegin;
                             char[] c = new char[length];
                             current.Cursor = _selectedBegin;
-                            current.MaxLine -= State.Position(_selectedEnd).Item1 - State.Position(_selectedEnd).Item1;
+                            current.MaxLine -= _history[_current].Position(_selectedEnd).Item1 - _history[_current].Position(_selectedEnd).Item1;
                             current.Text.CopyTo(_selectedBegin, c, 0, length);
                             current.Text.Remove(_selectedBegin, length);
                             _selectedBegin = -1;
@@ -290,8 +212,8 @@ namespace HackTheWorld
                 }
                 if (Input.V.Pushed)
                 {
-                    State.Record(current);
-                    current = State.Current;
+                    Record(current);
+                    current = _history[_current];
                     WindowContext.Invoke((Action)(() => {
                         var str = Clipboard.GetText();
                         current.Text.Insert(current.Cursor, str);
@@ -306,22 +228,42 @@ namespace HackTheWorld
 
             Height = _lineHeight * current.MaxLine;
 
-            frame++;
+            _frame++;
         }
 
         public string GetString()
         {
-            return State.Current.Text.ToString();
+            return _history[_current].Text.ToString();
         }
 
         public void Insert(char c)
         {
             if (_isFocused && !Input.Control.Pressed)
             {
-                State.Record(State.Current);
-                State.Current.Text.Insert(State.Current.Cursor++, c);
+                Record(_history[_current]);
+                _history[_current].Text.Insert(_history[_current].Cursor++, c);
             }
             Input.KeyBoard.Clear();
+        }
+
+        public void Record(CodeState s)
+        {
+            _current = (_current + 1) % _length;
+            _origin = _current;
+            _history[_current] = new CodeState(s.Cursor, s.MaxLine) {
+                Text = new StringBuilder(s.Text.ToString()),
+                UpdatedAt = DateTime.Now
+            };
+        }
+
+        public void Undo()
+        {
+            if (_current > 0) _current = (_current + _length - 1) % _length;
+        }
+
+        public void Redo()
+        {
+            if (_history[_current + 1] != null && _current < _origin) _current = (_current + 1) % _length;
         }
 
         public override void Draw()
@@ -333,10 +275,10 @@ namespace HackTheWorld
                 GraphicsContext.DrawRectangle(Pens.ForestGreen, this);
                 GraphicsContext.FillRectangle(Brushes.LightGreen, X, Y - 20, W, 20);
                 GraphicsContext.DrawRectangle(Pens.ForestGreen, X, Y - 20, W, 20);
-                GraphicsContext.DrawString(State.Current.Name.ToString(), _font, Brushes.Black, X, Y - 20);
+                GraphicsContext.DrawString(_history[_current].Name.ToString(), _font, Brushes.Black, X, Y - 20);
 
-                string[] lines = State.Current.Text.ToString().Split('\n');
-                var pos = State.Current.CursorPosition;
+                string[] lines = _history[_current].Text.ToString().Split('\n');
+                var pos = _history[_current].CursorPosition;
 
                 // 選択範囲の描画
                 if (TextSelected)
@@ -345,13 +287,13 @@ namespace HackTheWorld
                     Tuple<int, int> selectedEnd;
                     if (_selectedBegin < _selectedEnd)
                     {
-                        selectedBegin = State.Position(_selectedBegin);
-                        selectedEnd = State.Position(_selectedEnd);
+                        selectedBegin = _history[_current].Position(_selectedBegin);
+                        selectedEnd = _history[_current].Position(_selectedEnd);
                     }
                     else
                     {
-                        selectedBegin = State.Position(_selectedEnd);
-                        selectedEnd = State.Position(_selectedBegin);
+                        selectedBegin = _history[_current].Position(_selectedEnd);
+                        selectedEnd = _history[_current].Position(_selectedBegin);
                     }
 
                     int beginX = (int)MinX + selectedBegin.Item2 * 10 + 2;
@@ -375,11 +317,11 @@ namespace HackTheWorld
                 {
                     GraphicsContext.DrawString(lines[i], _font, Brushes.Black, X, Y + i * _lineHeight);
                 }
-                if (frame % 120 > 60)
+                if (_frame % 120 > 60)
                 {
                     GraphicsContext.DrawLine(Pens.Black, X + 10 * pos.Item2 + 2, Y + _lineHeight * pos.Item1 + 2, X + 10 * pos.Item2 + 2, Y + _lineHeight * (pos.Item1 + 1) + 2);
                 }
-                GraphicsContext.DrawString("line: " + pos.Item1 + ", cursor: " + pos.Item2 + ", maxline: " + State.Current.MaxLine, _font, Brushes.Black, X, MaxY + 10);
+                GraphicsContext.DrawString("line: " + pos.Item1 + ", cursor: " + pos.Item2 + ", maxline: " + _history[_current].MaxLine, _font, Brushes.Black, X, MaxY + 10);
             }
         }
 

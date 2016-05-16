@@ -97,6 +97,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Stage.cs" />
+    <Compile Include="CodeState.cs" />
     <Compile Include="TitleScene.cs" />
     <Compile Include="Vector.cs" />
     <EmbeddedResource Include="Form1.resx">
