@@ -8,7 +8,7 @@ namespace HackTheWorld
 {
     public class PBlock : Block, IEditable
     {
-        public float Dt { get; set; }
+        public int ProcessPtr { get; set; }
         public CodeBox Codebox { get; private set; }
         public List<Process> Processes { get; set; }
         public IEnumerator Routine { get; set; }

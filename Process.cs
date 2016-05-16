@@ -14,11 +14,18 @@ namespace HackTheWorld
     {
         public float MilliSeconds { get; }
         public ExecuteWith ExecuteWith { get; }
+        public float ElapsedTime { get; set; }
+
+        public Process(ExecuteWith executeWith)
+        {
+            ExecuteWith = executeWith;
+        }
 
         public Process(ExecuteWith executeWith, float seconds)
         {
-            this.ExecuteWith = executeWith;
-            this.MilliSeconds = seconds * 1000;
+            ExecuteWith = executeWith;
+            MilliSeconds = seconds * 1000;
+            ElapsedTime = 0;
         }
 
     }

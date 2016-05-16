@@ -14,7 +14,7 @@ namespace HackTheWorld
     [JsonObject(MemberSerialization.OptIn)]
     public interface IEditable
     {
-        float Dt { get; set; }
+        int ProcessPtr { get; set; }
         IEnumerator Routine { get; set; }
         CodeBox Codebox { get; }
         List<Process> Processes { get; set; }
@@ -57,21 +57,6 @@ namespace HackTheWorld
             return  self.Routine != null;
         }
 
-        public static IEnumerator GetEnumerator(this IEditable self)
-        {
-            var processes = self.Processes;
-            foreach (var process in processes)
-            {
-                float elapsedTime = 0;
-                while (elapsedTime * 1000 < process.MilliSeconds)
-                {
-                    process.ExecuteWith(self, self.Dt);
-                    elapsedTime += self.Dt;
-                    yield return null;
-                }
-            }
-        }
-
         public static void SetProcesses(this IEditable self, Process[] processes)
         {
             self.Processes = processes.ToList();
@@ -87,21 +72,28 @@ namespace HackTheWorld
             self.Processes.Add(process);
         }
 
-
         public static void Update(this IEditable self, float dt)
         {
-            self.Dt = dt;
-            self.Routine?.MoveNext();
+            var process = self.Processes[self.ProcessPtr];
+            if (process.ElapsedTime*1000 < process.MilliSeconds)
+            {
+                process.ExecuteWith(self, dt);
+                process.ElapsedTime += dt;
+            }
+            else if(self.ProcessPtr + 1 < self.Processes.Count)
+            {
+                self.ProcessPtr++;
+            }
+
             if (self.Clicked) self.Codebox.Focus();
             self.Codebox.Update();
         }
 
         public static void Compile(this IEditable self)
         {
-            // ここにstring型をProcess型に変換する処理を書く。
             string str = self.Codebox.GetString();
-            // SetProcesses(new Process[] {});
-            self.Routine = self.GetEnumerator();
+            // ここにstring型をProcess型に変換する処理を書く。
+            // self.SetProcesses(new Process[] {});
         }
 
 
