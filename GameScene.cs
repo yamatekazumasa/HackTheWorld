@@ -15,24 +15,32 @@ namespace HackTheWorld
         private MenuItem _resetButton;
         private MenuItem _pauseButton;
         // ゲーム内変数宣言
+        private List<GameObject> _objects;
         private Player _player;
-        private List<GameObject> _blocks;
-        private List<EditableObject> _pblocks;
+        private List<Block> _blocks;
+        private List<PBlock> _pblocks;
         private List<Enemy> _enemies;
         private List<Item> _items;
-        private Stage _stage;
+
+        public GameScene()
+        {
+            var stage = Stage.CreateDemoStage();
+            _objects = stage.Objects;
+            _player = stage.Player;
+            _blocks = stage.Blocks;
+            _pblocks = stage.PBlocks;
+            _enemies = stage.Enemies;
+            _items = stage.Items;
+        }
 
         public GameScene(Stage stage)
         {
-            _stage = new Stage {
-                Rows = stage.Rows,
-                Cols = stage.Cols,
-                Objects = new List<GameObject>()
-            };
-            foreach (var obj in stage.Objects)
-            {
-                _stage.Objects.Add(obj);
-            }
+            _objects = stage.Objects;
+            _player =  stage.Player;
+            _blocks = stage.Blocks;
+            _pblocks = stage.PBlocks;
+            _enemies = stage.Enemies;
+            _items = stage.Items;
         }
 
         public override void Cleanup()
@@ -58,62 +66,19 @@ namespace HackTheWorld
             };
             _menuItem = new List<MenuItem> {_backButton, _resetButton, _pauseButton};
 
-            // ゲーム内初期化
-            // 変数の初期化
-            _stage = _stage ?? new Stage();
-            _player = new Player();
-            _blocks = new List<GameObject>();
-            _pblocks = new List<EditableObject>();
-            _enemies = new List<Enemy>();
-            _items = new List<Item>();
-            _stage = new Stage();
-            
-            // マップの生成
-            for (int iy = 0; iy < CellNumY; iy++)
-            {
-                for (int ix = 0; ix < CellNumX; ix++)
-                {
-                    if (Map[iy, ix] == 1)
-                    {
-                        var block = new Block(CellSize * ix, CellSize * iy);
-                        _stage.Objects.Add(block);
-                        _blocks.Add(block);
-                    }
-                    if (Map[iy, ix] == 11)
-                    {
-                        var pblock = new PBlock(CellSize * ix, CellSize * iy);
-                        GetProcess(pblock);
-//                        _stage.Objects.Add(pblock);
-//                        _blocks.Add(pblock);
-//                        _pblocks.Add(pblock);
-                    }
-                    if (Map[iy, ix] == 2)
-                    {
-                        var enemy = new Enemy(CellSize * ix, CellSize * iy);
-                        _stage.Objects.Add(enemy);
-                        _enemies.Add(enemy);
-                    }
-                    if (Map[iy, ix] == 3)
-                    {
-                        var item = new Item(CellSize * ix, CellSize * iy);
-                        _stage.Objects.Add(item);
-                        _items.Add(item);
-                    }
-                }
-            }
+            foreach (var o in _pblocks) if (!o.CanExecute) o.Compile();
+
         }
 
         public override void Update(float dt)
         {
             // ゲーム外処理
-            if (Input.X.Pushed || Input.Back.Pushed) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
-            // ボタンの処理
+            if (_backButton.Clicked || Input.X.Pushed || Input.Back.Pushed) Scene.Pop();
             foreach (var button in _menuItem)
             {
                 button.IsSelected = button.Contains(Input.Mouse.Position);
             }
-            if (_backButton.Clicked) Scene.Pop();
             if (_resetButton.Clicked) Startup();
             if (_pauseButton.Clicked) Scene.Push(new PauseScene());
             // セーブ・ロード
@@ -121,13 +86,29 @@ namespace HackTheWorld
             {
                 if (Input.R.Pushed)
                 {
-                    _stage = Stage.Load();
+                    var stage = Stage.Load();
+                    _objects = stage.Objects;
+                    _player = stage.Player;
+                    _blocks = stage.Blocks;
+                    _pblocks = stage.PBlocks;
+                    _enemies = stage.Enemies;
+                    _items = stage.Items;
                 }
                 if (Input.S.Pushed)
                 {
-                    Stage.Save(_stage);
+                    var stage = new Stage {
+                        Objects = _objects,
+                        Player = _player,
+                        Blocks = _blocks,
+                        PBlocks = _pblocks,
+                        Enemies = _enemies,
+                        Items = _items
+                    };
+                    Stage.Save(stage);
                 }
             }
+
+            if (_player == null) return;
 
             // ゲーム内処理
             // 死亡時処理
@@ -174,7 +155,7 @@ namespace HackTheWorld
                     _player.Height += CellSize / 4;
                     _player.Width  = CellSize;
                     _player.jumpspeed = -CellSize * 13; // h=v^2/2g
-                    _stage.Objects.Remove(_items[i]);
+                    _objects.Remove(_items[i]);
                     _items.RemoveAt(i);
                 }
             }
@@ -190,7 +171,7 @@ namespace HackTheWorld
             DebugWrite();
 
             // 描画
-            _stage.Objects.ForEach(obj => obj.Draw());
+            _objects.ForEach(obj => obj.Draw());
             _player.Draw();
 
             // ボタンの描画
@@ -227,27 +208,5 @@ namespace HackTheWorld
             GraphicsContext.DrawString(PVY, font, Brushes.Black, ScreenWidth - 180, 160);
         }
 
-        private void GetProcess(EditableObject pobj)
-        {
-            pobj.SetProcesses(new Process[] {
-                            new Process((obj, dt) => { ; } , 3.0f),
-
-                            new Process((obj, dt) => { obj.VY = -CellSize; }, 3.0f),
-                            new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
-
-                            new Process((obj, dt) => { obj.VY = +CellSize; }, 1.0f),
-                            new Process((obj, dt) => { ; } , 2.0f),
-                            new Process((obj, dt) => { obj.VY = 0; } , 0.01f),
-
-                            new Process((obj, dt) => { obj.VX = -CellSize; }, 1.0f),
-                            new Process((obj, dt) => { obj.VX = 0; } , 2.0f),
-
-                            new Process((obj, dt) => { ; } , 2.0f),
-                            new Process((obj, dt) => { obj.Y -= dt*CellSize; }, 3.0f),
-                            new Process((obj, dt) => { obj.Y += dt*CellSize; }, 3.0f),
-                            new Process((obj, dt) => { obj.X += dt*CellSize; }, 3.0f),
-                            new Process((obj, dt) => { obj.X -= dt*CellSize; }, 3.0f),
-                        });
-        }
     }
 }

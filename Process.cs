@@ -8,9 +8,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    delegate void ExecuteWith(EditableObject obj, float dt);
+    public delegate void ExecuteWith(EditableObject obj, float dt);
 
-    class Process
+    public class Process
     {
         public float MilliSeconds { get; private set; }
         public ExecuteWith ExecuteWith;

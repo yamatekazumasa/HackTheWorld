@@ -6,7 +6,7 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class Player : GameObject
+    public class Player : GameObject
     {
         private Image _img;
         public int speed = CellSize * 3;

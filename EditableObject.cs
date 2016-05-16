@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
     [JsonObject(MemberSerialization.OptIn)]
-    class EditableObject : GameObject, IEnumerable
+    public class EditableObject : GameObject, IEnumerable
     {
         private List<Process> _processes;
         private IEnumerator _routine;
@@ -21,9 +17,9 @@ namespace HackTheWorld
         private CodeBox _codebox;
 
         public bool IsFocused => _codebox.IsFocused;
-        public bool IsExecutable => _processes != null;
         [JsonProperty("code", Order = 10)]
         public string Code => _codebox.Current.Text.ToString();
+        public bool CanExecute => _routine != null && Scene.Current is GameScene;
 
         public EditableObject() : base(500, 300) { }
         public EditableObject(float x, float y) : base(x, y) { }
@@ -38,31 +34,30 @@ namespace HackTheWorld
 
         public IEnumerator GetEnumerator()
         {
-            Stopwatch stopwatch = new Stopwatch();
             foreach (var process in _processes)
             {
-                stopwatch.Restart();
-                while (stopwatch.ElapsedMilliseconds < process.MilliSeconds)
+                float elapsedTime = 0;
+                while (elapsedTime * 1000 < process.MilliSeconds)
                 {
                     process.ExecuteWith(this, _dt);
+                    elapsedTime += _dt;
                     yield return null;
                 }
             }
-
         }
 
         public void Compile()
         {
-            string str = _codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
-            SetProcesses(new Process[] {});
+            // string str = _codebox.GetString();
+            // SetProcesses(new Process[] {});
             _routine = GetEnumerator();
         }
 
         public override void Update(float dt)
         {
             _dt = dt;
-            if (IsExecutable) _routine.MoveNext();
+            if (CanExecute) _routine.MoveNext();
             if (Clicked) _codebox.Focus();
             _codebox.Update();
         }

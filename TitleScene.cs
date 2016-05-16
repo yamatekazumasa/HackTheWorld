@@ -76,10 +76,10 @@ namespace HackTheWorld
                 switch (_cursor)
                 {
                     case 0:
-                        Scene.Push(new GameScene(new Stage()));
+                        Scene.Push(new GameScene());
                         break;
                     case 1:
-                        Scene.Push(new GameScene(new Stage()));
+                        Scene.Push(new GameScene());
                         break;
                     case 2:
                         Scene.Push(new EditScene());
@@ -97,6 +97,8 @@ namespace HackTheWorld
             {
                 _cursor = 4;
             }
+
+            if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
             foreach (var item in _menu)
             {

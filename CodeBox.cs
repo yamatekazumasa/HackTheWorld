@@ -37,7 +37,7 @@ namespace HackTheWorld
         {
             _cols = 40;
             _lineHeight = 12;
-            _isFocused = false;
+            _isFocused = true;
             _selectedBegin = -1;
             _selectedEnd = -1;
             _subject = obj;

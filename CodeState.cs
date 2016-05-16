@@ -37,6 +37,7 @@ namespace HackTheWorld
             }
         }
 
+        // 渡されたカーソルが何行目の何文字目にあるかを取得する。
         public Tuple<int, int> Position(int cursor)
         {
             string[] lines = Text.ToString().Split('\n');

@@ -12,7 +12,6 @@ namespace HackTheWorld
         private MenuItem _startButton;
         private List<MenuItem> _menuItem;
         private Stage _stage;
-        private EditableObject _pobj;
 
         public override void Cleanup()
         {
@@ -30,9 +29,7 @@ namespace HackTheWorld
             };
             _menuItem = new List<MenuItem> {_backButton, _startButton};
 
-            _stage = new Stage();
-            _pobj = new EditableObject(8*CellSize, 6*CellSize);
-            _stage.Objects.Add(_pobj);
+            _stage = Stage.CreateDemoStage();
         }
 
         public override void Update(float dt)
@@ -43,7 +40,15 @@ namespace HackTheWorld
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_startButton.Clicked) Scene.Push(new GameScene(_stage));
-            if ((Input.X.Pushed || Input.Back.Pushed) && !_pobj.IsFocused) Scene.Pop();
+            if (Input.X.Pushed || Input.Back.Pushed)
+            {
+                bool isFocused = false;
+                foreach (var obj in _stage.PBlocks)
+                {
+                    isFocused = isFocused || obj.IsFocused;
+                }
+                if (!isFocused) Scene.Pop();
+            }
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
             if (Input.Control.Pressed)
@@ -58,12 +63,12 @@ namespace HackTheWorld
                 }
             }
 
-            _pobj.Update(dt);
+            foreach (var b in _stage.PBlocks) b.Update(dt);
 
             if (Input.Control.Pressed)
             {
                 if (Input.R.Pushed) _stage = Stage.Load();
-//                if (Input.S.Pushed) Stage.Save(_stage);
+                if (Input.S.Pushed) Stage.Save(_stage);
             }
 
             GraphicsContext.Clear(Color.White);
@@ -71,7 +76,6 @@ namespace HackTheWorld
             {
                 obj.Draw();
             }
-            _pobj.Draw();
             _backButton.Draw();
             _startButton.Draw();
         }
