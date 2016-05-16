@@ -234,7 +234,7 @@ namespace HackTheWorld
         /// <summary>
         /// 編集可能なら true を返す。
         /// </summary>
-        [JsonProperty("editable", Order = 11)]
+        [JsonProperty("edit", Order = 11)]
         public bool IsEditable => _isEditable;
 
         /// <summary>
