@@ -8,3 +8,6 @@ obj/
 
 !App.config
 packages/
+Newtonsoft.Json.xml
+*.json
+*.stackdump

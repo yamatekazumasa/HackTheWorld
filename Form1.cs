@@ -33,10 +33,11 @@ namespace HackTheWorld
             this.FormBorderStyle = FormBorderStyle.FixedSingle;//サイズの固定
             this.MaximizeBox = false;
 
+            WindowContext = this;
+
             Shown += (sender, e) => { Task.Run(() => { MainProcess(); }); };
 
         }
-
 
         private void MainProcess()
         {
@@ -62,7 +63,6 @@ namespace HackTheWorld
                 Input.Update(_pressedKeys);
                 Input.Update(_mouseButtons);
                 Input.Update(MousePosition, Location);
-
                 // プレイヤーとステージをアップデート
                 Scene.Current.Update(dt);
 
@@ -77,6 +77,13 @@ namespace HackTheWorld
                 GraphicsContext.DrawString(debugSeconds, font, Brushes.Black, ScreenWidth - 140, 40);
 #endif
 
+//                if (new Rectangle(0, 0, 500, 500).Contains(Input.Mouse.Position))
+//                {
+//                    Invoke((Action)(() => {
+//                        System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.IBeam;
+//                    }));
+//                }
+
                 // 画面の更新
                 if (InvokeRequired)
                     try { Invoke((Action)Refresh); }
@@ -84,7 +91,7 @@ namespace HackTheWorld
                 else Refresh();
 
                 prevTime = currentTime;
-
+                
             }
 
         }

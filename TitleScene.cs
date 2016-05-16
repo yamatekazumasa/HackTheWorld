@@ -14,8 +14,6 @@ namespace HackTheWorld
         private Image[] _menuImages;
         private MenuItem[] _menu;
         private int _cursor;
-        private bool _isFocused;
-
 
         public override void Cleanup()
         {
@@ -41,32 +39,24 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
 
-            _isFocused = false;
-
-
             if (_menu[0].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 0;
             }
             if (_menu[1].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 1;
             }
             if (_menu[2].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 2;
             }
             if (_menu[3].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 3;
             }
             if (_menu[4].Contains(Input.Mouse.Position))
             {
-                _isFocused = true;
                 _cursor = 4;
             }
 
@@ -81,7 +71,7 @@ namespace HackTheWorld
                 _cursor = (_cursor + 4) % 5;
             }
 
-            if (Input.Sp1.Pushed || (Input.LeftButton.Pushed && _isFocused))
+            if (Input.Z.Pushed || (Input.LeftButton.Pushed && _menu[_cursor].Contains(Input.Mouse.Position)))
             {
                 switch (_cursor)
                 {
@@ -89,13 +79,13 @@ namespace HackTheWorld
                         Scene.Push(new GameScene());
                         break;
                     case 1:
-                        Scene.Push(new MasatoScene1());
+                        Scene.Push(new GameScene());
                         break;
                     case 2:
-                        Scene.Push(new MasatoScene2());
+                        Scene.Push(new EditScene());
                         break;
                     case 3:
-                        Scene.Push(new MasatoScene3());
+                        Scene.Push(new ProcessTestScene());
                         break;
                     case 4:
                         Application.Exit();
@@ -103,10 +93,12 @@ namespace HackTheWorld
                 }
             }
 
-            if (Input.Sp2.Pushed)
+            if (Input.X.Pushed)
             {
                 _cursor = 4;
             }
+
+            if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
             foreach (var item in _menu)
             {
@@ -114,16 +106,13 @@ namespace HackTheWorld
             }
             _menu[_cursor].IsSelected = true;
 
-
-
             GraphicsContext.Clear(Color.White);
             foreach (var item in _menu)
             {
                 item.Draw();
 
             }
-
-
+            
 
         }
     }
