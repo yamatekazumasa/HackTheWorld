@@ -75,7 +75,7 @@ namespace HackTheWorld
         public static void Update(this IEditable self, float dt)
         {
             var process = self.Processes[self.ProcessPtr];
-            if (process.ElapsedTime*1000 < process.MilliSeconds)
+            if (process.ElapsedTime*1000 <= process.MilliSeconds)
             {
                 process.ExecuteWith(self, dt);
                 process.ElapsedTime += dt;

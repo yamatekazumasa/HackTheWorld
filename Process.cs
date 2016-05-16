@@ -19,6 +19,8 @@ namespace HackTheWorld
         public Process(ExecuteWith executeWith)
         {
             ExecuteWith = executeWith;
+            MilliSeconds = 0;
+            ElapsedTime = 0;
         }
 
         public Process(ExecuteWith executeWith, float seconds)
