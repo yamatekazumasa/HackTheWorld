@@ -58,6 +58,35 @@ namespace HackTheWorld
             return new Vector(a.X / b, a.Y / b);
         }
 
+        public static bool operator ==(Vector a, Vector b)
+        {
+            return Equals(a.X, b.X) && Equals(a.Y, b.Y);
+        }
+
+        public static bool operator !=(Vector a, Vector b)
+        {
+            return !Equals(a.X, b.X) || !Equals(a.Y, b.Y);
+        }
+
+        public bool Equals(Vector other)
+        {
+            return X.Equals(other.X) && Y.Equals(other.Y);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is Vector && Equals((Vector)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (X.GetHashCode() * 397) ^ Y.GetHashCode();
+            }
+        }
+
         public static implicit operator Size(Vector v)
         {
             return new Size((int)v.X, (int)v.Y);

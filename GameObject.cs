@@ -1,9 +1,13 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    class GameObject
+    [JsonObject(MemberSerialization.OptIn)]
+    public class GameObject
     {
         private int _x;
         private int _y;
@@ -19,7 +23,9 @@ namespace HackTheWorld
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
-        private ObjectType _objectType;
+        [JsonProperty("type")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ObjectType ObjectType { get; set; }
 
         #region コンストラクタ
 
@@ -36,7 +42,7 @@ namespace HackTheWorld
         /// </summary>
         /// <param name="x">初期x座標。</param>
         /// <param name="y">初期y座標。</param>
-        public GameObject(int x, int y) : this()
+        public GameObject(float x, float y) : this()
         {
             X = x;
             Y = y;
@@ -49,7 +55,7 @@ namespace HackTheWorld
         /// <param name="y">初期y座標。</param>
         /// <param name="vx">初期速度のx方向成分。</param>
         /// <param name="vy">初期速度のy方向成分。</param>
-        public GameObject(int x, int y, int vx, int vy) : this(x, y)
+        public GameObject(float x, float y, float vx, float vy) : this(x, y)
         {
             VX = vx;
             VY = vy;
@@ -64,7 +70,7 @@ namespace HackTheWorld
         /// <param name="vy">初期速度のy方向成分。</param>
         /// <param name="w">幅。</param>
         /// <param name="h">高さ。</param>
-        public GameObject(int x, int y, int vx, int vy, int w, int h) : this(x, y, vx, vy)
+        public GameObject(float x, float y, float vx, float vy, float w, float h) : this(x, y, vx, vy)
         {
             Width = w;
             Height = h;
@@ -108,7 +114,7 @@ namespace HackTheWorld
         public float MinX
         {
             get { return (float)_x / Scale; }
-            set { _x = (int)(value*Scale); }
+            set { _x = (int)(value * Scale); }
         }
 
         public float MinY
@@ -120,7 +126,7 @@ namespace HackTheWorld
         public float MaxX
         {
             get { return (float)(_x + _w) / Scale; }
-            set { _x = (int)(value*Scale) - _w; }
+            set { _x = (int)(value * Scale) - _w; }
         }
 
         public float MaxY
@@ -131,46 +137,52 @@ namespace HackTheWorld
 
         public float MidX
         {
-            get { return (float)(_x + _w/2) / Scale; }
-            set { _x = (int)(value * Scale) - _w/2; }
+            get { return (float)(_x + _w / 2) / Scale; }
+            set { _x = (int)(value * Scale) - _w / 2; }
         }
 
         public float MidY
         {
-            get { return (float)(_y + _h/2) / Scale; }
-            set { _y = (int)(value * Scale) - _h/2; }
+            get { return (float)(_y + _h / 2) / Scale; }
+            set { _y = (int)(value * Scale) - _h / 2; }
         }
 
+        [JsonProperty("x")]
         public float X
         {
             get { return MinX; }
             set { MinX = value; }
         }
 
+        [JsonProperty("y")]
         public float Y
         {
             get { return MinY; }
             set { MinY = value; }
         }
 
+        [JsonProperty("vx")]
         public float VX
         {
             get { return (float)_vx / Scale; }
             set { _vx = (int)(value * Scale); }
         }
 
+        [JsonProperty("vy")]
         public float VY
         {
             get { return (float)_vy / Scale; }
             set { _vy = (int)(value * Scale); }
         }
 
+        [JsonProperty("width")]
         public float Width
         {
             get { return (float)_w / Scale; }
             set { _w = (int)(value * Scale); }
         }
 
+        [JsonProperty("height")]
         public float Height
         {
             get { return (float)_h / Scale; }
@@ -188,8 +200,6 @@ namespace HackTheWorld
             get { return Height; }
             set { Height = value; }
         }
-
-        public ObjectType ObjectType => _objectType;
 
         public bool Clicked => Contains(Input.Mouse.Position) && Input.LeftButton.Pushed;
 
@@ -250,7 +260,7 @@ namespace HackTheWorld
         {
             Position += Velocity * dt;
         }
-        
+
         /// <summary>
         /// 角度を指定して、velocityを回転させる。
         /// </summary>
@@ -270,7 +280,7 @@ namespace HackTheWorld
         {
             this.Velocity = this.Velocity.Extend(a);
         }
-        
+
         /// <summary>
         /// 重なりの判定。
         /// 渡されたオブジェクトの矩形領域と重なっているか判定する。
@@ -301,9 +311,9 @@ namespace HackTheWorld
         /// </summary>
         public virtual bool Contains(Point p)
         {
-            return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y; 
+            return MinX < p.X && MaxX > p.X && MinY < p.Y && MaxY > p.Y;
         }
-  
+
         /// <summary>
         /// 包含判定。
         /// 渡された点を包含しているか判定する。
@@ -313,7 +323,6 @@ namespace HackTheWorld
             return MinX < x && MaxX > x && MinY < y && MaxY > y;
         }
 
-
         /// <summary>
         /// 衝突判定。
         /// </summary>
@@ -322,7 +331,7 @@ namespace HackTheWorld
         public virtual bool CollidesWith(GameObject obj)
         {
             if (!obj._isAlive) return false;
-            if (_objectType == obj.ObjectType) return false;
+            if (ObjectType == obj.ObjectType) return false;
             return Intersects(obj);
         }
 
@@ -336,10 +345,7 @@ namespace HackTheWorld
                    MinY > -100 && MinY < ScreenHeight + 100;
         }
 
-        public virtual bool OnGround()
-        {
-            return true;
-        }
+        public virtual bool OnGround { get; set; }
 
         /// <summary>
         /// 衝突後の調整関数。
@@ -350,32 +356,62 @@ namespace HackTheWorld
         {
             if (Intersects(obj))
             {
-                int max = 10;// めり込み許容量。10という値は仮で、要調整。
-                if (MaxY > obj.MinY && MaxY - obj.MinY <= max)
+                int maxY = 10;// めり込み許容量。10という値は仮で、要調整。
+                int maxX = 10;// 要調整。
+                if (MaxY > obj.MinY && MaxY - obj.MinY <= maxY)
                 {
-                    this.Y -= MaxY - obj.MinY;
+                    MaxY = obj.MinY;
                 }
-                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -max)
+                else if (MaxX > obj.MinX && MaxX - obj.MinX <= maxX)
                 {
-                    this.Y -= MinY - obj.MaxY;
+                    MaxX = obj.MinX;
                 }
-                else if (MaxX > obj.MinX && MaxX - obj.MinX <= max)
+                else if (MinX < obj.MaxX && MinX - obj.MaxX >= -maxX)
                 {
-                    this.MinX -= MaxX - obj.MinX;
+                    MinX = obj.MaxX;
                 }
-                else if (MinX < obj.MaxX && MinX - obj.MaxX >= -max)
+                else if (MinY < obj.MaxY && MinY - obj.MaxY >= -maxY)
                 {
-                    this.MinX -= MinX - obj.MaxX;
+                    MinY = obj.MaxY;
                 }
+                else MaxY = obj.MinY;
             }
-        }
 
+//            if (MaxX > obj.MinX && MinX < obj.MaxX)
+//            {
+//                if (MaxY > obj.MinY && MaxY < obj.MaxY)
+//                {
+//                    MaxY = obj.MinY;
+//                    VY = 0;
+//                }
+//                if (MinY < obj.MaxY && MinY > obj.MinY)
+//                {
+//                    MinY = obj.MaxY;
+//                    VY = 0;
+//                }
+//            }
+//            if (MaxY > obj.MinY && MinY < obj.MaxY)
+//            {
+//                if (MaxX > obj.MinX && MaxX < obj.MaxX)
+//                {
+//                    MaxX = obj.MinX;
+//                    VX = 0;
+//                }
+//                if (MinX < obj.MaxX && MinX > obj.MinX)
+//                {
+//                    MinX = obj.MaxX;
+//                    VX = 0;
+//                }
+//                else MaxY = obj.MinY;
+//            }
+
+        }
 
         #endregion
 
         public virtual void Update(float dt)
         {
-            
+
         }
 
         /// <summary>
@@ -384,7 +420,7 @@ namespace HackTheWorld
         /// <param name="g">このグラフィックスコンテクストにオブジェクトを描画する。</param>
         public virtual void Draw()
         {
-            if(_isAlive)
+            if (_isAlive)
             {
                 GraphicsContext.FillRectangle(Brushes.Red, MinX, MinY, Width, Height);
             }

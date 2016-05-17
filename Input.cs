@@ -39,11 +39,9 @@ namespace HackTheWorld
         public class MousePosition
         {
             private Vector _position;
-
             public void Append(Vector mousePosition, Vector windowPosition)
             {
                 _position = mousePosition - windowPosition - new Vector(9, 30);
-
             }
 
             public int X => (int)_position.X;
@@ -78,11 +76,14 @@ namespace HackTheWorld
             Down.Append(pressedKeys.Contains(Keys.Down));
             Left.Append(pressedKeys.Contains(Keys.Left));
             Right.Append(pressedKeys.Contains(Keys.Right));
-            Sp1.Append(pressedKeys.Contains(Keys.Z));
-            Sp2.Append(pressedKeys.Contains(Keys.X));
-            Sp3.Append(pressedKeys.Contains(Keys.C));
+            Z.Append(pressedKeys.Contains(Keys.Z));
+            X.Append(pressedKeys.Contains(Keys.X));
+            V.Append(pressedKeys.Contains(Keys.V));
+            R.Append(pressedKeys.Contains(Keys.R));
+            C.Append(pressedKeys.Contains(Keys.C));
             A.Append(pressedKeys.Contains(Keys.A));
             W.Append(pressedKeys.Contains(Keys.W));
+            S.Append(pressedKeys.Contains(Keys.S));
             Y.Append(pressedKeys.Contains(Keys.Y));
             Enter.Append(pressedKeys.Contains(Keys.Enter));
             Space.Append(pressedKeys.Contains(Keys.Space));
@@ -108,10 +109,13 @@ namespace HackTheWorld
         public static Key Down { get; } = new Key();
         public static Key Left { get; } = new Key();
         public static Key Right { get; } = new Key();
-        public static Key Sp1 { get; } = new Key();
-        public static Key Sp2 { get; } = new Key();
-        public static Key Sp3 { get; } = new Key();
+        public static Key Z { get; } = new Key();
+        public static Key X { get; } = new Key();
+        public static Key C { get; } = new Key();
+        public static Key V { get; } = new Key();
+        public static Key R { get; } = new Key();
         public static Key A { get; } = new Key();
+        public static Key S { get; } = new Key();
         public static Key Y { get; } = new Key();
         public static Key W { get; } = new Key();
         public static Key Enter { get; } = new Key();

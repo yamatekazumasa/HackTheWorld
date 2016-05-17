@@ -10,3 +10,4 @@ obj/
 packages/
 Newtonsoft.Json.xml
 *.json
+*.stackdump

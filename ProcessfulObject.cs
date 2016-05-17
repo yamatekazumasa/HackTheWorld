@@ -13,7 +13,7 @@ namespace HackTheWorld
 {
     class ProcessfulObject : GameObject, IEnumerable
     {
-        private Process[] _processes;
+        private List<Process> _processes;
         private readonly IEnumerator _routine;
         private float _dt;
 
@@ -21,8 +21,15 @@ namespace HackTheWorld
         {
             _routine = GetEnumerator();
         }
-
-        public ProcessfulObject(int x, int y, int w, int h) : base(x, y, 0, 0, w, h)
+        public ProcessfulObject(float x, float y) : base(x, y)
+        {
+            _routine = GetEnumerator();
+        }
+        public ProcessfulObject(float x, float y, float w, float h) : base(x, y, 0, 0, w, h)
+        {
+            _routine = GetEnumerator();
+        }
+        public ProcessfulObject(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h)
         {
             _routine = GetEnumerator();
         }
@@ -50,7 +57,17 @@ namespace HackTheWorld
 
         public void SetProcesses(Process[] processes)
         {
+            _processes = processes.ToList();
+        }
+
+        public void SetProcesses(List<Process> processes)
+        {
             _processes = processes;
+        }
+
+        public void AddProcess(Process process)
+        {
+            _processes.Add(process);
         }
 
         public override void Draw()

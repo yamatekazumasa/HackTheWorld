@@ -5,20 +5,32 @@ namespace HackTheWorld
 {
     class Item : GameObject
     {
-        public Item(int x, int y) : base(x, y)
+
+
+        public Item(float x, float y) : base(x, y)
         {
+            X += CellSize / 4;
+            Y += CellSize / 2;
+            W = CellSize / 2;
+            H = CellSize / 2;
+            ObjectType = ObjectType.Item;
         }
 
-        //Itemを取得した時のPlayerのサイズを変更する
-        public void Giant(Player player)
+        public Item(float x, float y, float vx, float vy) : base(x, y, vx, vy)
         {
-            player.Height *= 2;
+            ObjectType = ObjectType.Item;
+        }
+
+        public Item(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h)
+        {
+            ObjectType = ObjectType.Item;
+
         }
 
         public override void Draw()
         {
-        GraphicsContext.FillRectangle(Brushes.Brown, X, Y, Width, Height);
-        GraphicsContext.DrawRectangle(Pens.Black, X, Y, Width, Height);
+            GraphicsContext.FillRectangle(Brushes.GreenYellow, X, Y, Width, Height);
+            GraphicsContext.DrawRectangle(Pens.ForestGreen, X, Y, Width, Height);
         }
     }
 }

@@ -10,34 +10,28 @@ namespace HackTheWorld
     {
 
         private Image _img;
-        public bool onGround = false;
+        public int speed = CellSize * 3;
+        public int jumpspeed = -CellSize * 11; // h=v^2/2g
 
-        public Player(Image img)
+        public Player()
         {
-            this._img = img;
-            this.Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
+            _img = Image.FromFile(@"image\masato1.jpg");
+            Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
         }
 
         public override void Update(float dt)
         {
             // キーで動かす部分
-            int speed = CellSize * 3;
             if (Input.Left.Pressed)  X -= speed * dt;
             if (Input.Right.Pressed) X += speed * dt;
-            //if (Input.Down.Pressed)  Y += speed * dt;
-
-            // キーで操作する部分
-            if (Input.Up.Pushed && onGround)
-            {
-                onGround = false;
-                VY = -CellSize * 11; // h=v^2/2g
-            }
-
+//            if (Input.Left.Pressed)  VX = -speed;
+//            if (Input.Right.Pressed) VX = speed;
+//            if (Input.Left.Pressed == Input.Right.Pressed) VX = 0;
+            if (Input.Up.Pushed && OnGround) VY = jumpspeed;
+            
             // 自動で動く部分
-            int gravity = CellSize * 25;
-            VY += gravity * dt;
+            VY += Gravity * dt;
             Move(dt);
-           
         }
 
         /// <summary>
@@ -49,13 +43,13 @@ namespace HackTheWorld
         public virtual bool StandOn(GameObject obj)
         {
             return MinX < obj.MaxX && MaxX > obj.MinX &&
-                   MaxY == obj.MinY;
+                   MaxY > obj.MinY - 1 && MaxY <= obj.MinY;//この行自信ないです
         }
 
         public virtual bool HitHeadOn(GameObject obj)
         {
             return MinX < obj.MaxX && MaxX > obj.MinX &&
-                   MinY == obj.MaxY;
+                   MinY > obj.MaxY - 1 && MinY <= obj.MaxY;//この行自信ないです
         }
 
         public override void Draw()
@@ -63,6 +57,7 @@ namespace HackTheWorld
             GraphicsContext.DrawImage(_img, X, Y, Width, Height);
             //GraphicsContext.FillRectangle(Brushes.Aqua, X, Y, Width, Height);
             //GraphicsContext.DrawRectangle(Pens.LightBlue, X, Y, Width, Height);
+            if (!IsAlive) GraphicsContext.FillRectangle(Brushes.Gray, X, Y, Width, Height);
         }
 
     }

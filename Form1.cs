@@ -21,20 +21,7 @@ namespace HackTheWorld
         private Bitmap _bmp;
         private LinkedList<Keys> _pressedKeys;
         private LinkedList<MouseButtons> _mouseButtons;
-        //カーソルを変えられるようにしたいけどできないよん
-       // delegate void mouseCursor(Cursor cursor);
-       //internal void setCursor(Cursor cursor)
-       // {
-       //     if (this.InvokeRequired)
-       //     {
-       //         mouseCursor d = new mouseCursor(setCursor);
-       //         this.Invoke(d, new object[] { cursor });
-       //     }
-       //     else
-       //     {
-       //         this.Cursor = cursor;
-       //     }
-       // }
+
         public Form1()
         {
             InitializeComponent();
@@ -46,10 +33,11 @@ namespace HackTheWorld
             this.FormBorderStyle = FormBorderStyle.FixedSingle;//サイズの固定
             this.MaximizeBox = false;
 
+            WindowContext = this;
+
             Shown += (sender, e) => { Task.Run(() => { MainProcess(); }); };
 
         }
-
 
         private void MainProcess()
         {
@@ -88,6 +76,13 @@ namespace HackTheWorld
                 GraphicsContext.DrawString(debugFps, font, Brushes.Black, ScreenWidth - 140, 20);
                 GraphicsContext.DrawString(debugSeconds, font, Brushes.Black, ScreenWidth - 140, 40);
 #endif
+
+//                if (new Rectangle(0, 0, 500, 500).Contains(Input.Mouse.Position))
+//                {
+//                    Invoke((Action)(() => {
+//                        System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.IBeam;
+//                    }));
+//                }
 
                 // 画面の更新
                 if (InvokeRequired)
