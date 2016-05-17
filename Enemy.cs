@@ -5,6 +5,8 @@ namespace HackTheWorld
 {
     class Enemy : GameObject
     {
+        public Enemy() : base() { }
+
         public Enemy(float x, float y) : base(x, y)
         {
             ObjectType = ObjectType.Enemy;
