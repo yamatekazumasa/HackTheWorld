@@ -132,23 +132,30 @@ namespace HackTheWorld
                     {
                         var pblock = new PBlock(CellSize * ix, CellSize * iy);
                         pblock.SetProcesses(new[] {
-                            new Process((obj, dt) => { } , 0.0f),
+                            new Process((obj, dt) => { } , 1.0f),
 
-                            new Process((obj, dt) => { obj.VY = -CellSize; }, 3.0f),
-                            new Process((obj, dt) => { obj.VY = 0; } , 2.0f),
+                            new Process((obj, dt) => { obj.VY = -CellSize; }),
+                            new Process((obj, dt) => { obj.Move(dt); }, 3.0f),
+                            new Process((obj, dt) => { obj.VY = 0; }),
+                            new Process((obj, dt) => { } , 1.0f),
 
-                            new Process((obj, dt) => { obj.VY = +CellSize; }, 1.0f),
-                            new Process((obj, dt) => { } , 2.0f),
-                            new Process((obj, dt) => { obj.VY = 0; } , 0.01f),
+                            new Process((obj, dt) => { obj.VY = +CellSize; }),
+                            new Process((obj, dt) => { obj.Move(dt); }, 3.0f),
+                            new Process((obj, dt) => { obj.VY = 0; }),
 
-                            new Process((obj, dt) => { obj.VX = -CellSize; }, 1.0f),
-                            new Process((obj, dt) => { obj.VX = 0; } , 2.0f),
+                            new Process((obj, dt) => { obj.VX = +CellSize; }),
+                            new Process((obj, dt) => { obj.Move(dt); }, 3.0f),
+                            new Process((obj, dt) => { obj.VX = 0; }),
 
-                            new Process((obj, dt) => { } , 2.0f),
-                            new Process((obj, dt) => { obj.Y -= dt*CellSize; }, 3.0f),
-                            new Process((obj, dt) => { obj.Y += dt*CellSize; }, 3.0f),
-                            new Process((obj, dt) => { obj.X += dt*CellSize; }, 3.0f),
-                            new Process((obj, dt) => { obj.X -= dt*CellSize; }, 3.0f),
+                            new Process((obj, dt) => { obj.VX = -CellSize; }),
+                            new Process((obj, dt) => { obj.Move(dt); }, 3.0f),
+                            new Process((obj, dt) => { obj.VX = 0; }),
+
+//                            new Process((obj, dt) => { } , 2.0f),
+//                            new Process((obj, dt) => { obj.Y -= dt*CellSize; }, 3.0f),
+//                            new Process((obj, dt) => { obj.Y += dt*CellSize; }, 3.0f),
+//                            new Process((obj, dt) => { obj.X += dt*CellSize; }, 3.0f),
+//                            new Process((obj, dt) => { obj.X -= dt*CellSize; }, 3.0f),
                         });
                         stage.Objects.Add(pblock);
                         stage.Blocks.Add(pblock);

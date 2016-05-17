@@ -24,13 +24,10 @@ namespace HackTheWorld
             // キーで動かす部分
             if (Input.Left.Pressed)  X -= speed * dt;
             if (Input.Right.Pressed) X += speed * dt;
-//            if (Input.Left.Pressed)  VX = -speed;
-//            if (Input.Right.Pressed) VX = speed;
-//            if (Input.Left.Pressed == Input.Right.Pressed) VX = 0;
             if (Input.Up.Pushed && OnGround) VY = jumpspeed;
             
             // 自動で動く部分
-            VY += Gravity * dt;
+            if(!OnGround) VY += Gravity * dt;
             Move(dt);
         }
 
@@ -42,14 +39,12 @@ namespace HackTheWorld
         /// <returns>乗っていたらtrue、乗っていなかったらfalseを返す。</returns>
         public virtual bool StandOn(GameObject obj)
         {
-            return MinX < obj.MaxX && MaxX > obj.MinX &&
-                   MaxY > obj.MinY - 1 && MaxY <= obj.MinY;//この行自信ないです
+            return MinX < obj.MaxX && MaxX > obj.MinX && (int)MaxY == (int)obj.MinY;
         }
 
         public virtual bool HitHeadOn(GameObject obj)
         {
-            return MinX < obj.MaxX && MaxX > obj.MinX &&
-                   MinY > obj.MaxY - 1 && MinY <= obj.MaxY;//この行自信ないです
+            return MinX < obj.MaxX && MaxX > obj.MinX && (int)MinY == (int)obj.MaxY;//この行自信ないです
         }
 
         public override void Draw()

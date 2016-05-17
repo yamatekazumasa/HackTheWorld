@@ -38,6 +38,14 @@ namespace HackTheWorld
         Vector Size { get; set; }
         bool Clicked { get; }
         bool IsAlive { get; }
+        void Move(float dt);
+        void Rotate(double degree);
+        void Accelerate(double a);
+        bool Contains(Point p);
+        bool Contains(GameObject obj);
+        bool Intersects(GameObject obj);
+        bool CollidesWith(GameObject obj);
+        bool InWindow();
     }
 
     static partial class Extensions
