@@ -11,6 +11,10 @@ using HackTheWorld;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// 編集可能インターフェース。
+    /// CodeBox で編集するオブジェクトに継承させる。
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public interface IEditable
     {
@@ -82,6 +86,7 @@ namespace HackTheWorld
 
         public static void Update(this IEditable self, float dt)
         {
+            if (self.Processes == null) return;
             var process = self.Processes[self.ProcessPtr];
             if (process.ElapsedTime*1000 <= process.MilliSeconds)
             {

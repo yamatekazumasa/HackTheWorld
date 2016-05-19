@@ -60,12 +60,12 @@ namespace HackTheWorld
 
             if (Input.Space.Pushed) _isFocused = true;
 
-            if (Input.LeftButton.Pushed && !Contains(Input.Mouse.Position) && !_subject.Contains(Input.Mouse.Position))
+            if (Input.Mouse.Left.Pushed && !Contains(Input.Mouse.Position) && !_subject.Contains(Input.Mouse.Position))
             {
                 _isFocused = false;
             }
 
-            if (Input.LeftButton.Pressed && Contains(Input.Mouse.Position))
+            if (Input.Mouse.Left.Pressed && Contains(Input.Mouse.Position))
             {
                 _isFocused = true;
                 int l = (int)(Input.Mouse.Y - MinY) / _lineHeight;
@@ -133,10 +133,10 @@ namespace HackTheWorld
             }
 
             // 選択範囲の設定
-            if (Input.Shift.Pressed || (Input.LeftButton.Pressed && Contains(Input.Mouse.Position)))
+            if (Input.Shift.Pressed || (Input.Mouse.Left.Pressed && Contains(Input.Mouse.Position)))
             {
                 if (_selectedBegin == -1) _selectedBegin = current.Cursor;
-                if(!Input.LeftButton.Pushed) _selectedEnd = current.Cursor;
+                if(!Input.Mouse.Left.Pushed) _selectedEnd = current.Cursor;
             }
             if (current.Cursor != _selectedEnd)
             {
@@ -156,9 +156,9 @@ namespace HackTheWorld
                 }
                 if (Input.R.Pushed)
                 {
-                    StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
-                    _history[_current] = JsonConvert.DeserializeObject<CodeState>(sr.ReadToEnd());
-                    sr.Close();
+//                    StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
+//                    _history[_current] = JsonConvert.DeserializeObject<CodeState>(sr.ReadToEnd());
+//                    sr.Close();
                 }
                 if (Input.S.Pushed)
                 {

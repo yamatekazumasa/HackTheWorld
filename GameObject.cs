@@ -205,7 +205,7 @@ namespace HackTheWorld
             set { Height = value; }
         }
 
-        public bool Clicked => Contains(Input.Mouse.Position) && Input.LeftButton.Pushed;
+        public bool Clicked => Contains(Input.Mouse.Position) && Input.Mouse.Left.Pushed;
 
 
         /// <summary>

@@ -4,69 +4,192 @@ using System.Windows.Forms;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// 入力を静的に取得するクラス。
+    /// </summary>
     public static class Input
     {
+        /// <summary>
+        /// キーボード入力を取得する。
+        /// </summary>
         public class Key
         {
+            /// <summary>
+            /// 一つ前のフレームでキーが押されていたか否か。
+            /// </summary>
             private bool _wasPressed;
+            /// <summary>
+            /// 現在キーが押されているか否か。
+            /// </summary>
             private bool _isPressed;
 
+            /// <summary>
+            /// 現在キーが押下されているかどうかを見て、自身の状態を更新する。
+            /// </summary>
+            /// <param name="isPressed">現在キーが押されているか否か。</param>
             public void Append(bool isPressed)
             {
                 _wasPressed = _isPressed;
                 _isPressed = isPressed;
             }
 
+            /// <summary>
+            /// 前後の状態は関係なく、現在キーが押されていたら true を返す。
+            /// </summary>
             public bool Pressed => _isPressed;
+            /// <summary>
+            /// 一つ前のフレームでキーが押されておらず、現在のフレームで初めてキーが押された場合に true を返す。
+            /// </summary>
             public bool Pushed => !_wasPressed && _isPressed;
+            /// <summary>
+            /// 一つ前のフレームでキーが押されており、現在のフレームでキーが離された場合に true を返す。
+            /// </summary>
+            public bool Released => _wasPressed && !_isPressed;
         }
 
-        public class MouseButton
+        /// <summary>
+        /// マウスの座標とボタンの状態を取得する。
+        /// </summary>
+        public static class Mouse
         {
-            private bool _wasPressed;
-            private bool _isPressed;
+            /// <summary>
+            /// 現在のマウスのウィンドウに対する相対座標。
+            /// </summary>
+            private static Vector _position;
+            /// <summary>
+            /// 一つ前のフレームでのマウスのウィンドウに対する相対座標。
+            /// </summary>
+            private static Vector _previousPosition;
+            /// <summary>
+            /// マウスの左ボタン。
+            /// </summary>
+            public static MouseButton Left { get; } = new MouseButton();
+            /// <summary>
+            /// マウスの右ボタン。
+            /// </summary>
+            public static MouseButton Right { get; } = new MouseButton();
 
-            public void Append(bool isPressed)
+            /// <summary>
+            /// マウスのボタン入力を取得する。
+            /// </summary>
+            public class MouseButton
             {
-                _wasPressed = _isPressed;
-                _isPressed = isPressed;
+                /// <summary>
+                /// 一つ前のフレームでボタンが押されていたか否か。
+                /// </summary>
+                private bool _wasPressed;
+                /// <summary>
+                /// 現在ボタンが押されているか否か。
+                /// </summary>
+                private bool _isPressed;
+
+                /// <summary>
+                /// 現在マウスボタンが押下されているかどうかを見て、自身の状態を更新する。
+                /// </summary>
+                /// <param name="isPressed">現在ボタンが押されているか否か。</param>
+                public void Append(bool isPressed)
+                {
+                    _wasPressed = _isPressed;
+                    _isPressed = isPressed;
+                }
+
+                /// <summary>
+                /// 前後の状態は関係なく、現在ボタンが押されていたら true を返す。
+                /// </summary>
+                public bool Pressed => _isPressed;
+                /// <summary>
+                /// 一つ前のフレームでボタンが押されておらず、現在のフレームで初めてボタンが押された場合に true を返す。
+                /// </summary>
+                public bool Pushed => !_wasPressed && _isPressed;
+                /// <summary>
+                /// 一つ前のフレームでボタンが押されており、現在のフレームでボタンが離された場合に true を返す。
+                /// </summary>
+                public bool Released => _wasPressed && !_isPressed;
             }
 
-            public bool Pressed => _isPressed;
-            public bool Pushed => !_wasPressed && _isPressed;
-        }
-
-        public class MousePosition
-        {
-            private Vector _position;
-            public void Append(Vector mousePosition, Vector windowPosition)
+            /// <summary>
+            /// マウスポインタの座標の更新。
+            /// </summary>
+            public static void Update(Point mousePosition, Point windowPosition)
             {
-                _position = mousePosition - windowPosition - new Vector(9, 30);
+                _previousPosition = _position;
+                _position = mousePosition.ToVector() - windowPosition.ToVector() - new Vector(9, 30);
             }
 
-            public int X => (int)_position.X;
-            public int Y => (int)_position.Y;
-            public Vector Position => _position;
+            /// <summary>
+            /// 押されたボタンの状態を更新する。
+            /// </summary>
+            /// <param name="e"></param>
+            public static void ButtonAppend(MouseEventArgs e)
+            {
+                if (e.Button == MouseButtons.Left) Left.Append(true);
+                if (e.Button == MouseButtons.Right) Right.Append(true);
+            }
+            /// <summary>
+            /// 離されたボタンの状態を更新する。
+            /// </summary>
+            /// <param name="e"></param>
+            public static void ButtonDisappend(MouseEventArgs e)
+            {
+                if (e.Button == MouseButtons.Left) Left.Append(false);
+                if (e.Button == MouseButtons.Right) Right.Append(false);
+            }
+
+            /// <summary>
+            /// マウスポインタの X 座標。
+            /// </summary>
+            public static int X => (int)_position.X;
+            /// <summary>
+            /// マウスポインタの Y 座標。
+            /// </summary>
+            public static int Y => (int)_position.Y;
+            /// <summary>
+            /// マウスポインタの座標。
+            /// </summary>
+            public static Vector Position => _position;
+            /// <summary>
+            /// マウスポインタが動かされたか否か。
+            /// </summary>
+            public static bool Moved => _position != _previousPosition;
         }
 
-
-        public class KeyBoards
+        /// <summary>
+        /// キーボード入力を取得する。
+        /// </summary>
+        public static class KeyBoard
         {
-            char _buffer;
+            /// <summary>
+            /// 押された文字。
+            /// キーボードのキーではなく、実際に入力された文字が入る。
+            /// 例えば Shift+'a' が押された場合は 'A' が入る。
+            /// </summary>
+            static char _buffer;
 
-            public void Append(char c)
+            /// <summary>
+            /// 状態の更新。
+            /// </summary>
+            public static void Append(char c)
             {
                 _buffer = c;
             }
 
-            public void Clear()
+            /// <summary>
+            /// null 値で更新（clear）。
+            /// </summary>
+            public static void Clear()
             {
                 _buffer = '\0';
             }
 
-            public bool IsDefined => _buffer != '\0';
+            /// <summary>
+            /// 押された文字があるか。
+            /// </summary>
+            public static bool IsDefined => _buffer != '\0';
 
-            public char TypedChar => _buffer;
+            /// <summary>
+            /// 押された文字。
+            /// </summary>
+            public static char TypedChar => _buffer;
 
         }
 
@@ -94,17 +217,6 @@ namespace HackTheWorld
             Delete.Append(pressedKeys.Contains(Keys.Delete));
         }
 
-        public static void Update(LinkedList<MouseButtons> mouseButtons)
-        {
-            LeftButton.Append(mouseButtons.Contains(MouseButtons.Left));
-            RightButton.Append(mouseButtons.Contains(MouseButtons.Right));
-        }
-
-        public static void Update(Point mousePosition, Point windowPosition)
-        {
-            Mouse.Append(mousePosition.ToVector(), windowPosition.ToVector());
-        }
-
         public static Key Up { get; } = new Key();
         public static Key Down { get; } = new Key();
         public static Key Left { get; } = new Key();
@@ -125,11 +237,5 @@ namespace HackTheWorld
         public static Key Control { get; } = new Key();
         public static Key Back { get; } = new Key();
         public static Key Delete { get; } = new Key();
-
-        public static MousePosition Mouse { get; } = new MousePosition();
-        public static MouseButton LeftButton { get; } = new MouseButton();
-        public static MouseButton RightButton { get; } = new MouseButton();
-        public static KeyBoards KeyBoard { get; } = new KeyBoards();
-        
     }
 }

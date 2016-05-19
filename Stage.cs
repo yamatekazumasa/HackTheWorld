@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -63,44 +64,45 @@ namespace HackTheWorld
         {
             if (!File.Exists(@".\stage\test.json")) return null;
             StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
-            Stage tmp = JsonConvert.DeserializeObject<Stage>(sr.ReadToEnd());
-            Stage stage = new Stage(tmp.Rows, tmp.Cols);
-            foreach (var obj in tmp.Objects)
+            var tmp = JObject.Parse(sr.ReadToEnd());
+            Stage stage = new Stage((int)tmp["rows"], (int)tmp["cols"]);
+            foreach (var obj in tmp["objects"])
             {
-                switch (obj.ObjectType)
+                switch ((string)obj["type"])
                 {
-                    case ObjectType.Block:
+                    case "Block":
                         {
-                            if (obj.IsEditable)
+                            if ((bool)obj["edit"])
                             {
-                                var b = new PBlock(obj.X, obj.Y);
+                                var b = new PBlock((float)obj["x"], (float)obj["y"]);
+                                b.Codebox.Current.Text = new StringBuilder((string)obj["code"]);
                                 stage.Blocks.Add(b);
                                 stage.EditableObjects.Add(b);
                                 stage.Objects.Add(b);
                             }
                             else
                             {
-                                Block b = new Block(obj.X, obj.Y);
+                                Block b = new Block((float)obj["x"], (float)obj["y"]);
                                 stage.Blocks.Add(b);
                                 stage.Objects.Add(b);
                             }
                             break;
                         }
-                    case ObjectType.Enemy:
+                    case "Enemy":
                         {
-                            Enemy e = new Enemy(obj.X, obj.Y, obj.VX, obj.VY, obj.W, obj.H);
+                            Enemy e = new Enemy((float)obj["x"], (float)obj["y"], (float)obj["vx"], (float)obj["vy"], (float)obj["width"], (float)obj["height"]);
                             stage.Enemies.Add(e);
                             stage.Objects.Add(e);
                             break;
                         }
-                    case ObjectType.Item:
+                    case "Item":
                     {
-                        Item i = new Item(obj.X, obj.Y, 0, 0, obj.W, obj.H);
+                        Item i = new Item((float)obj["x"], (float)obj["y"], 0, 0, (float)obj["width"], (float)obj["height"]);
                         stage.Items.Add(i);
                         stage.Objects.Add(i);
                         break;
                     }
-                    case ObjectType.Player:
+                    case "Player":
                     {
                         var p = new Player();
                         stage.Player = p;
