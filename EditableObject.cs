@@ -9,12 +9,13 @@ using static HackTheWorld.Constants;
 namespace HackTheWorld
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class EditableObject : GameObject, IEnumerable
+    public  class EditableObject : GameObject, IEnumerable
     {
         private List<Process> _processes;
         private IEnumerator _routine;
         private float _dt;
         private CodeBox _codebox;
+
 
         public bool IsFocused => _codebox.IsFocused;
         [JsonProperty("code", Order = 10)]
@@ -50,6 +51,10 @@ namespace HackTheWorld
         {
             // ここにstring型をProcess型に変換する処理を書く。
             string str = _codebox.GetString();
+            CodeParser.yomitori(str);
+            //setArray(str);
+            //ArrayToArray(strArray);
+            //setprocess(strArray);
             // SetProcesses(new Process[] {});
             if (str.Contains("this.X += 1")) X += CellSize;
             _routine = GetEnumerator();

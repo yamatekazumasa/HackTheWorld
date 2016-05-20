@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 namespace HackTheWorld
 {
     //ぺいぺい
-    public static class Kakikae
+    public static class CodeParser
     {
         //forとかifとかのかっこの組が配列の何番目か記録しておきたい
         //いいやり方が思いつかない
@@ -21,7 +21,7 @@ namespace HackTheWorld
         //const int constn = 10;
         //public static Vector[ ] kakkoset = new Vector[constn];
         //static int kakkocount = 0;
-
+        public static ArrayList strArray = new ArrayList( );
         //arraylistのなかにTuple<int,int>をもたせる
         public static ArrayList forArray = new ArrayList( );
         public static ArrayList ifArray = new ArrayList( );

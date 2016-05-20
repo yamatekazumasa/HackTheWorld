@@ -4,12 +4,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
 
+
+
 namespace HackTheWorld
 {
     class EditScene : Scene
     {
         private MenuItem _backButton;
         private MenuItem _startButton;
+        private MenuItem _runButton;
         private List<MenuItem> _menuItem;
         private Stage _stage;
 
@@ -27,7 +30,12 @@ namespace HackTheWorld
                 Size = new Vector(50, 50),
                 Position = new Vector(75, 500)
             };
-            _menuItem = new List<MenuItem> {_backButton, _startButton};
+            _runButton = new MenuItem(Image.FromFile(@"run.PNG"))
+            {
+                Size = new Vector(75 , 75) ,
+                Position = new Vector(125 , 500)
+            };
+            _menuItem = new List<MenuItem> {_backButton, _startButton,_runButton};
 
             _stage = Stage.CreateDemoStage();
         }
@@ -40,6 +48,7 @@ namespace HackTheWorld
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_startButton.Clicked) Scene.Push(new GameScene(_stage));
+            if(_runButton.Clicked) 
             if (Input.X.Pushed || Input.Back.Pushed)
             {
                 bool isFocused = false;
@@ -78,6 +87,7 @@ namespace HackTheWorld
             }
             _backButton.Draw();
             _startButton.Draw();
+            _runButton.Draw( );
         }
     }
 }
