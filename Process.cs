@@ -8,17 +8,26 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    public delegate void ExecuteWith(EditableObject obj, float dt);
+    public delegate void ExecuteWith(IEditable obj, float dt);
 
     public class Process
     {
-        public float MilliSeconds { get; private set; }
-        public ExecuteWith ExecuteWith;
+        public float MilliSeconds { get; }
+        public ExecuteWith ExecuteWith { get; }
+        public float ElapsedTime { get; set; }
+
+        public Process(ExecuteWith executeWith)
+        {
+            ExecuteWith = executeWith;
+            MilliSeconds = 0;
+            ElapsedTime = 0;
+        }
 
         public Process(ExecuteWith executeWith, float seconds)
         {
-            this.ExecuteWith = executeWith;
-            this.MilliSeconds = seconds * 1000;
+            ExecuteWith = executeWith;
+            MilliSeconds = seconds * 1000;
+            ElapsedTime = 0;
         }
 
     }

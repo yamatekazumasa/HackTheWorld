@@ -52,9 +52,9 @@ namespace HackTheWorld
             if (Input.X.Pushed || Input.Back.Pushed)
             {
                 bool isFocused = false;
-                foreach (var obj in _stage.PBlocks)
+                foreach (var obj in _stage.EditableObjects)
                 {
-                    isFocused = isFocused || obj.IsFocused;
+                    isFocused = isFocused || obj.IsFocused();
                 }
                 if (!isFocused) Scene.Pop();
             }
@@ -72,7 +72,7 @@ namespace HackTheWorld
                 }
             }
 
-            foreach (var b in _stage.PBlocks) b.Update(dt);
+            foreach (var b in _stage.EditableObjects) b.Update(dt);
 
             if (Input.Control.Pressed)
             {
