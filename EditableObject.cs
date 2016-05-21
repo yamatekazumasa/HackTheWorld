@@ -21,7 +21,7 @@ namespace HackTheWorld
         /// <summary>
         /// 自身のコードを編集するテキストエディタ。
         /// </summary>
-        public CodeBox Codebox { get; private set; }
+        public CodeBox Codebox { get; set; }
         /// <summary>
         /// 自身の動作を格納する。
         /// </summary>
@@ -45,6 +45,7 @@ namespace HackTheWorld
             base.Initialize();
             CanExecute = false;
             Codebox = new CodeBox(this) {Position = Position + new Vector(50, -50)};
+            Processes = new List<Process>();
         }
 
         public override void Update(float dt)

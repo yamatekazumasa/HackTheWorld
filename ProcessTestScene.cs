@@ -38,7 +38,8 @@ namespace HackTheWorld
                 new Process((obj, dt) => { obj.Size = new Vector(30, 30); }, 2.0f),
                 new Process((obj, dt) => { obj.Size = new Vector(300, 300); }, 1.0f)
             });
-            _pobj.Compile();
+            _pobj.Compile(new Stage());
+            _pobj.Execute();
 
         }
 

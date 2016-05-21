@@ -49,6 +49,7 @@ namespace HackTheWorld
         {
             X = x;
             Y = y;
+            Size = new Vector(CellSize, CellSize);
             Initialize();
         }
 
@@ -65,6 +66,7 @@ namespace HackTheWorld
             Y = y;
             VX = vx;
             VY = vy;
+            Size = new Vector(CellSize, CellSize);
             Initialize();
         }
 
@@ -90,6 +92,14 @@ namespace HackTheWorld
 
         #endregion
 
+
+        /// <summary>
+        /// 初期化用。
+        /// </summary>
+        public virtual void Initialize()
+        {
+            _isAlive = true;
+        }
 
         #region アクセサ
         /// <summary>
@@ -299,16 +309,6 @@ namespace HackTheWorld
 
         #endregion
 
-
-        /// <summary>
-        /// 初期化用。
-        /// </summary>
-        public virtual void Initialize()
-        {
-            _isAlive = true;
-            Size = new Vector(CellSize, CellSize);
-        }
-
         #region GameObject専用
 
         /// <summary>
@@ -394,6 +394,22 @@ namespace HackTheWorld
         }
 
         /// <summary>
+        /// 対象のオブジェクトがある距離より近づいたときに true を返す。
+        /// </summary>
+        public virtual bool Nearby(GameObject obj)
+        {
+            return (Position - obj.Position).Length < 200;
+        }
+
+        /// <summary>
+        /// 乗っかられたときに true を返す。
+        /// </summary>
+        public bool RiddenBy(GameObject obj)
+        {
+            return MinX < obj.MaxX && MaxX < obj.MinX && (int)MinY == (int)obj.MaxY;
+        }
+
+        /// <summary>
         /// オブジェクトがウィンドウの中に納まっているか判定する。
         /// </summary>
         /// <returns>オブジェクトがウィンドウ内にあればture、ウインドウ外にあればfalseを返す。</returns>
@@ -470,7 +486,10 @@ namespace HackTheWorld
         /// <summary>
         /// 毎フレームの時間を受け取って、その時間分動く。
         /// </summary>
-        public virtual void Update(float dt) { }
+        public virtual void Update(float dt)
+        {
+            Move(dt);
+        }
 
         /// <summary>
         /// 自分が持っている座標に自分が持っている大きさの矩形を描画する。

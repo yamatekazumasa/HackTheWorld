@@ -12,7 +12,7 @@ namespace HackTheWorld
     public class PBlock : Block, IEditable
     {
         public int ProcessPtr { get; set; }
-        public CodeBox Codebox { get; private set; }
+        public CodeBox Codebox { get; set; }
         public List<Process> Processes { get; set; }
         public bool CanExecute { get; set; }
 
@@ -27,6 +27,7 @@ namespace HackTheWorld
             base.Initialize();
             CanExecute = false;
             Codebox = new CodeBox(this) { Position = Position + new Vector(70, -70) };
+            Processes = new List<Process>();
         }
 
         public override void Update(float dt)

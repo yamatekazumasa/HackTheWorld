@@ -32,6 +32,7 @@ namespace HackTheWorld
         public List<Block> Blocks { get; set; }
         public List<IEditable> EditableObjects { get; set; }
         public List<Enemy> Enemies { get; set; }
+        public List<Bullet> Bullets { get; set; }
         public List<Item> Items { get; set; }
 
         public Stage()
@@ -43,6 +44,7 @@ namespace HackTheWorld
             Blocks = new List<Block>();
             EditableObjects = new List<IEditable>();
             Enemies = new List<Enemy>();
+            Bullets = new List<Bullet>();
             Items = new List<Item>();
         }
 
@@ -58,6 +60,7 @@ namespace HackTheWorld
             Blocks = new List<Block>();
             EditableObjects = new List<IEditable>();
             Enemies = new List<Enemy>();
+            Bullets = new List<Bullet>();
             Items = new List<Item>();
         }
 
@@ -188,11 +191,6 @@ namespace HackTheWorld
                             new Process((obj, dt) => { obj.Move(dt); }, 3.0f),
                             new Process((obj, dt) => { obj.VX = 0; }),
 
-//                            new Process((obj, dt) => { } , 2.0f),
-//                            new Process((obj, dt) => { obj.Y -= dt*CellSize; }, 3.0f),
-//                            new Process((obj, dt) => { obj.Y += dt*CellSize; }, 3.0f),
-//                            new Process((obj, dt) => { obj.X += dt*CellSize; }, 3.0f),
-//                            new Process((obj, dt) => { obj.X -= dt*CellSize; }, 3.0f),
                         });
                         stage.Objects.Add(pblock);
                         stage.Blocks.Add(pblock);
@@ -203,6 +201,13 @@ namespace HackTheWorld
                         var enemy = new Enemy(CellSize * ix, CellSize * iy);
                         stage.Objects.Add(enemy);
                         stage.Enemies.Add(enemy);
+                    }
+                    if (Map[iy, ix] == 21)
+                    {
+                        var enemy = new EditableEnemy(CellSize * ix, CellSize * iy);
+                        stage.Objects.Add(enemy);
+                        stage.Enemies.Add(enemy);
+                        stage.EditableObjects.Add(enemy);
                     }
                     if (Map[iy, ix] == 3)
                     {

@@ -50,6 +50,15 @@ namespace HackTheWorld
         }
 
         /// <summary>
+        /// ベクトルの向きを変えずに長さを指定する。
+        /// </summary>
+        /// <param name="d">ベクトルの長さ。</param>
+        public Vector SetLength(double d)
+        {
+            return (d/Length)*this;
+        }
+
+        /// <summary>
         /// ベクトルの長さ。
         /// </summary>
         public double Length => Math.Sqrt(X * X + Y * Y);

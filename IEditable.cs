@@ -25,7 +25,7 @@ namespace HackTheWorld
         /// <summary>
         /// 自身のコードを編集するテキストエディタ。
         /// </summary>
-        CodeBox Codebox { get; }
+        CodeBox Codebox { get; set; }
         /// <summary>
         /// 自身の動作を格納する。
         /// </summary>
@@ -61,6 +61,8 @@ namespace HackTheWorld
         bool Contains(GameObject obj);
         bool Intersects(GameObject obj);
         bool CollidesWith(GameObject obj);
+        bool RiddenBy(GameObject obj);
+        bool Nearby(GameObject obj);
         bool InWindow();
     }
 
@@ -88,14 +90,19 @@ namespace HackTheWorld
 
         public static void AddProcess(this IEditable self, Process process)
         {
+            if (self.Processes == null) self.Processes = new List<Process>();
             self.Processes.Add(process);
         }
 
         public static void Update(this IEditable self, float dt)
         {
-            if (self.Clicked) self.Codebox.Focus();
-            if (!self.CanExecute) self.Codebox.Update();
+            if (Scene.Current is EditScene)
+            {
+                if (self.Clicked) self.Codebox.Focus();
+                self.Codebox.Update();
+            }
             if (!self.CanExecute || self.Processes == null) return;
+
             var process = self.Processes[self.ProcessPtr];
             if (process.ElapsedTime*1000 <= process.MilliSeconds)
             {
@@ -108,16 +115,40 @@ namespace HackTheWorld
             }
         }
 
-        public static void Compile(this IEditable self)
+        public static void Compile(this IEditable self, Stage stage)
         {
-            self.ProcessPtr = 0;
             string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
             // self.SetProcesses(new Process[] {});
         }
 
+        public static void SetDemoProcesses(this IEditable self, Stage s)
+        {
+            for (int i=0; i<100; i++)
+            {
+                if(i%2==0) self.AddProcess(new Process((obj, dt) => { obj.VX = CellSize; }));
+                else       self.AddProcess(new Process((obj, dt) => { obj.VX = -CellSize; }));
+                self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, 2.0f));
+                self.AddProcess(new Process((obj, dt) => { obj.VX = 0; }));
+                self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, 0.25f));
+                self.AddProcess(new Process((obj, dt) => {
+                    if (obj.Nearby(s.Player))
+                    {
+                        var b = new Bullet(self.X, self.MidY, -50, 0, 10, 10);
+                        s.Bullets.Add(b);
+                        s.Objects.Add(b);
+                    }
+                }));
+                self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, 0.25f));
+            }
+
+        }
+
+
+
         public static void Execute(this IEditable self)
         {
+            self.ProcessPtr = 0;
             self.CanExecute = true;
         }
 

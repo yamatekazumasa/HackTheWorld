@@ -25,6 +25,7 @@ namespace HackTheWorld
         private List<Block> _blocks;
         private List<IEditable> _editableObjects;
         private List<Enemy> _enemies;
+        private List<Bullet> _bullets;
         private List<Item> _items;
 
         public GameScene()
@@ -70,6 +71,7 @@ namespace HackTheWorld
             _blocks = s.Blocks;
             _editableObjects = s.EditableObjects;
             _enemies = s.Enemies;
+            _bullets = s.Bullets;
             _items = s.Items;
 
             foreach (var o in _editableObjects)
@@ -77,7 +79,12 @@ namespace HackTheWorld
                 o.ProcessPtr = 0;
                 if (o.Processes != null)
                 {
-                    o.Compile();
+                    o.Compile(s);
+                    o.Execute();
+                }
+                else
+                {
+                    o.SetDemoProcesses(s);
                     o.Execute();
                 }
             }
@@ -149,6 +156,14 @@ namespace HackTheWorld
             }
 
             _player.Update(dt);
+            foreach (var enemy in _enemies)
+            {
+                enemy.Update(dt);
+            }
+            foreach (var bullet in _bullets)
+            {
+                bullet.Update(dt);
+            }
             foreach (var obj in _editableObjects)
             {
                 obj.Update(dt);
@@ -172,7 +187,19 @@ namespace HackTheWorld
             // 死亡判定
             foreach (var enemy in _enemies)
             {
-                if (_player.Intersects(enemy)) _player.Die();
+                if (_player.Intersects(enemy))
+                {
+                    _player.Die();
+                    enemy.Die();
+                }
+            }
+            foreach (var bullet in _bullets)
+            {
+                if (_player.Intersects(bullet))
+                {
+                    _player.Die();
+                    bullet.Die();
+                }
             }
 
             // 画面のクリア
