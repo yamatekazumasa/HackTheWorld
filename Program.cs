@@ -6,6 +6,9 @@ using System.Windows.Forms;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// アプリケーションのメイン エントリ ポイントです。
+    /// </summary>
     static class Program
     {
         /// <summary>

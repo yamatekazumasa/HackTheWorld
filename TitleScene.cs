@@ -9,6 +9,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// タイトルシーン
+    /// </summary>
     class TitleScene : Scene
     {
         private Image[] _menuImages;

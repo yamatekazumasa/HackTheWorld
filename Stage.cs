@@ -10,12 +10,20 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// ステージの状態を保存するクラス。
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class Stage
     {
-
+        /// <summary>
+        /// 横のマス数
+        /// </summary>
         [JsonProperty("rows")]
         public int Rows { get; set; }
+        /// <summary>
+        /// 縦のマス数
+        /// </summary>
         [JsonProperty("cols")]
         public int Cols { get; set; }
         [JsonProperty("objects")]
@@ -38,6 +46,9 @@ namespace HackTheWorld
             Items = new List<Item>();
         }
 
+        /// <summary>
+        /// 縦と横のマス数を受け取ってステージを作成する。
+        /// </summary>
         public Stage(int r, int c)
         {
             Rows = r;
@@ -57,7 +68,9 @@ namespace HackTheWorld
         /// </summary>
         public Stage Replica => Parse(JsonConvert.SerializeObject(this));
 
-        // 本来ならゲーム内にはない処理
+        /// <summary>
+        /// ステージを保存する。
+        /// </summary>
         public static void Save(Stage stage)
         {
             string json = JsonConvert.SerializeObject(stage, Formatting.Indented);
@@ -67,6 +80,9 @@ namespace HackTheWorld
             sw.Close();
         }
 
+        /// <summary>
+        /// 保存されたステージを読み込む。
+        /// </summary>
         public static Stage Load()
         {
             if (!File.Exists(@".\stage\test.json")) return null;
@@ -76,6 +92,9 @@ namespace HackTheWorld
             return Parse(json);
         }
 
+        /// <summary>
+        /// json をステージに変換する。
+        /// </summary>
         public static Stage Parse(string json)
         {
             var tmp = JObject.Parse(json);
@@ -129,6 +148,9 @@ namespace HackTheWorld
             return stage;
         }
 
+        /// <summary>
+        /// デモステージを作成する。
+        /// </summary>
         public static Stage CreateDemoStage()
         {
             Stage stage = new Stage(CellNumX, CellNumY);

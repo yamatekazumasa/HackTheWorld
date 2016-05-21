@@ -62,6 +62,7 @@ namespace HackTheWorld
             _menuItem = new List<MenuItem> {_backButton, _resetButton, _pauseButton};
 
             // CodeParser ができていないとeditableObjectsが機能しない。
+            // shallow copy だとコンティニュー時に途中からスタートになる。
             var s = _stage.Replica;
             _objects = s.Objects;
             _player = s.Player;

@@ -7,6 +7,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// EditableObject の動作確認をするシーン。
+    /// </summary>
     class ProcessTestScene : Scene
     {
         Image _img;
