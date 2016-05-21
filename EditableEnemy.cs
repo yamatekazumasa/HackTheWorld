@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// 編集可能な敵。
+    /// IEditable.SetDemoProcesses()によって動作を付与している。
+    /// </summary>
     class EditableEnemy : Enemy, IEditable
     {
         public int ProcessPtr { get; set; }
