@@ -157,4 +157,21 @@ namespace HackTheWorld
 
     }
 
+    /// <summary>
+    /// 拡張メソッド用
+    /// </summary>
+    public static partial class Extensions
+    {
+        public static Vector ToVector(this Point p)
+        {
+            return new Vector(p.X, p.Y);
+        }
+
+        public static Vector ToVector(this Size s)
+        {
+            return new Vector(s.Width, s.Height);
+        }
+    }
+
+
 }

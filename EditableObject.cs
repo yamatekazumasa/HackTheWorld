@@ -8,6 +8,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// IEditable のテスト用
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class EditableObject : GameObject, IEditable
     {

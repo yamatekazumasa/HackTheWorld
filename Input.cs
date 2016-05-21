@@ -119,20 +119,18 @@ namespace HackTheWorld
             /// <summary>
             /// 押されたボタンの状態を更新する。
             /// </summary>
-            /// <param name="e"></param>
-            public static void ButtonAppend(MouseEventArgs e)
+            public static void ButtonAppend(MouseButtons b)
             {
-                if (e.Button == MouseButtons.Left) Left.Append(true);
-                if (e.Button == MouseButtons.Right) Right.Append(true);
+                if (b == MouseButtons.Left) Left.Append(true);
+                if (b == MouseButtons.Right) Right.Append(true);
             }
             /// <summary>
             /// 離されたボタンの状態を更新する。
             /// </summary>
-            /// <param name="e"></param>
-            public static void ButtonDisappend(MouseEventArgs e)
+            public static void ButtonDisappend(MouseButtons b)
             {
-                if (e.Button == MouseButtons.Left) Left.Append(false);
-                if (e.Button == MouseButtons.Right) Right.Append(false);
+                if (b == MouseButtons.Left) Left.Append(false);
+                if (b == MouseButtons.Right) Right.Append(false);
             }
 
             /// <summary>

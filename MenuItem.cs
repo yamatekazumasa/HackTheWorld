@@ -8,6 +8,10 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// メニューのボタン用のクラス。
+    /// 通常時の画像と選択されているときの画像を二枚用意して使い分ける。
+    /// </summary>
     class MenuItem : GameObject
     {
         private readonly Image[] _images;
@@ -18,6 +22,7 @@ namespace HackTheWorld
             _images = new Image[2] {defaultImage, selectedImage};
             Size = new Vector(defaultImage.Width, defaultImage.Height);
         }
+
         public MenuItem(Image defaultImage)
         {
 

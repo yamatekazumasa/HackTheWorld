@@ -6,6 +6,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// IEditable な Block
+    /// </summary>
     public class PBlock : Block, IEditable
     {
         public int ProcessPtr { get; set; }

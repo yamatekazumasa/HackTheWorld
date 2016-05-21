@@ -15,7 +15,10 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-
+    /// <summary>
+    /// ゲームウィンドウ。
+    /// キー入力やマウス入力、画面への出力などユーザーとのインタラクション全般を担う。
+    /// </summary>
     public partial class Form1 : Form
     {
         private Bitmap _bmp;
@@ -111,6 +114,11 @@ namespace HackTheWorld
             _pressedKeys.Remove(e.KeyCode);
         }
 
+        /// <summary>
+        /// 文字入力取得用。
+        /// 押された文字（キーではない）を格納する。
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
             // バックスペース(\n)、SOF(\u0001)、改行(\r,\n)、タブ(\t)は除外。
@@ -118,18 +126,27 @@ namespace HackTheWorld
             Input.KeyBoard.Append(e.KeyChar);
         }
 
-        //押されているマウスのボタン
+        /// <summary>
+        /// マウスのボタン入力取得用。
+        /// 押されたボタンの状態を更新する。
+        /// </summary>
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            Input.Mouse.ButtonAppend(e);
+            Input.Mouse.ButtonAppend(e.Button);
         }
 
+        /// <summary>
+        /// マウスのボタン入力取得用。
+        /// 離されたボタンの状態を更新する。
+        /// </summary>
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            Input.Mouse.ButtonDisappend(e);
+            Input.Mouse.ButtonDisappend(e.Button);
         }
 
-
+        /// <summary>
+        /// フォームの描画時に _bmp を描画する。
+        /// </summary>
         protected override void OnPaint(PaintEventArgs e)
         {
             if (_bmp == null) return;

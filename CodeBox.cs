@@ -12,11 +12,15 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// IEditable なオブジェクトに付随して作られる。
+    /// オブジェクトのスクリプトを編集するテキストエディタ。
+    /// </summary>
     public class CodeBox : GameObject
     {
         private int _selectedBegin;
         private int _selectedEnd;
-        private int _lineHeight;
+        private readonly int _lineHeight;
         private int _cols;
         private bool _isFocused;
         private readonly Font _font;
@@ -25,7 +29,7 @@ namespace HackTheWorld
         private readonly CodeState[] _history;
         private int _origin;
         private int _current;
-        private readonly int _length = 50;
+        private readonly int _historyLength;
 
         public bool IsFocused => _isFocused;
         public void Focus() { _isFocused = true; }
@@ -41,7 +45,8 @@ namespace HackTheWorld
             _selectedBegin = -1;
             _selectedEnd = -1;
             _subject = obj;
-            _history = new CodeState[50];
+            _historyLength = 50;
+            _history = new CodeState[_historyLength];
             _font = new Font("Courier New", 12);
 
             _history[_current] = new CodeState(0, 5);
@@ -231,11 +236,17 @@ namespace HackTheWorld
             _frame++;
         }
 
+        /// <summary>
+        /// 現在表示されているコードを取得する。
+        /// </summary>
         public string GetString()
         {
             return _history[_current].Text.ToString();
         }
 
+        /// <summary>
+        /// 現在のカーソルの位置に、文字を挿入する。
+        /// </summary>
         public void Insert(char c)
         {
             if (_isFocused && !Input.Control.Pressed)
@@ -246,9 +257,12 @@ namespace HackTheWorld
             Input.KeyBoard.Clear();
         }
 
+        /// <summary>
+        /// 現在のコードの状態を保存して、履歴を次に進める。
+        /// </summary>
         public void Record(CodeState s)
         {
-            _current = (_current + 1) % _length;
+            _current = (_current + 1) % _historyLength;
             _origin = _current;
             _history[_current] = new CodeState(s.Cursor, s.MaxLine) {
                 Text = new StringBuilder(s.Text.ToString()),
@@ -256,28 +270,40 @@ namespace HackTheWorld
             };
         }
 
+        /// <summary>
+        /// 操作を一つ戻す。
+        /// </summary>
         public void Undo()
         {
-            if (_current > 0) _current = (_current + _length - 1) % _length;
+            if (_current > 0) _current = (_current + _historyLength - 1) % _historyLength;
         }
 
+        /// <summary>
+        /// 戻した操作を一つやりなおす。
+        /// </summary>
         public void Redo()
         {
-            if (_history[_current + 1] != null && _current < _origin) _current = (_current + 1) % _length;
+            if (_history[_current + 1] != null && _current < _origin) _current = (_current + 1) % _historyLength;
         }
 
+        /// <summary>
+        /// 現在のシーンが EditScene で、
+        /// 自身または紐つけられたオブジェクトがフォーカスされているとき、描画する。
+        /// </summary>
         public override void Draw()
         {
             if (_isFocused && Scene.Current is EditScene)
             {
-                if (_isFocused) GraphicsContext.FillRectangle(Brushes.Azure, this);
-                else GraphicsContext.FillRectangle(Brushes.DarkSeaGreen, this);
+                // 編集部分の描画
+                GraphicsContext.FillRectangle(Brushes.Azure, this);
                 GraphicsContext.DrawRectangle(Pens.ForestGreen, this);
+
+                // オブジェクトの名前の描画
                 GraphicsContext.FillRectangle(Brushes.LightGreen, X, Y - 20, W, 20);
                 GraphicsContext.DrawRectangle(Pens.ForestGreen, X, Y - 20, W, 20);
                 GraphicsContext.DrawString(_history[_current].Name.ToString(), _font, Brushes.Black, X, Y - 20);
 
-                string[] lines = _history[_current].Text.ToString().Split('\n');
+                string[] lines = _history[_current].Lines;
                 var pos = _history[_current].CursorPosition;
 
                 // 選択範囲の描画
@@ -313,14 +339,17 @@ namespace HackTheWorld
                         GraphicsContext.FillRectangle(Brushes.LightBlue, MinX, endY, endX, _lineHeight + 5);
                     }
                 }
+                // 文字の描画
                 for (int i = 0; i < lines.Length; i++)
                 {
                     GraphicsContext.DrawString(lines[i], _font, Brushes.Black, X, Y + i * _lineHeight);
                 }
+                // カーソルの描画
                 if (_frame % 120 > 60)
                 {
                     GraphicsContext.DrawLine(Pens.Black, X + 10 * pos.Item2 + 2, Y + _lineHeight * pos.Item1 + 2, X + 10 * pos.Item2 + 2, Y + _lineHeight * (pos.Item1 + 1) + 2);
                 }
+                // デバッグ用の文字列の描画
                 GraphicsContext.DrawString("line: " + pos.Item1 + ", cursor: " + pos.Item2 + ", maxline: " + _history[_current].MaxLine, _font, Brushes.Black, X, MaxY + 10);
             }
         }

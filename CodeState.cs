@@ -8,6 +8,9 @@ using Newtonsoft.Json.Converters;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// CodeBox に紐つけられたコードの状態を保存する。
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class CodeState
     {
@@ -25,7 +28,9 @@ namespace HackTheWorld
 
         public string[] Lines => Text.ToString().Split('\n');
 
-        // カーソルが何行目の何文字目にあるかを取得する。
+        /// <summary>
+        ///  カーソルが何行目の何文字目にあるかを取得する。
+        /// </summary>
         public Tuple<int, int> CursorPosition
         {
             get
@@ -37,7 +42,9 @@ namespace HackTheWorld
             }
         }
 
-        // 渡されたカーソルが何行目の何文字目にあるかを取得する。
+        /// <summary>
+        /// 渡されたカーソルが何行目の何文字目にあるかを取得する。
+        /// </summary>
         public Tuple<int, int> Position(int cursor)
         {
             string[] lines = Text.ToString().Split('\n');
@@ -46,6 +53,9 @@ namespace HackTheWorld
             return Tuple.Create(line, cursor - sum);
         }
 
+        /// <summary>
+        /// カーソルの位置と最大の行数を受け取って、CodeState を生成する。
+        /// </summary>
         public CodeState(int cursor, int maxLine)
         {
             Cursor = cursor;
@@ -55,6 +65,9 @@ namespace HackTheWorld
             for (int i = 0; i < maxLine - 1; i++) Text.Append('\n');
         }
 
+        /// <summary>
+        /// 文章を受け取って、自身に貼り付ける。
+        /// </summary>
         public void ReadFrom(string text)
         {
             Cursor = 0;

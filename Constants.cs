@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// 各種定数を格納する。
+    /// </summary>
     public static partial class Constants
     {
         /// <summary>
@@ -45,7 +48,23 @@ namespace HackTheWorld
             Player, Block, Enemy, Item
         }
 
+        /// <summary>
+        /// アイテムのタイプ。
+        /// </summary>
+        public enum ItemType
+        {
+            Bigger, Smaller
+        }
+
+        /// <summary>
+        /// どこからでも描画できるようにするために使っている。
+        /// 同時に別スレッドからアクセスさせると落ちるので、これに対して非同期な処理は行わないように。
+        /// </summary>
         public static Graphics GraphicsContext;
+
+        /// <summary>
+        /// クリップボードをいじるのに必要だった。
+        /// </summary>
         public static Form WindowContext;
 
     }

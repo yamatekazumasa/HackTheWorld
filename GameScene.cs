@@ -160,16 +160,15 @@ namespace HackTheWorld
             }
 
             // アイテム取得判定
-            for (int i = _items.Count; --i >= 0;)
+            foreach (var item in _items)
             {
-                if (_player.Intersects(_items[i]))
+                if (_player.Intersects(item) || item.IsAlive)
                 {
                     _player.Y -= CellSize / 4;
                     _player.Height += CellSize / 4;
                     _player.Width  = CellSize;
                     _player.jumpspeed = -CellSize * 13; // h=v^2/2g
-                    _objects.Remove(_items[i]);
-                    _items.RemoveAt(i);
+                    item.Die();
                 }
             }
 
