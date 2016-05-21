@@ -12,7 +12,6 @@ namespace HackTheWorld
         public CodeBox Codebox { get; set; }
         public List<Process> Processes { get; set; }
         public bool CanExecute { get; set; }
-        public Stage StageContext { get; set; }
 
         public EditableEnemy(float x, float y) : base(x, y) { }
 
