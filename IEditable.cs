@@ -94,6 +94,18 @@ namespace HackTheWorld
             self.Processes.Add(process);
         }
 
+        public static void AddProcess(this IEditable self, ExecuteWith executeWith, float seconds)
+        {
+            if (self.Processes == null) self.Processes = new List<Process>();
+            self.Processes.Add(new Process(executeWith, seconds));
+        }
+
+        public static void AddProcess(this IEditable self, ExecuteWith executeWith)
+        {
+            if (self.Processes == null) self.Processes = new List<Process>();
+            self.Processes.Add(new Process(executeWith));
+        }
+
         public static void Update(this IEditable self, float dt)
         {
             if (Scene.Current is EditScene)
@@ -126,20 +138,20 @@ namespace HackTheWorld
         {
             for (int i=0; i<100; i++)
             {
-                if(i%2==0) self.AddProcess(new Process((obj, dt) => { obj.VX = CellSize; }));
-                else       self.AddProcess(new Process((obj, dt) => { obj.VX = -CellSize; }));
-                self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, 2.0f));
-                self.AddProcess(new Process((obj, dt) => { obj.VX = 0; }));
-                self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, 0.25f));
-                self.AddProcess(new Process((obj, dt) => {
+                if(i%2==0) self.AddProcess((obj, dt) => { obj.VX = CellSize; });
+                else       self.AddProcess((obj, dt) => { obj.VX = -CellSize; });
+                self.AddProcess((obj, dt) => { obj.Move(dt); }, 2.0f);
+                self.AddProcess((obj, dt) => { obj.VX = 0; });
+                self.AddProcess((obj, dt) => { obj.Move(dt); }, 0.25f);
+                self.AddProcess((obj, dt) => {
                     if (obj.Nearby(s.Player))
                     {
                         var b = new Bullet(self.X, self.MidY, -50, 0, 10, 10);
                         s.Bullets.Add(b);
                         s.Objects.Add(b);
                     }
-                }));
-                self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, 0.25f));
+                });
+                self.AddProcess((obj, dt) => { obj.Move(dt); }, 0.25f);
             }
 
         }
