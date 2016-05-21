@@ -144,8 +144,7 @@ namespace HackTheWorld
                 self.AddProcess((obj, dt) => { obj.VX = 0; });
                 self.AddProcess((obj, dt) => { obj.Move(dt); }, 0.25f);
                 self.AddProcess((obj, dt) => {
-                    if (obj.Nearby(s.Player))
-                    {
+                    if (obj.Nearby(s.Player)) {
                         var b = new Bullet(self.X, self.MidY, -50, 0, 10, 10);
                         s.Bullets.Add(b);
                         s.Objects.Add(b);
@@ -155,8 +154,6 @@ namespace HackTheWorld
             }
 
         }
-
-
 
         public static void Execute(this IEditable self)
         {
