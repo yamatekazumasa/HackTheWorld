@@ -51,7 +51,7 @@ namespace HackTheWorld
         /// <summary>
         /// アイテムのタイプ。
         /// </summary>
-        public enum ItemType
+        public enum ItemEffects
         {
             Bigger, Smaller
         }

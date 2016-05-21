@@ -130,7 +130,7 @@ namespace HackTheWorld
                         }
                     case "Item":
                         {
-                            Item i = new Item((float)obj["x"], (float)obj["y"], 0, 0, (float)obj["width"], (float)obj["height"]);
+                            Item i = new Item((float)obj["x"], (float)obj["y"], 0, 0, (float)obj["width"], (float)obj["height"], (ItemEffects)Enum.Parse(typeof(ItemEffects), (string)obj["effect"]));
                             stage.Items.Add(i);
                             stage.Objects.Add(i);
                             break;
@@ -206,7 +206,7 @@ namespace HackTheWorld
                     }
                     if (Map[iy, ix] == 3)
                     {
-                        var item = new Item(CellSize * ix, CellSize * iy);
+                        var item = new Item(CellSize * ix + CellSize/4, CellSize * iy + CellSize/2, ItemEffects.Bigger);
                         stage.Objects.Add(item);
                         stage.Items.Add(item);
                     }

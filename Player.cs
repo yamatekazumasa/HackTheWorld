@@ -12,8 +12,8 @@ namespace HackTheWorld
     public class Player : GameObject
     {
         private readonly Image _img;
-        public int speed = CellSize * 3;
-        public int jumpspeed = -CellSize * 11; // h=v^2/2g
+        public int Speed = CellSize * 3;
+        public int Jumpspeed = -CellSize * 11; // h=v^2/2g
 
         public Player()
         {
@@ -25,9 +25,9 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
             // キーで動かす部分
-            if (Input.Left.Pressed)  X -= speed * dt;
-            if (Input.Right.Pressed) X += speed * dt;
-            if (Input.Up.Pushed && OnGround) VY = jumpspeed;
+            if (Input.Left.Pressed)  X -= Speed * dt;
+            if (Input.Right.Pressed) X += Speed * dt;
+            if (Input.Up.Pushed && OnGround) VY = Jumpspeed;
             
             // 自動で動く部分
             if(!OnGround) VY += Gravity * dt;
@@ -57,7 +57,7 @@ namespace HackTheWorld
 
         public override void Draw()
         {
-            GraphicsContext.DrawImage(_img, X, Y, Width, Height);
+            if (Scene.Current is GameScene) GraphicsContext.DrawImage(_img, X, Y, Width, Height);
             //GraphicsContext.FillRectangle(Brushes.Aqua, X, Y, Width, Height);
             //GraphicsContext.DrawRectangle(Pens.LightBlue, X, Y, Width, Height);
             if (!IsAlive) GraphicsContext.FillRectangle(Brushes.Gray, X, Y, Width, Height);

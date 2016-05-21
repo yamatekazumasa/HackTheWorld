@@ -44,7 +44,7 @@ namespace HackTheWorld
         {
             base.Initialize();
             CanExecute = false;
-            Codebox = new CodeBox(this) {Position = Position + new Vector(100, 50)};
+            Codebox = new CodeBox(this) {Position = Position + new Vector(50, -50)};
         }
 
         public override void Update(float dt)

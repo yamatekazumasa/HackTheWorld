@@ -13,6 +13,7 @@ namespace HackTheWorld
     class GameScene : Scene
     {
         // ゲーム画面外の変数の定義
+        private Image _bgImage;
         private List<MenuItem> _menuItem;
         private MenuItem _backButton;
         private MenuItem _resetButton;
@@ -29,8 +30,6 @@ namespace HackTheWorld
         public GameScene()
         {
             _stage = Stage.CreateDemoStage();
-            // CodeParser ができた時点でこちらに置き換える。
-            // _stage = Stage.CreateDemoStage().Replica;
         }
 
         public GameScene(Stage stage)
@@ -60,10 +59,12 @@ namespace HackTheWorld
                 Position = new Vector(125, 600)
             };
             _menuItem = new List<MenuItem> {_backButton, _resetButton, _pauseButton};
+            _bgImage = Image.FromFile(@"image\backscreen.bmp");
 
             // CodeParser ができていないとeditableObjectsが機能しない。
             // shallow copy だとコンティニュー時に途中からスタートになる。
-            var s = _stage.Replica;
+             var s = _stage;
+//            var s = _stage.Replica; // CodeParser ができたらこちらに切り替える。
             _objects = s.Objects;
             _player = s.Player;
             _blocks = s.Blocks;
@@ -162,13 +163,9 @@ namespace HackTheWorld
             // アイテム取得判定
             foreach (var item in _items)
             {
-                if (_player.Intersects(item) || item.IsAlive)
+                if (_player.Intersects(item) && item.IsAlive)
                 {
-                    _player.Y -= CellSize / 4;
-                    _player.Height += CellSize / 4;
-                    _player.Width  = CellSize;
-                    _player.jumpspeed = -CellSize * 13; // h=v^2/2g
-                    item.Die();
+                    item.GainedBy(_player);
                 }
             }
 
@@ -195,7 +192,7 @@ namespace HackTheWorld
         private void ScreenClear()
         {
             GraphicsContext.Clear(Color.White);
-            GraphicsContext.DrawImage(Image.FromFile(@"image\backscreen.bmp"),0,0);
+            GraphicsContext.DrawImage(_bgImage,0,0);
             for (int ix = 0; ix < ScreenWidth; ix += CellSize)
             {
                 GraphicsContext.DrawLine(Pens.LightGray, ix, 0, ix, ScreenHeight);
