@@ -117,17 +117,41 @@ namespace HackTheWorld
             {
                 Record(current);
                 current = _history[_current];
-                bool isLineFeedCode = current.Text.ToString()[current.Cursor - 1] == '\n';
-                current.Text.Remove(--current.Cursor, 1);
-                if (isLineFeedCode) current.MaxLine--;
+                if (_selectedEnd != -1)
+                {
+                    if (_selectedBegin < _selectedEnd)
+                    {
+                        current.Cursor = _selectedBegin;
+                        current.Text.Remove(_selectedBegin, _selectedEnd - _selectedBegin);
+                    }
+                    else
+                    {
+                        current.Cursor = _selectedEnd;
+                        current.Text.Remove(_selectedEnd, _selectedBegin - _selectedEnd);
+                    }
+                }
+                else current.Text.Remove(--current.Cursor, 1);
+                current.MaxLine = current.Lines.Length;
             }
             if (Input.Delete.Pushed && current.Cursor < current.Text.Length)
             {
                 Record(current);
                 current = _history[_current];
-                bool isLineFeedCode = current.Text.ToString()[current.Cursor] == '\n';
-                current.Text.Remove(current.Cursor, 1);
-                if (isLineFeedCode) current.MaxLine--;
+                if (_selectedEnd != -1)
+                {
+                    if (_selectedBegin < _selectedEnd)
+                    {
+                        current.Cursor = _selectedBegin;
+                        current.Text.Remove(_selectedBegin, _selectedEnd - _selectedBegin);
+                    }
+                    else
+                    {
+                        current.Cursor = _selectedEnd;
+                        current.Text.Remove(_selectedEnd, _selectedBegin - _selectedEnd);
+                    }
+                }
+                else current.Text.Remove(current.Cursor, 1);
+                current.MaxLine = current.Lines.Length;
             }
             if (Input.Tab.Pushed)
             {

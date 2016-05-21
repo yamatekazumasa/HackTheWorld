@@ -8,6 +8,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// 弾。決して Bullet が Bullet を生成してはならない。
+    /// </summary>
     public class Bullet : GameObject
     {
         public Bullet(float x, float y) : base(x, y) { }
