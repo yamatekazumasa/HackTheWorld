@@ -63,6 +63,12 @@ namespace HackTheWorld
                 result.Add("for間違えマン");
                 return result;
             }
+            string str = "";
+            for(int i = 0;i < result.Count;i++)
+            {
+                str += (string)result[i] + "\n";
+            }
+            MessageBox.Show(str);
             return result;
         }
 
@@ -183,13 +189,28 @@ namespace HackTheWorld
             {
                 case 3:
                     Regex re3 = new Regex(@"for\s*(?<repeat>\d+)");
-                    Match m3 = re3.Match((string)sArray[0]);
+                    Match m3 = re3.Match((string)sArray[home]);
                     int n = int.Parse(m3.Groups["repeat"].Value);
                     for(int i = 0;i < n;i++)
                     {
-                        while(!firstend(sArray,home + i))
+                        int j = 1;
+                        while(!firstend(sArray,home + j))
                         {
-                            result.Add(sArray[home + i]);
+                            switch(bunki(sArray,home + j))
+                            {
+                                case 1:
+                                    For(sArray,result,home + j);
+                                    j += nextend(home + j)-(home+j)+1;
+                                    break;
+                                case 2:
+                                    If(sArray,result,home + j);
+                                    j += nextend(home + j) - (home + j) + 1;
+                                    break;
+                                default:
+                                    result.Add(sArray[home + j]);
+                                    j++;
+                                    break;
+                            }
                         }
                     }
 

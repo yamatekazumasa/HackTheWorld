@@ -30,7 +30,7 @@ namespace HackTheWorld
                 Size = new Vector(50, 50),
                 Position = new Vector(75, 500)
             };
-            _runButton = new MenuItem(Image.FromFile(@"run.PNG"))
+            _runButton = new MenuItem(Image.FromFile(@"image\run.PNG"))
             {
                 Size = new Vector(75 , 75) ,
                 Position = new Vector(125 , 500)
