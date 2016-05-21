@@ -56,11 +56,11 @@ namespace HackTheWorld
         /// <summary>
         /// カーソルの位置と最大の行数を受け取って、CodeState を生成する。
         /// </summary>
-        public CodeState(int cursor, int maxLine)
+        public CodeState(int cursor, int maxLine, Constants.ObjectType type)
         {
             Cursor = cursor;
             MaxLine = maxLine;
-            Name = Constants.ObjectType.Block;
+            Name = type;
             Text = new StringBuilder();
             for (int i = 0; i < maxLine - 1; i++) Text.Append('\n');
         }

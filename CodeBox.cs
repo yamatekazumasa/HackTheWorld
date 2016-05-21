@@ -49,7 +49,7 @@ namespace HackTheWorld
             _history = new CodeState[_historyLength];
             _font = new Font("Courier New", 12);
 
-            _history[_current] = new CodeState(0, 5);
+            _history[_current] = new CodeState(0, 5, _subject.ObjectType);
 
             Width = 12 * _cols;
             Height = _lineHeight * _history[_current].MaxLine;
@@ -286,9 +286,10 @@ namespace HackTheWorld
         /// </summary>
         public void Record(CodeState s)
         {
+            var name = _history[_current].Name;
             _current = (_current + 1) % _historyLength;
             _origin = _current;
-            _history[_current] = new CodeState(s.Cursor, s.MaxLine) {
+            _history[_current] = new CodeState(s.Cursor, s.MaxLine, name) {
                 Text = new StringBuilder(s.Text.ToString()),
                 UpdatedAt = DateTime.Now
             };

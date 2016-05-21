@@ -11,9 +11,21 @@ namespace HackTheWorld
     /// </summary>
     public class PBlock : Block, IEditable
     {
+        /// <summary>
+        /// 何番目の Process が実行されているか。
+        /// </summary>
         public int ProcessPtr { get; set; }
+        /// <summary>
+        /// 自身のコードを編集するテキストエディタ。
+        /// </summary>
         public CodeBox Codebox { get; set; }
+        /// <summary>
+        /// 自身の動作を格納する。
+        /// </summary>
         public List<Process> Processes { get; set; }
+        /// <summary>
+        /// true のとき Update() 内で Process が実行されるようになる。
+        /// </summary>
         public bool CanExecute { get; set; }
 
         [JsonProperty("code", Order = 10)]

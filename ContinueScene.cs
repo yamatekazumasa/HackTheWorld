@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static HackTheWorld.Constants;
 using System.Drawing;
+using System.Windows.Forms;
 
 
 namespace HackTheWorld
@@ -46,6 +47,7 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
+            if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
             //背景を透明にする
             _bmp.MakeTransparent();

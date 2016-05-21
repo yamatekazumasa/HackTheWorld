@@ -25,7 +25,6 @@ namespace HackTheWorld
         /// <summary>
         /// 自身の動作を格納する。
         /// </summary>
-        [JsonProperty("process", Order = 11)]
         public List<Process> Processes { get; set; }
         /// <summary>
         /// true のとき Update() 内で Process が実行されるようになる。

@@ -76,15 +76,14 @@ namespace HackTheWorld
 
             foreach (var o in _editableObjects)
             {
-                o.ProcessPtr = 0;
-                if (o.Processes != null)
+                if (o is EditableEnemy)
                 {
-                    o.Compile(s);
+                    o.SetDemoProcesses(s);
                     o.Execute();
                 }
                 else
                 {
-                    o.SetDemoProcesses(s);
+                    o.Compile(s);
                     o.Execute();
                 }
             }
