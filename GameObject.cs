@@ -6,6 +6,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// ゲーム内のオブジェクト大体全部の基底オブジェクト
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class GameObject
     {
