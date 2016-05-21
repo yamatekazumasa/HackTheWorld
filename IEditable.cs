@@ -106,6 +106,7 @@ namespace HackTheWorld
         {
             string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
+            CodeParser.yomitori(str);
             // self.SetProcesses(new Process[] {});
         }
 
