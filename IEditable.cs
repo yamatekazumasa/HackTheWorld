@@ -18,9 +18,21 @@ namespace HackTheWorld
     [JsonObject(MemberSerialization.OptIn)]
     public interface IEditable
     {
+        /// <summary>
+        /// 何番目の Process が実行されているか。
+        /// </summary>
         int ProcessPtr { get; set; }
+        /// <summary>
+        /// 自身のコードを編集するテキストエディタ。
+        /// </summary>
         CodeBox Codebox { get; }
+        /// <summary>
+        /// 自身の動作を格納する。
+        /// </summary>
         List<Process> Processes { get; set; }
+        /// <summary>
+        /// true のとき Update() で Process が実行されるようになる。
+        /// </summary>
         bool CanExecute { get; set; }
         // GameObject 由来のプロパティ
         float X { get; set; }
