@@ -19,9 +19,9 @@ namespace HackTheWorld
     public interface IEditable
     {
         int ProcessPtr { get; set; }
-        IEnumerator Routine { get; set; }
         CodeBox Codebox { get; }
         List<Process> Processes { get; set; }
+        bool CanExecute { get; set; }
         // GameObject 由来のプロパティ
         float X { get; set; }
         float Y { get; set; }
@@ -64,11 +64,6 @@ namespace HackTheWorld
             return self.Codebox.IsFocused;
         }
 
-        public static bool CanExecute(this IEditable self)
-        {
-            return  self.Routine != null;
-        }
-
         public static void SetProcesses(this IEditable self, Process[] processes)
         {
             self.Processes = processes.ToList();
@@ -86,7 +81,9 @@ namespace HackTheWorld
 
         public static void Update(this IEditable self, float dt)
         {
-            if (self.Processes == null) return;
+            if (self.Clicked) self.Codebox.Focus();
+            if (!self.CanExecute) self.Codebox.Update();
+            if (!self.CanExecute || self.Processes == null) return;
             var process = self.Processes[self.ProcessPtr];
             if (process.ElapsedTime*1000 <= process.MilliSeconds)
             {
@@ -97,18 +94,20 @@ namespace HackTheWorld
             {
                 self.ProcessPtr++;
             }
-
-            if (self.Clicked) self.Codebox.Focus();
-            self.Codebox.Update();
         }
 
         public static void Compile(this IEditable self)
         {
+            self.ProcessPtr = 0;
             string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
             // self.SetProcesses(new Process[] {});
         }
 
+        public static void Execute(this IEditable self)
+        {
+            self.CanExecute = true;
+        }
 
 
     }

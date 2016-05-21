@@ -21,10 +21,6 @@ namespace HackTheWorld
         /// </summary>
         private bool _isAlive;
         /// <summary>
-        /// エディット可能か。
-        /// </summary>
-        protected bool _isEditable;
-        /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
         [JsonProperty("type", Order = 0)]
@@ -84,7 +80,9 @@ namespace HackTheWorld
 
 
         #region アクセサ
-
+        /// <summary>
+        /// Object の位置座標。
+        /// </summary>
         public Vector Position
         {
             get { return new Vector(_x, _y) / Scale; }
@@ -95,6 +93,9 @@ namespace HackTheWorld
             }
         }
 
+        /// <summary>
+        /// Object の速度。
+        /// </summary>
         public Vector Velocity
         {
             get { return new Vector(_vx, _vy) / Scale; }
@@ -105,6 +106,9 @@ namespace HackTheWorld
             }
         }
 
+        /// <summary>
+        /// Object のサイズ。
+        /// </summary>
         public Vector Size
         {
             get { return new Vector(_w, _h) / Scale; }
@@ -115,42 +119,63 @@ namespace HackTheWorld
             }
         }
 
+        /// <summary>
+        /// 左端の X 座標。
+        /// </summary>
         public float MinX
         {
             get { return (float)_x / Scale; }
             set { _x = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 上端の Y 座標。
+        /// </summary>
         public float MinY
         {
             get { return (float)_y / Scale; }
             set { _y = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 右端の X 座標。
+        /// </summary>
         public float MaxX
         {
             get { return (float)(_x + _w) / Scale; }
             set { _x = (int)(value * Scale) - _w; }
         }
 
+        /// <summary>
+        /// 下端の Y 座標。
+        /// </summary>
         public float MaxY
         {
             get { return (float)(_y + _h) / Scale; }
             set { _y = (int)(value * Scale) - _h; }
         }
 
+        /// <summary>
+        /// 中心の X 座標。
+        /// </summary>
         public float MidX
         {
             get { return (float)(_x + _w / 2) / Scale; }
             set { _x = (int)(value * Scale) - _w / 2; }
         }
 
+        /// <summary>
+        /// 中心の Y 座標。
+        /// </summary>
         public float MidY
         {
             get { return (float)(_y + _h / 2) / Scale; }
             set { _y = (int)(value * Scale) - _h / 2; }
         }
 
+        /// <summary>
+        /// 左端の X 座標。
+        /// </summary>
         [JsonProperty("x", Order = 1)]
         public float X
         {
@@ -158,13 +183,19 @@ namespace HackTheWorld
             set { MinX = value; }
         }
 
+        /// <summary>
+        /// 上端の Y 座標。
+        /// </summary>
         [JsonProperty("y", Order = 2)]
         public float Y
         {
             get { return MinY; }
             set { MinY = value; }
         }
-
+        
+        /// <summary>
+        /// 速度の X 成分。
+        /// </summary>
         [JsonProperty("vx", Order = 3)]
         public float VX
         {
@@ -172,6 +203,9 @@ namespace HackTheWorld
             set { _vx = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 速度の Y 成分。
+        /// </summary>
         [JsonProperty("vy", Order = 4)]
         public float VY
         {
@@ -179,13 +213,19 @@ namespace HackTheWorld
             set { _vy = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 横幅。
+        /// </summary>
         [JsonProperty("width", Order = 5)]
         public float Width
         {
             get { return (float)_w / Scale; }
             set { _w = (int)(value * Scale); }
         }
-
+        
+        /// <summary>
+        /// 縦幅。
+        /// </summary>
         [JsonProperty("height", Order = 6)]
         public float Height
         {
@@ -193,12 +233,18 @@ namespace HackTheWorld
             set { _h = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 横幅。
+        /// </summary>
         public float W
         {
             get { return Width; }
             set { Width = value; }
         }
 
+        /// <summary>
+        /// 縦幅。
+        /// </summary>
         public float H
         {
             get { return Height; }
@@ -230,12 +276,6 @@ namespace HackTheWorld
         /// 生きていたらtrueを返す。
         /// </summary>
         public bool IsAlive => _isAlive;
-
-        /// <summary>
-        /// 編集可能なら true を返す。
-        /// </summary>
-        [JsonProperty("edit", Order = 11)]
-        public bool IsEditable => _isEditable;
 
         /// <summary>
         /// オブジェクトを消す。
@@ -415,10 +455,10 @@ namespace HackTheWorld
 
         #endregion
 
-        public virtual void Update(float dt)
-        {
-
-        }
+        /// <summary>
+        /// 毎フレームの時間を受け取って、その時間分動く。
+        /// </summary>
+        public virtual void Update(float dt) { }
 
         /// <summary>
         /// 自分が持っている座標に自分が持っている大きさの矩形を描画する。

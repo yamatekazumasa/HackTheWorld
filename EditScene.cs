@@ -6,6 +6,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// ステージを表示しながらゲーム中のオブジェクトのコードを編集するシーン
+    /// </summary>
     class EditScene : Scene
     {
         private MenuItem _backButton;

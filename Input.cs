@@ -10,7 +10,7 @@ namespace HackTheWorld
     public static class Input
     {
         /// <summary>
-        /// キーボード入力を取得する。
+        /// キー入力を取得する。
         /// </summary>
         public class Key
         {

@@ -9,6 +9,9 @@ using System.Drawing;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// ポーズ画面
+    /// </summary>
     class PauseScene : Scene
     {
         private int _cursor;

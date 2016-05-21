@@ -7,6 +7,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// 実際にプレイヤーを動かしたりして遊ぶシーン
+    /// </summary>
     class GameScene : Scene
     {
         // ゲーム画面外の変数の定義
@@ -15,6 +18,7 @@ namespace HackTheWorld
         private MenuItem _resetButton;
         private MenuItem _pauseButton;
         // ゲーム内変数宣言
+        private readonly Stage _stage;
         private List<GameObject> _objects;
         private Player _player;
         private List<Block> _blocks;
@@ -24,23 +28,14 @@ namespace HackTheWorld
 
         public GameScene()
         {
-            var stage = Stage.CreateDemoStage();
-            _objects = stage.Objects;
-            _player = stage.Player;
-            _blocks = stage.Blocks;
-            _editableObjects = stage.EditableObjects;
-            _enemies = stage.Enemies;
-            _items = stage.Items;
+            _stage = Stage.CreateDemoStage();
+            // CodeParser ができた時点でこちらに置き換える。
+            // _stage = Stage.CreateDemoStage().Replica;
         }
 
         public GameScene(Stage stage)
         {
-            _objects = stage.Objects;
-            _player =  stage.Player;
-            _blocks = stage.Blocks;
-            _editableObjects = stage.EditableObjects;
-            _enemies = stage.Enemies;
-            _items = stage.Items;
+            _stage = stage;
         }
 
         public override void Cleanup()
@@ -66,7 +61,24 @@ namespace HackTheWorld
             };
             _menuItem = new List<MenuItem> {_backButton, _resetButton, _pauseButton};
 
-            foreach (var o in _editableObjects) if (!o.CanExecute()) o.Compile();
+            // CodeParser ができていないとeditableObjectsが機能しない。
+            var s = _stage.Replica;
+            _objects = s.Objects;
+            _player = s.Player;
+            _blocks = s.Blocks;
+            _editableObjects = s.EditableObjects;
+            _enemies = s.Enemies;
+            _items = s.Items;
+
+            foreach (var o in _editableObjects)
+            {
+                o.ProcessPtr = 0;
+                if (o.Processes != null)
+                {
+                    o.Compile();
+                    o.Execute();
+                }
+            }
 
         }
 

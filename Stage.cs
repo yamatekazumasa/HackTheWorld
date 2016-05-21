@@ -50,6 +50,13 @@ namespace HackTheWorld
             Items = new List<Item>();
         }
 
+        /// <summary>
+        /// 自身のディープコピーを作成する
+        /// と見せかけて、一度 json 形式にしてもう一度 Stage に変換している。
+        /// CodeParser が完成していないと、Editable なオブジェクトの動きがコピーされない。
+        /// </summary>
+        public Stage Replica => Parse(JsonConvert.SerializeObject(this));
+
         // 本来ならゲーム内にはない処理
         public static void Save(Stage stage)
         {
@@ -64,7 +71,14 @@ namespace HackTheWorld
         {
             if (!File.Exists(@".\stage\test.json")) return null;
             StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
-            var tmp = JObject.Parse(sr.ReadToEnd());
+            string json = sr.ReadToEnd();
+            sr.Close();
+            return Parse(json);
+        }
+
+        public static Stage Parse(string json)
+        {
+            var tmp = JObject.Parse(json);
             Stage stage = new Stage((int)tmp["rows"], (int)tmp["cols"]);
             foreach (var obj in tmp["objects"])
             {
@@ -72,7 +86,7 @@ namespace HackTheWorld
                 {
                     case "Block":
                         {
-                            if ((bool)obj["edit"])
+                            if (obj["code"] != null)
                             {
                                 var b = new PBlock((float)obj["x"], (float)obj["y"]);
                                 b.Codebox.Current.Text = new StringBuilder((string)obj["code"]);
@@ -96,23 +110,22 @@ namespace HackTheWorld
                             break;
                         }
                     case "Item":
-                    {
-                        Item i = new Item((float)obj["x"], (float)obj["y"], 0, 0, (float)obj["width"], (float)obj["height"]);
-                        stage.Items.Add(i);
-                        stage.Objects.Add(i);
-                        break;
-                    }
+                        {
+                            Item i = new Item((float)obj["x"], (float)obj["y"], 0, 0, (float)obj["width"], (float)obj["height"]);
+                            stage.Items.Add(i);
+                            stage.Objects.Add(i);
+                            break;
+                        }
                     case "Player":
-                    {
-                        var p = new Player();
-                        stage.Player = p;
-                        stage.Objects.Add(p);
-                        break;
-                    }
+                        {
+                            var p = new Player();
+                            stage.Player = p;
+                            stage.Objects.Add(p);
+                            break;
+                        }
 
                 }
             }
-            sr.Close();
             return stage;
         }
 

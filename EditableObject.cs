@@ -13,8 +13,9 @@ namespace HackTheWorld
     {
         public int ProcessPtr { get; set; }
         public CodeBox Codebox { get; private set; }
+        [JsonProperty("process", Order = 11)]
         public List<Process> Processes { get; set; }
-        public IEnumerator Routine { get; set; }
+        public bool CanExecute { get; set; }
 
         [JsonProperty("code", Order = 10)]
         public string Code => Codebox.Current.Text.ToString();
@@ -27,7 +28,7 @@ namespace HackTheWorld
         public override void Initialize()
         {
             base.Initialize();
-            _isEditable = true;
+            CanExecute = false;
             Codebox = new CodeBox(this) {Position = Position + new Vector(100, 50)};
         }
 
