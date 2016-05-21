@@ -37,15 +37,28 @@ namespace HackTheWorld
             ObjectType = ObjectType.Item;
         }
 
+        /// <summary>
+        /// 取得されたときの処理。
+        /// </summary>
+        /// <param name="obj">このアイテムを取得したオブジェクト。</param>
         public void GainedBy(GameObject obj)
         {
-            if (ItemEffect == ItemEffects.Bigger)
+            switch (ItemEffect)
             {
-                obj.Y -= CellSize / 4;
-                obj.Height += CellSize / 4;
-                obj.Width = CellSize;
-                if (obj is Player) ((Player)obj).Jumpspeed = -CellSize * 13; // h=v^2/2g
+                case ItemEffects.Bigger:
+                    {
+                        obj.Y -= CellSize / 4;
+                        obj.Height += CellSize / 4;
+                        obj.Width = CellSize;
+                        if (obj is Player) ((Player)obj).Jumpspeed = -CellSize * 13; // h=v^2/2g
+                        break;
+                    }
+                case ItemEffects.Smaller:
+                    {
+                        break;
+                    }
             }
+
             Die();
         }
 
