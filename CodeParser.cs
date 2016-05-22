@@ -22,6 +22,7 @@ namespace HackTheWorld
         public static ArrayList funcArray = new ArrayList();
         static bool mismatch = false;
         static bool misfor = false;
+        static bool misif = false;
         public static ArrayList yomitori(string s1)
         {
             //連続で入力してデバックしたいからいる奴ら
@@ -30,6 +31,7 @@ namespace HackTheWorld
             funcArray.Clear();
             mismatch = false;
             misfor = false;
+            misif = false;
 
             //行で分割
             //char[ ] delimiterChars = { ' ' , ':' , '\t' , '\n' };
@@ -166,7 +168,7 @@ namespace HackTheWorld
 
         public static void For(ArrayList sArray,ArrayList result,int home)
         {
-            if(!boolfor(sArray))
+            if(!boolfor(sArray,home))
             {
                 sArray.Clear();
                 sArray.Add("boolforひっかかった");
@@ -356,30 +358,30 @@ namespace HackTheWorld
 
 
         //For()に突っ込んでいいのか判断するためのbool
-        public static bool boolfor(ArrayList sArray)
+        public static bool boolfor(ArrayList sArray,int home)
         {
             //一致してるかは知りたいけどうしろに余計なのがついてたらはじきたい
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)\s*"))
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)\s*"))
             {
-                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)\s*."))
+                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)\s*."))
                 {
                     misfor = true;
                     return false;
                 }
                 return true;
             }
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"for\s*\w+\s*=\s*\d+\s*to\s*\d+\s*"))
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\w+\s*=\s*\d+\s*to\s*\d+\s*"))
             {
-                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"for\s*\w+\s*=\s*\d+\s*to\s*\d+\s*."))
+                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\w+\s*=\s*\d+\s*to\s*\d+\s*."))
                 {
                     misfor = true;
                     return false;
                 }
                 return true;
             }
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"for\s*\d+\s*"))
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\d+\s*"))
             {
-                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"for\s*\d+\s*."))
+                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\d+\s*."))
                 {
                     misfor = true;
                     return false;
@@ -391,15 +393,26 @@ namespace HackTheWorld
         }
 
 
-        public static bool boolif(ArrayList sArray)
+        public static bool boolif(ArrayList sArray,int home)
         {
-            Regex re = new Regex(@"if\s*(?<hensuu>\w+)\s*");
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"if\s*(?<hensuu>\w+)\s*"))
-            {
-                //Match m = re.Match((string)sArray[0]);
-                //string hensuu = m.Groups["hensuu"].Value.ToString( );
+            string[] re = new string[5];
+            re[0] = @"(?<sahen>\w+)\s*<\s*(?<uhen>^[0-9a-zA-Z]+)";
+            re[1]= @"(?<sahen>\w+)\s*>\s*(?<uhen>^[0-9a-zA-Z]+)";
+            re[2] = @"(?<sahen>\w+)\s*<\s*=\s*(?<uhen>^[0-9a-zA-Z]+)";
+            re[3] = @"(?<sahen>\w+)\s*>\s*=\s*(?<uhen>^[0-9a-zA-Z]+)";
+            re[4] = @"(?<sahen>\w+)\s*=\s*=\s*(?<uhen>^[0-9a-zA-Z]+)";
 
-                return true;
+            for(int i = 0;i < re.Length;i++)
+            {
+                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"if\s*(" + re[i] + @")\s*"))
+                {
+                    if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"if\s*(" + re[i] + @")\s*."))
+                    {
+                        misif = true;
+                        return false;
+                    }
+                    return true;
+                }
             }
             return false;
         }
@@ -431,6 +444,57 @@ namespace HackTheWorld
         //ifのための判定群
         public static bool hantei(string s)
         {
+            //大小判定したい
+            Regex re1 = new Regex(@"(?<sahen>\d+)\s*<\s*(?<uhen>\d+)");
+            Match m1 = re1.Match(s);
+
+            Regex re2 = new Regex(@"(?<sahen>\d+)\s*>\s*(?<uhen>\d+)");
+            Match m2 = re2.Match(s);
+
+            Regex re3 = new Regex(@"(?<sahen>\d+)\s*<\s*=\s*(?<uhen>\d+)");
+            Match m3 = re3.Match(s);
+
+            Regex re4 = new Regex(@"(?<sahen>\d+)\s*>\s*=\s*(?<uhen>\d+)");
+            Match m4 = re4.Match(s);
+
+            Regex re5 = new Regex(@"(?<sahen>\d+)\s*=\s*=\s*(?<uhen>\d+)");
+            Match m5 = re5.Match(s);
+
+            if(m1.Length > 0)
+            {
+                int sahen = int.Parse(m1.Groups["sahen"].Value);
+                int uhen = int.Parse(m1.Groups["uhen"].Value);
+                if(sahen < uhen) return true;
+                else return false;
+            }
+            if(m2.Length > 0)
+            {
+                int sahen = int.Parse(m2.Groups["sahen"].Value);
+                int uhen = int.Parse(m2.Groups["uhen"].Value);
+                if(sahen > uhen) return true;
+                else return false;
+            }
+            if(m3.Length > 0)
+            {
+                int sahen = int.Parse(m3.Groups["sahen"].Value);
+                int uhen = int.Parse(m3.Groups["uhen"].Value);
+                if(sahen <= uhen) return true;
+                else return false;
+            }
+            if(m4.Length > 0)
+            {
+                int sahen = int.Parse(m4.Groups["sahen"].Value);
+                int uhen = int.Parse(m4.Groups["uhen"].Value);
+                if(sahen >= uhen) return true;
+                else return false;
+            }
+            if(m5.Length > 0)
+            {
+                int sahen = int.Parse(m5.Groups["sahen"].Value);
+                int uhen = int.Parse(m5.Groups["uhen"].Value);
+                if(sahen == uhen) return true;
+                else return false;
+            }
             return false;
         }
     }
