@@ -170,8 +170,7 @@ namespace HackTheWorld
         {
             if(!boolfor(sArray,home))
             {
-                sArray.Clear();
-                sArray.Add("boolforひっかかった");
+                result.Add("boolforひっかかった");
                 return;
             }
             int type = 0;
@@ -181,11 +180,11 @@ namespace HackTheWorld
             //typeを3つ作ることにする
 
             //for(i=0;i<5;i++)がtype1
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)")) type = 1;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)")) type = 1;
             //for i=0 to 3がtype2
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"for\s*\w+\s*=\s*\d+\s*to\s*\d+")) type = 2;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\w+\s*=\s*\d+\s*to\s*\d+")) type = 2;
             //for 2とかをtype3とする
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[0],@"for\s*\d+")) type = 3;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\d+")) type = 3;
 
             switch(type)
             {
@@ -224,11 +223,70 @@ namespace HackTheWorld
         }
 
 
-        public static ArrayList If(ArrayList sArray,ArrayList result,int home)
+        public static void If(ArrayList sArray,ArrayList result,int home)
         {
-            ArrayList expantion = new ArrayList();
+            if(!boolif(sArray,home))
+            {
+                result.Add("boolifひっかかった");
+                return;
+            }
+            if(hantei((string)sArray[home]))
+            {
+                int i = 1;
+                while(!firstelse(sArray,home + i))
+                {
+                    switch(bunki(sArray,home + i))
+                    {
+                        case 1:
+                            For(sArray,result,home + i);
+                            i += nextend(home + i) - (home + i) + 1;
+                            break;
+                        case 2:
+                            If(sArray,result,home + i);
+                            i += nextend(home + i) - (home + i) + 1;
+                            break;
+                        default:
+                            result.Add(sArray[home + i]);
+                            i++;
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                int tmp = 0;
+                int i = 0;
+                while(true)
+                {
+                    if(firstelse(sArray,home+tmp))
+                    {
+                        i = tmp + 1;
+                        break;
+                    }
+                    else tmp++;
+                }
+                while(!firstend(sArray,home + i))
+                {
+                    switch(bunki(sArray,home + i))
+                    {
+                        case 1:
+                            For(sArray,result,home + i);
+                            i += nextend(home + i) - (home + i) + 1;
+                            break;
+                        case 2:
+                            If(sArray,result,home + i);
+                            i += nextend(home + i) - (home + i) + 1;
+                            break;
+                        default:
+                            result.Add(sArray[home + i]);
+                            i++;
+                            break;
+                    }
+                }
+            }
+            
 
-            return expantion;
+            return;
         }
 
 
@@ -396,17 +454,17 @@ namespace HackTheWorld
         public static bool boolif(ArrayList sArray,int home)
         {
             string[] re = new string[5];
-            re[0] = @"(?<sahen>\w+)\s*<\s*(?<uhen>^[0-9a-zA-Z]+)";
-            re[1]= @"(?<sahen>\w+)\s*>\s*(?<uhen>^[0-9a-zA-Z]+)";
-            re[2] = @"(?<sahen>\w+)\s*<\s*=\s*(?<uhen>^[0-9a-zA-Z]+)";
-            re[3] = @"(?<sahen>\w+)\s*>\s*=\s*(?<uhen>^[0-9a-zA-Z]+)";
-            re[4] = @"(?<sahen>\w+)\s*=\s*=\s*(?<uhen>^[0-9a-zA-Z]+)";
+            re[0] = @"[0-9a-zA-Z]+\s*\<\s*[0-9a-zA-Z]+";
+            re[1]= @"[0-9a-zA-Z]+\s*\>\s*[0-9a-zA-Z]+";
+            re[2] = @"[0-9a-zA-Z]+\s*\<\s*\=\s*[0-9a-zA-Z]+";
+            re[3] = @"[0-9a-zA-Z]+\s*\>\s*\=\s*[0-9a-zA-Z]+";
+            re[4] = @"[0-9a-zA-Z]+\s*\=\s*\=\s*[0-9a-zA-Z]+";
 
             for(int i = 0;i < re.Length;i++)
             {
-                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"if\s*(" + re[i] + @")\s*"))
+                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"if\s*\(" + re[i] + @"\)\s*"))
                 {
-                    if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"if\s*(" + re[i] + @")\s*."))
+                    if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"if\s*\(" + re[i] + @"\)\s*."))
                     {
                         misif = true;
                         return false;
@@ -439,7 +497,11 @@ namespace HackTheWorld
             if(sArray[i].ToString().StartsWith("end")) return true;
             return false;
         }
-
+        public static bool firstelse(ArrayList sArray,int i)
+        {
+            if(sArray[i].ToString().StartsWith("else")) return true;
+            return false;
+        }
 
         //ifのための判定群
         public static bool hantei(string s)
