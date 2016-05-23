@@ -233,8 +233,9 @@ namespace HackTheWorld
             if(hantei((string)sArray[home]))
             {
                 int i = 1;
-                while(!firstelse(sArray,home + i))
+                while(!firstend(sArray,home + i))
                 {
+                    if(firstelse(sArray,home + i)) break;
                     switch(bunki(sArray,home + i))
                     {
                         case 1:
@@ -264,6 +265,7 @@ namespace HackTheWorld
                         break;
                     }
                     else tmp++;
+                    if(home + tmp >= sArray.Count) return;
                 }
                 while(!firstend(sArray,home + i))
                 {
