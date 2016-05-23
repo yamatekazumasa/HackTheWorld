@@ -66,7 +66,7 @@ namespace HackTheWorld
 
         public static bool CanExecute(this IEditable self)
         {
-            return  self.Routine != null;
+            return self.Routine != null;
         }
 
         public static void SetProcesses(this IEditable self, Process[] processes)
@@ -88,12 +88,12 @@ namespace HackTheWorld
         {
             if (self.Processes == null) return;
             var process = self.Processes[self.ProcessPtr];
-            if (process.ElapsedTime*1000 <= process.MilliSeconds)
+            if (process.ElapsedTime * 1000 <= process.MilliSeconds)
             {
                 process.ExecuteWith(self, dt);
                 process.ElapsedTime += dt;
             }
-            else if(self.ProcessPtr + 1 < self.Processes.Count)
+            else if (self.ProcessPtr + 1 < self.Processes.Count)
             {
                 self.ProcessPtr++;
             }
@@ -104,10 +104,37 @@ namespace HackTheWorld
 
         public static void Compile(this IEditable self)
         {
-            string str = self.Codebox.GetString();
+            //string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
-            CodeParser.yomitori(str);
+            // CodeParserで生成されたArrayListの中身は<move><X><Y><time>の形
+            // <set><X><Y>
+
+            //CodeParser.yomitori(str);
+
             // self.SetProcesses(new Process[] {});
+
+            //ちょっと動いてくれるか試すよ
+            ArrayList array = new ArrayList();
+            array.Add("move");
+            array.Add("100");
+            array.Add("100");
+
+            for (int i = 0; i < array.Count -1 ;i++)
+            {
+                switch ((string)array[i])
+                {
+                    case "move":
+                        self.AddProcess(new Process((obj,dt) => { obj.X += float.Parse((string)array[i + 1]) * dt; },2.0f));
+                        self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse((string)array[i + 2]) * dt; },2.0f));
+                        break;
+
+                    case "set":
+                        self.AddProcess(new Process((obj, dt) => { obj.Size += new Vector(float.Parse((string)array[i + 1]), float.Parse((string)array[i + 2])); }));
+                        break;
+                }
+            }
+            
+
         }
 
 
