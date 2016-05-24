@@ -60,9 +60,16 @@ namespace HackTheWorld
             warifuri(sArray,result);
             if(misfor)
             {
-                MessageBox.Show("forとendforはいるみたいだけど\n文の中身が違う");
+                MessageBox.Show("forとendはいるみたいだけど\n文の中身が違う");
                 result.Clear();
                 result.Add("for間違えマン");
+                return result;
+            }
+            if(misif)
+            {
+                MessageBox.Show("ifとendはいるみたいだけど\n文の中身が違う");
+                result.Clear();
+                result.Add("if間違えマン");
                 return result;
             }
             string str = "";
@@ -174,7 +181,7 @@ namespace HackTheWorld
                 return;
             }
             int type = 0;
-            //sArray[0]はforから始まっていて繰り返し回数を指定している行
+            //sArray[home]はforから始まっていて繰り返し回数を指定している行
             //どんな書き方をしているかの正規表現を用いた場合分けをしたい
             //いちいち間に\s*(0個以上の空白文字を示す)を入れて間に空白が入っても読めるようにする
             //typeを3つ作ることにする
@@ -188,6 +195,12 @@ namespace HackTheWorld
 
             switch(type)
             {
+                //case 1:
+                //    Regex re1_1 = new Regex(@"for\s*\(\s*\w+\s*\=\s*(?<start>\d+)\s*;\s*");
+                //    Regex re1_2 = new Regex(@"(?<jouken>\w+\s*[<|>|<=|>=]\s*\d+)");
+                //    Regex re1_3 = new Regex(@"(?<update>\w+[\+\+|\-\-|\+=\d+|\-=\d+])");
+
+
                 case 3:
                     Regex re3 = new Regex(@"for\s*(?<repeat>\d+)");
                     Match m3 = re3.Match((string)sArray[home]);
