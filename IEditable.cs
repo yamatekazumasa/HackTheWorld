@@ -114,26 +114,32 @@ namespace HackTheWorld
             // self.SetProcesses(new Process[] {});
 
             //ちょっと動いてくれるか試すよ
-            ArrayList array = new ArrayList();
-            array.Add("move");
-            array.Add("100");
-            array.Add("100");
+            var strlist = new List<string>();
+            strlist.Add("size");
+            strlist.Add("100");
+            strlist.Add("100");
+            //strlist.Add("move");
+            //strlist.Add("50");
+            //strlist.Add("100");
+            self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse((string)strlist[1]), float.Parse((string)strlist[2])); }, 2.0f));
 
-            for (int i = 0; i < array.Count -1 ;i++)
+            /*
+
+            for (int i = 0; i < 4; i++)
             {
-                switch ((string)array[i])
+                switch ((string)strlist[i])
                 {
                     case "move":
-                        self.AddProcess(new Process((obj,dt) => { obj.X += float.Parse((string)array[i + 1]) * dt; },2.0f));
-                        self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse((string)array[i + 2]) * dt; },2.0f));
+                        self.AddProcess(new Process((obj, dt) => { obj.X += float.Parse((string)strlist[i + 1]) * dt; }, 2.0f));
+                        self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse((string)strlist[i + 2]) * dt; }, 2.0f));
                         break;
 
-                    case "set":
-                        self.AddProcess(new Process((obj, dt) => { obj.Size += new Vector(float.Parse((string)array[i + 1]), float.Parse((string)array[i + 2])); }));
+                    case "size":
+                        self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse((string)strlist[i + 1]), float.Parse((string)strlist[i + 2])); }, 2.0f));
                         break;
                 }
             }
-            
+            */
 
         }
 
