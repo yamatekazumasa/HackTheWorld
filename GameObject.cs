@@ -273,7 +273,15 @@ namespace HackTheWorld
             set { Height = value; }
         }
 
+        /// <summary>
+        /// クリックされたときに true を返す。
+        /// </summary>
         public bool Clicked => Contains(Input.Mouse.Position) && Input.Mouse.Left.Pushed;
+
+        /// <summary>
+        /// 右クリックされたときに true を返す。
+        /// </summary>
+        public bool RightClicked => Contains(Input.Mouse.Position) && Input.Mouse.Right.Pushed;
 
 
         /// <summary>

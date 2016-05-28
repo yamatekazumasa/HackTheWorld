@@ -9,6 +9,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// マップエディタ
+    /// </summary>
     class MapEditor : GameObject
     {
         private Palette[] _palettes;
@@ -17,6 +20,38 @@ namespace HackTheWorld
         private int _cursorY;
         private int _selected;
 
+        public MapEditor()
+        {
+            _palettes = new Palette[5];
+            for (int i = 0; i < 5; i++)
+            {
+                _palettes[i] = new Palette((ObjectType)i);
+                _palettes[i].Position = new Vector(500 + 50*i, 50);
+            }
+            _cursorX = -1;
+            _cursorY = -1;
+            X = 500;
+            Y = 100;
+            W = CellNumX*30;
+            H = CellNumY*30;
+
+            _map = new[,] {
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1}
+            };
+        }
+
+        /// <summary>
+        /// 編集しているマップからステージを生成する。
+        /// </summary>
         public Stage GenerateStage()
         {
             Stage s = new Stage();
@@ -54,35 +89,6 @@ namespace HackTheWorld
             return s;
         }
 
-        public MapEditor()
-        {
-            _palettes = new Palette[5];
-            for (int i = 0; i < 5; i++)
-            {
-                _palettes[i] = new Palette((ObjectType)i);
-                _palettes[i].Position = new Vector(500 + 50*i, 50);
-            }
-            _cursorX = -1;
-            _cursorY = -1;
-            X = 500;
-            Y = 100;
-            W = CellNumX*30;
-            H = CellNumY*30;
-
-            _map = new[,] {
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1}
-            };
-        }
-
         public void Update()
         {
             _cursorX = (Input.Mouse.X - (int)X) / 30;
@@ -98,8 +104,9 @@ namespace HackTheWorld
             if (!Contains(Input.Mouse.Position)) return;
 
             if (Clicked)
+            {
                 _map[_cursorY, _cursorX] = (int)_palettes[_selected].Type;
-
+            }
 
         }
 
@@ -147,6 +154,10 @@ namespace HackTheWorld
             public override void Draw()
             {
                 GraphicsContext.FillRectangle(ColorOf(Type), this);
+                if (Contains(Input.Mouse.Position))
+                {
+                    GraphicsContext.DrawRectangle(Pens.Black, this);
+                }
             }
 
         }
