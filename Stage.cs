@@ -110,7 +110,7 @@ namespace HackTheWorld
                         {
                             if (obj["code"] != null)
                             {
-                                var b = new PBlock((float)obj["x"], (float)obj["y"]);
+                                var b = new EditableBlock((float)obj["x"], (float)obj["y"]);
                                 b.Codebox.Current.Text = new StringBuilder((string)obj["code"]);
                                 stage.Blocks.Add(b);
                                 stage.EditableObjects.Add(b);
@@ -170,7 +170,7 @@ namespace HackTheWorld
                     }
                     if (Map[iy, ix] == 11)
                     {
-                        var pblock = new PBlock(CellSize * ix, CellSize * iy);
+                        var pblock = new EditableBlock(CellSize * ix, CellSize * iy);
                         pblock.SetProcesses(new[] {
                             new Process((obj, dt) => { } , 1.0f),
 

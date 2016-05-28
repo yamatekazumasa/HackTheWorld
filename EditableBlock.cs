@@ -9,7 +9,7 @@ namespace HackTheWorld
     /// <summary>
     /// IEditable な Block
     /// </summary>
-    public class PBlock : Block, IEditable
+    public class EditableBlock : Block, IEditable
     {
         /// <summary>
         /// 何番目の Process が実行されているか。
@@ -32,7 +32,7 @@ namespace HackTheWorld
         public string Code => Codebox.Current.Text.ToString();
         public bool IsWorking = false;
 
-        public PBlock(float x, float y) : base(x, y) { }
+        public EditableBlock(float x, float y) : base(x, y) { }
 
         public override void Initialize()
         {

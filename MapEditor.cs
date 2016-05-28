@@ -2,32 +2,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using static HackTheWorld.Constants;
+using Brush = System.Drawing.Brush;
+using Color = System.Drawing.Color;
 
 namespace HackTheWorld
 {
+    class Null { }
+
     /// <summary>
     /// マップエディタ
     /// </summary>
     class MapEditor : GameObject
     {
-        private Palette[] _palettes;
-        private int[,] _map;
+        private readonly Palette[] _palettes;
+        private readonly Type[,] _map;
         private int _cursorX;
         private int _cursorY;
         private int _selected;
 
         public MapEditor()
         {
-            _palettes = new Palette[5];
-            for (int i = 0; i < 5; i++)
-            {
-                _palettes[i] = new Palette((ObjectType)i);
-                _palettes[i].Position = new Vector(500 + 50*i, 50);
-            }
             _cursorX = -1;
             _cursorY = -1;
             X = 500;
@@ -35,18 +36,35 @@ namespace HackTheWorld
             W = CellNumX*30;
             H = CellNumY*30;
 
-            _map = new[,] {
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1}
-            };
+            {
+                StreamReader sr = new StreamReader(@".\palette.json", Encoding.GetEncoding("utf-8"));
+                string json = sr.ReadToEnd();
+                sr.Close();
+                var tmp = JObject.Parse(json);
+                foreach (var p in tmp["palettes"])
+                {
+                    Palette.ColorTable.Add(Type.GetType((string) p["type"]), new SolidBrush(Color.FromName((string) p["color"])));
+                }
+            }
+
+            _palettes = new Palette[5];
+            for (int i = 0; i < 5; i++)
+            {
+                _palettes[i] = new Palette(Palette.ColorTable.ElementAt(i).Key);
+                _palettes[i].Position = new Vector(500 + 30 * i, 50);
+            }
+
+            _map = new Type[CellNumY, CellNumX];
+            for (int i = 0; i < CellNumX; i++)
+            {
+                for (int j = 0; j < CellNumY; j++)
+                {
+                    if (j == CellNumY - 1) _map[j, i] = typeof(Block);
+                    else _map[j, i] = typeof(Null);
+                }
+            }
+
+
         }
 
         /// <summary>
@@ -59,31 +77,26 @@ namespace HackTheWorld
             {
                 for (int j = 0; j < CellNumY; j++)
                 {
-                    switch ((ObjectType)_map[j, i])
+                    var obj = _map[j, i];
+                    if (obj == typeof(Block))
                     {
-                        case ObjectType.Block:
-                            {
-                                Block b = new Block(CellSize * i, CellSize * j);
-                                s.Blocks.Add(b);
-                                s.Objects.Add(b);
-                                break;
-                            }
-                        case ObjectType.Enemy:
-                            {
-                                Enemy e = new Enemy(CellSize * i, CellSize * j);
-                                s.Enemies.Add(e);
-                                s.Objects.Add(e);
-                                break;
-                            }
-                        case ObjectType.Item:
-                            {
-                                Item obj = new Item(CellSize * i, CellSize * j, ItemEffects.Bigger);
-                                s.Items.Add(obj);
-                                s.Objects.Add(obj);
-                                break;
-                            }
+                        Block b = new Block(CellSize * i, CellSize * j);
+                        s.Blocks.Add(b);
+                        s.Objects.Add(b);
                     }
-
+                    if (obj == typeof(Enemy))
+                    {
+                        Enemy e = new Enemy(CellSize * i, CellSize * j);
+                        s.Enemies.Add(e);
+                        s.Objects.Add(e);
+                        break;
+                    }
+                    if (obj == typeof(Item))
+                    {
+                        Item item = new Item(CellSize * i + CellSize/4, CellSize * j + CellSize/2, ItemEffects.Bigger);
+                        s.Items.Add(item);
+                        s.Objects.Add(item);
+                    }
                 }
             }
             return s;
@@ -105,7 +118,11 @@ namespace HackTheWorld
 
             if (Clicked)
             {
-                _map[_cursorY, _cursorX] = (int)_palettes[_selected].Type;
+                _map[_cursorY, _cursorX] = _palettes[_selected].Type;
+            }
+            if (RightClicked)
+            {
+                _map[_cursorY, _cursorX] = typeof(Null);
             }
 
         }
@@ -116,7 +133,7 @@ namespace HackTheWorld
             {
                 for (int j = 0; j < CellNumY; j++)
                 {
-                    GraphicsContext.FillRectangle(Palette.ColorOf((ObjectType)_map[j, i]), X + i*30, Y + j*30, 30, 30);
+                    GraphicsContext.FillRectangle(Palette.ColorOf(_map[j, i]), X + i*30, Y + j*30, 30, 30);
                 }
             }
             for (int i = 0; i < 5; i++)
@@ -132,23 +149,19 @@ namespace HackTheWorld
 
         private class Palette : GameObject
         {
-            public ObjectType Type;
+            public readonly Type Type;
 
-            public static Brush ColorOf(ObjectType type)
-            {
-                switch (type)
-                {
-                    case ObjectType.Block: return Brushes.Brown;
-                    case ObjectType.Enemy: return Brushes.Pink;
-                    case ObjectType.Item:  return Brushes.LightGreen;
-                    default:               return Brushes.Aqua;
-                }
-            }
+            public static readonly Dictionary<Type, Brush> ColorTable = new Dictionary<Type, Brush>();
 
-            public Palette(ObjectType type)
+            public Palette(Type type)
             {
                 Size = new Vector(30, 30);
                 Type = type;
+            }
+
+            public static Brush ColorOf(Type t)
+            {
+                return ColorTable[t];
             }
 
             public override void Draw()

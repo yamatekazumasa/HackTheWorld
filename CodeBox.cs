@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -50,25 +48,6 @@ namespace HackTheWorld
             _font = new Font("Courier New", 12);
 
             _history[_current] = new CodeState(0, 5, _subject.ObjectType);
-
-            Width = 12 * _cols;
-            Height = _lineHeight * _history[_current].MaxLine;
-
-            _frame = 0;
-        }
-
-        public CodeBox()
-        {
-            _cols = 40;
-            _lineHeight = 12;
-            _isFocused = true;
-            _selectedBegin = -1;
-            _selectedEnd = -1;
-            _historyLength = 50;
-            _history = new CodeState[_historyLength];
-            _font = new Font("Courier New", 12);
-
-            _history[_current] = new CodeState(0, 5);
 
             Width = 12 * _cols;
             Height = _lineHeight * _history[_current].MaxLine;
