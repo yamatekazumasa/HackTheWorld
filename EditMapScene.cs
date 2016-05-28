@@ -22,20 +22,21 @@ namespace HackTheWorld
         private MapObject _enemyObject;
         private MapObject _itemObject;
         private List<MapObject> _selectedObject;
-        private int _cursol;
+        private int _cursor;
+
         private class MapObject : GameObject
         {
-            public int typ;
-            public bool isSelected = false;
-            public MapObject(int typ)
+            public int Type;
+            public bool IsSelected = false;
+            public MapObject(int type)
             {
                 Size = new Vector(30, 30);
-                this.typ = typ;
+                this.Type = type;
             }
 
             public override void Draw()
             {
-                switch (typ)
+                switch (Type)
                 {
                     case 0:
                         GraphicsContext.FillRectangle(Brushes.Aqua, MinX, MinY, Width, Height);
@@ -136,22 +137,22 @@ namespace HackTheWorld
                         char c = str.ToCharArray()[i * (16 + 1) + j];
                         if (c == '\n') break;
                         Map2[i, j] = int.Parse(c.ToString());
-                        _mapObjects[i * Map2.GetLength(1) + j].typ = Map2[i, j];
+                        _mapObjects[i * Map2.GetLength(1) + j].Type = Map2[i, j];
                     }
                 }
             }
 
             for (int i = 0; i < _selectedObject.Count; i++)
             {
-                if (_selectedObject[i].Clicked) _cursol = i;
+                if (_selectedObject[i].Clicked) _cursor = i;
             }
 
             for (int i = 0; i < _mapObjects.Count; i++)
             {
                 if (_mapObjects[i].Clicked)
                 {
-                    _mapObjects[i].typ = _cursol;
-                    Map2[i / Map2.GetLength(1), i - i / Map2.GetLength(1) * Map2.GetLength(1)] = _cursol;
+                    _mapObjects[i].Type = _cursor;
+                    Map2[i / Map2.GetLength(1), i - i / Map2.GetLength(1) * Map2.GetLength(1)] = _cursor;
 
                     _codebox.Clear();
                     map2 = "";
@@ -190,7 +191,7 @@ namespace HackTheWorld
             {
                 item.Draw();
             }
-            GraphicsContext.DrawRectangle(Pens.WhiteSmoke, _selectedObject[_cursol].MinX + 1, _selectedObject[_cursol].MinY + 1, _selectedObject[_cursol].Width - 3, _selectedObject[_cursol].Height - 3);
+            GraphicsContext.DrawRectangle(Pens.WhiteSmoke, _selectedObject[_cursor].MinX + 1, _selectedObject[_cursor].MinY + 1, _selectedObject[_cursor].Width - 3, _selectedObject[_cursor].Height - 3);
             foreach (var item in _menuItem)
             {
                 item.Draw();
