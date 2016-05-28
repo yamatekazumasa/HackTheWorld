@@ -144,7 +144,7 @@ namespace HackTheWorld
             {
                 GraphicsContext.DrawRectangle(Pens.WhiteSmoke, X + _cursorX * 30, Y + _cursorY * 30, 30, 30);
             }
-
+            GraphicsContext.DrawString("消しゴムは右クリック", new Font("Courier New", 12), Brushes.Black, X, MaxY + 20);
         }
 
         private class Palette : GameObject
