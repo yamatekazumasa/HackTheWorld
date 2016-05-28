@@ -72,6 +72,7 @@
     <Compile Include="Bullet.cs" />
     <Compile Include="ContinueScene.cs" />
     <Compile Include="EditableEnemy.cs" />
+    <Compile Include="EditMapScene.cs" />
     <Compile Include="EditScene.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="IEditable.cs" />

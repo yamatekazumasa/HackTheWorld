@@ -65,6 +65,15 @@ namespace HackTheWorld
             for (int i = 0; i < maxLine - 1; i++) Text.Append('\n');
         }
 
+        public CodeState(int cursor, int maxLine)
+        {
+            Cursor = cursor;
+            MaxLine = maxLine;
+            Text = new StringBuilder();
+            for (int i = 0; i < maxLine - 1; i++) Text.Append('\n');
+        }
+
+
         /// <summary>
         /// 文章を受け取って、自身に貼り付ける。
         /// </summary>

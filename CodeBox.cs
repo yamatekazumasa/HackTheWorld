@@ -57,6 +57,25 @@ namespace HackTheWorld
             _frame = 0;
         }
 
+        public CodeBox()
+        {
+            _cols = 40;
+            _lineHeight = 12;
+            _isFocused = true;
+            _selectedBegin = -1;
+            _selectedEnd = -1;
+            _historyLength = 50;
+            _history = new CodeState[_historyLength];
+            _font = new Font("Courier New", 12);
+
+            _history[_current] = new CodeState(0, 5);
+
+            Width = 12 * _cols;
+            Height = _lineHeight * _history[_current].MaxLine;
+
+            _frame = 0;
+        }
+
         public void Update()
         {
             var current = _history[_current];
@@ -65,10 +84,14 @@ namespace HackTheWorld
 
             if (Input.Space.Pushed) _isFocused = true;
 
-            if (Input.Mouse.Left.Pushed && !Contains(Input.Mouse.Position) && !_subject.Contains(Input.Mouse.Position))
+            if (Input.Mouse.Left.Pushed && !Contains(Input.Mouse.Position) &&
+                _subject != null && !_subject.Contains(Input.Mouse.Position))
             {
                 _isFocused = false;
             }
+
+            if (_subject == null) _isFocused = true;
+
 
             if (Input.Mouse.Left.Pressed && Contains(Input.Mouse.Position))
             {
@@ -260,12 +283,22 @@ namespace HackTheWorld
             _frame++;
         }
 
+        public void SetString(string str)
+        {
+            _history[_current].Text = new StringBuilder(str);
+        }
+
         /// <summary>
         /// 現在表示されているコードを取得する。
         /// </summary>
         public string GetString()
         {
             return _history[_current].Text.ToString();
+        }
+
+        public void Clear()
+        {
+            _history[_current].Text = new StringBuilder();
         }
 
         /// <summary>
@@ -317,7 +350,7 @@ namespace HackTheWorld
         /// </summary>
         public override void Draw()
         {
-            if (_isFocused && Scene.Current is EditScene)
+            if (_isFocused && Scene.Current is EditScene || Scene.Current is EditMapScene)
             {
                 // 編集部分の描画
                 GraphicsContext.FillRectangle(Brushes.Azure, this);

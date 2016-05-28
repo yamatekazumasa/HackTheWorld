@@ -82,7 +82,7 @@ namespace HackTheWorld
                         Scene.Push(new GameScene());
                         break;
                     case 1:
-                        Scene.Push(new GameScene());
+                        Scene.Push(new EditMapScene());
                         break;
                     case 2:
                         Scene.Push(new EditScene());
