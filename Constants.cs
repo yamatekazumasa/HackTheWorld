@@ -45,7 +45,7 @@ namespace HackTheWorld
         /// </summary>
         public enum ObjectType
         {
-            Player, Block, Enemy, Item
+            Player=0, Block=1, Enemy=2, Item=3
         }
 
         /// <summary>
