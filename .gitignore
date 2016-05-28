@@ -11,5 +11,7 @@ doc/
 !App.config
 packages/
 Newtonsoft.Json.xml
-*.json
 *.stackdump
+stage/
+code.json
+code_.json

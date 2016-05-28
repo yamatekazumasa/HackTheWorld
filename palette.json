@@ -1,0 +1,32 @@
+{
+  "palettes": [
+    {
+      "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "color": "Brown"
+    },
+    {
+      "type": "HackTheWorld.Enemy, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "color": "Pink"
+    },
+    {
+      "type": "HackTheWorld.Item, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "color": "LightGreen"
+    },
+    {
+      "type": "HackTheWorld.EditableEnemy, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "color": "Red"
+    },
+    {
+      "type": "HackTheWorld.EditableBlock, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "color": "Yellow"
+    },
+    {
+      "type": "HackTheWorld.Null, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "color": "Aqua"
+    }
+  ]
+}
+
+
+
+
