@@ -23,6 +23,198 @@ namespace HackTheWorld
         static bool mismatch = false;
         static bool misfor = false;
         static bool misif = false;
+
+        //ジョンの
+        public static Hashtable hash = new Hashtable();
+        public static ICollection keycall = hash.Keys;
+        public static ICollection valuecall = hash.Values;
+        static string m1;
+        static string m2;
+
+        public static void Has(ArrayList sArray)
+        {
+
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*\w+\s*=\s*\d+\s*"))
+                {
+
+                    Regex reg1 = new Regex(@"\w+");
+                    Regex reg2 = new Regex(@"\d+");
+                    Match mat1 = reg1.Match((string)sArray[i]);
+                    Match mat2 = reg2.Match((string)sArray[i]);
+                    m1 = mat1.Value;
+                    m2 = mat2.Value;
+
+                    //for (int j = 0; j < sArray.Count; j++)
+                    //{
+                    //    if (System.Text.RegularExpressions.Regex.IsMatch((string)sArray[j], @"\s*\w+\s*=\s*\d+\s*"))
+                    //    {
+                    //        Regex regj = new Regex(@"\w+");
+                    //        Match matj = regj.Match((string)sArray[j]);
+                    //        string mj = matj.Value;
+
+                    //        if (m1 == mj)
+                    //        {
+                    //            hash.Remove(m1);
+                    //        }
+                    //    }
+                    //}
+
+                    //foreach (string k in hash.Keys)
+                    //{
+                    //    if (k == m)
+                    //    {
+                    //        hash.Remove(m);
+                    //    }
+                    //}
+
+
+                    //dict.Add(mat1.Value, int.Parse(mat2.Value ));
+                    hash[m1] = m2;
+
+                }
+                else if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*=\s*(?<value>[a-zA-z]+)\s*"))
+                //else if (System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i], @"\s*\w+\s*=\s*\w+\s*"))
+                {
+
+                    Regex reg = new Regex(@"\s*(?<name>[a-zA-z]+)\s*=\s*(?<value>[a-zA-z]+)\s*");
+                    Match mat = reg.Match((string)sArray[i]);
+                    m1 = mat.Groups["name"].Value;
+                    m2 = mat.Groups["value"].Value;
+
+                    //Regex reg = new Regex(@"\w+)", RegexOptions.IgnoreCase);
+                    //Match mat = reg.Match((string)sArray[i]);
+                    //string m1 = mat1.Groups["name"].Value;
+                    //string m2 = mat2.Groups["value"].Value;
+                    //while(mat.Success)
+                    //{
+                    //    for(int k = 0; k <= 2; k++)
+                    //    {
+                    //        Group g = mat.Groups[k];
+                    //        CaptureCollection cc = g.Captures;
+                    //    }
+                    //}
+
+                    //for (int j = 0; j < sArray.Count; j++)
+                    //{
+                    //    if (System.Text.RegularExpressions.Regex.IsMatch((string)sArray[j], @"\s*(?<name>[a-zA-z]+)\s*=\s*(?<value>[a-zA-z]+)\s*"))
+                    //    {
+                    //        Regex regj = new Regex(@"(?<name>[a-zA-z]+)");
+                    //        Match matj = regj.Match((string)sArray[j]);
+                    //        string mj = matj.Value;
+
+                    //        if (m1 == mj)
+                    //        {
+                    //            hash.Remove(m1);
+                    //        }
+                    //    }
+                    //}
+
+                    if(hash.ContainsKey(m2))
+                    {
+                        hash[m1] = hash[m2];
+                    }
+                    else hash[m1] = m2;
+                    //MessageBox.Show("m1 is " + m1);
+                    //MessageBox.Show("m2 is " + m2);
+                }
+            }
+
+        }
+
+        //public static void dainyu(ArrayList sArray, ArrayList tArray)
+        //{
+
+        //    string result;
+
+        //    for (int i = 0; i < sArray.Count; i++)
+        //    {
+        //        string s1 = (string)sArray[i];
+
+
+
+        //        if (keycall.Count > 0)
+        //        {
+        //            foreach (string k in keycall)
+        //            {
+        //                char c1 = Convert.ToChar(k);
+        //                char c2 = Convert.ToChar(hash[k].ToString());
+        //                result = s1.Replace(c1, c2);
+        //                tArray.Add(result);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            tArray.Add(s1);
+        //        }
+
+
+        //    }
+        //}
+
+        public static void dainyu(ArrayList sArray,ArrayList tArray,int x)
+        {
+            string sx = (string)sArray[x];
+
+            //int aIndex = sx.IndexOf(k);
+            //int bIndex = 0;
+            //int cIndex = 0;
+            //while (0 <= aIndex)
+            //{
+            //    //次の検索開始位置
+            //    int nextIndex = aIndex + k.Length;
+            //    if (nextIndex < sx.Length)
+            //    {
+            //        //次の位置を探す
+            //        bIndex = sx.IndexOf(k, nextIndex);
+            //    }
+            //    else
+            //    {
+            //        //最後まで検索したときは終わる
+            //        break;
+            //    }
+
+            //    int nextnextIndex = aIndex + bIndex + k.Length;
+            //    if(nextnextIndex < sx.Length)
+            //    {
+            //        cIndex = sx.IndexOf(k, nextnextIndex);
+            //    }
+            //    else
+            //    {
+            //        break;
+            //    }
+            //}
+            //if (sx.IndexOf(k) >= 0)
+            //{
+
+            //    string sx1 = sx.Substring(aIndex - 1, 1);
+            //    string sx2 = sx.Substring(aIndex + 1, 1);
+
+            //Regex reg = new Regex(@"[a-zA-z]");
+            //Match mat = reg.Match((string)sArray[x]);
+            //if(sx1==@"\W" && sx2==@"\W")
+            //{
+            string result;
+
+            if(keycall.Count > 0)
+            {
+                foreach(string k in keycall)
+                {
+                    char c1 = Convert.ToChar(k);
+                    char c2 = Convert.ToChar(hash[k].ToString());
+                    result = sx.Replace(c1,c2);
+                    tArray.Add(result);
+                }
+            }
+            else
+            {
+                tArray.Add(sx);
+            }
+
+
+        }
+
         public static ArrayList yomitori(string s1)
         {
             //連続で入力してデバックしたいからいる奴ら
@@ -32,6 +224,7 @@ namespace HackTheWorld
             mismatch = false;
             misfor = false;
             misif = false;
+            hash.Clear();
 
             //行で分割
             //char[ ] delimiterChars = { ' ' , ':' , '\t' , '\n' };
@@ -56,6 +249,13 @@ namespace HackTheWorld
                 result.Add("関数乱れマン");
                 return result;
             }
+
+            /*
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                dainyu(sArray,tArray,i);
+            }
+            */
             //割り振る
             warifuri(sArray,result);
             if(misfor)
