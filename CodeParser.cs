@@ -31,10 +31,10 @@ namespace HackTheWorld
         static string m1;
         static string m2;
 
-        public static void Has(ArrayList sArray)
+        public static void Has(ArrayList sArray,int x)
         {
 
-            for(int i = 0;i < sArray.Count;i++)
+            for(int i = 0;i < x;i++)
             {
                 if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*\w+\s*=\s*\d+\s*"))
                 {
@@ -153,7 +153,7 @@ namespace HackTheWorld
         //    }
         //}
 
-        public static void dainyu(ArrayList sArray,ArrayList tArray,int x)
+        public static void dainyu(ArrayList sArray,int x)
         {
             string sx = (string)sArray[x];
 
@@ -204,13 +204,10 @@ namespace HackTheWorld
                     char c1 = Convert.ToChar(k);
                     char c2 = Convert.ToChar(hash[k].ToString());
                     result = sx.Replace(c1,c2);
-                    tArray.Add(result);
+                    sArray[x]=result;
                 }
             }
-            else
-            {
-                tArray.Add(sx);
-            }
+            
 
 
         }
@@ -218,9 +215,6 @@ namespace HackTheWorld
         public static ArrayList yomitori(string s1)
         {
             //連続で入力してデバックしたいからいる奴ら
-            forArray.Clear();
-            ifArray.Clear();
-            funcArray.Clear();
             mismatch = false;
             misfor = false;
             misif = false;
@@ -240,6 +234,7 @@ namespace HackTheWorld
             {
                 sArray.Add(s2[i]);
             }
+
             //for、ifとendが組になってるかと組がどこの行か
             kakkoread(sArray);
             if(mismatch)
@@ -250,12 +245,7 @@ namespace HackTheWorld
                 return result;
             }
 
-            /*
-            for(int i = 0;i < sArray.Count;i++)
-            {
-                dainyu(sArray,tArray,i);
-            }
-            */
+
             //割り振る
             warifuri(sArray,result);
             if(misfor)
@@ -284,6 +274,10 @@ namespace HackTheWorld
 
         public static void kakkoread(ArrayList sArray)
         {
+            forArray.Clear();
+            ifArray.Clear();
+            funcArray.Clear();
+
             int countfunction = 0;
             int kakko = 0;
             for(int i = 0;i < sArray.Count;i++)
@@ -375,6 +369,10 @@ namespace HackTheWorld
 
         public static void For(ArrayList sArray,ArrayList result,int home)
         {
+            //homeまで読んでhash登録、代入、forとendの対応の取り直し
+            Has(sArray,home);
+            dainyu(sArray,home);
+            kakkoread(sArray);
             if(!boolfor(sArray,home))
             {
                 result.Add("boolforひっかかった");
@@ -410,6 +408,11 @@ namespace HackTheWorld
                         int j = 1;
                         while(!firstend(sArray,home + j))
                         {
+                            //home+jまで同じことをする
+                            Has(sArray,home+j);
+                            dainyu(sArray,home+j);
+                            kakkoread(sArray);
+
                             switch(bunki(sArray,home + j))
                             {
                                 case 1:
@@ -438,6 +441,11 @@ namespace HackTheWorld
 
         public static void If(ArrayList sArray,ArrayList result,int home)
         {
+            //homeまで読んでhash登録、代入、forとendの対応の取り直し
+            Has(sArray,home);
+            dainyu(sArray,home);
+            kakkoread(sArray);
+
             if(!boolif(sArray,home))
             {
                 result.Add("boolifひっかかった");
@@ -449,6 +457,10 @@ namespace HackTheWorld
                 while(!firstend(sArray,home + i))
                 {
                     if(firstelse(sArray,home + i)) break;
+                    //home+iまで同じことをする
+                    Has(sArray,home + i);
+                    dainyu(sArray,home + i);
+                    kakkoread(sArray);
                     switch(bunki(sArray,home + i))
                     {
                         case 1:
@@ -482,6 +494,11 @@ namespace HackTheWorld
                 }
                 while(!firstend(sArray,home + i))
                 {
+                    //home+iまで同じことをする
+                    Has(sArray,home + i);
+                    dainyu(sArray,home + i);
+                    kakkoread(sArray);
+
                     switch(bunki(sArray,home + i))
                     {
                         case 1:
