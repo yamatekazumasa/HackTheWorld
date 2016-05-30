@@ -107,7 +107,7 @@ namespace HackTheWorld
             //string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
             // CodeParserで生成されたArrayListの中身は<move><X><Y><time>の形
-            // <set><X><Y>
+            //<"if¥s*¥(¥s*touch¥s*¥)"><move><X><Y>
 
             //CodeParser.yomitori(str);
 
@@ -115,31 +115,34 @@ namespace HackTheWorld
 
             //ちょっと動いてくれるか試すよ
             var strlist = new List<string>();
-            strlist.Add("size");
+            strlist.Add("move");
             strlist.Add("100");
             strlist.Add("100");
             //strlist.Add("move");
             //strlist.Add("50");
             //strlist.Add("100");
-            self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse((string)strlist[1]), float.Parse((string)strlist[2])); }, 2.0f));
+            self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[1]), float.Parse(strlist[2])); }, 2.0f));
 
-            /*
 
-            for (int i = 0; i < 4; i++)
+
+            for (int i = 0; i < strlist.Count; i++)
             {
-                switch ((string)strlist[i])
+                switch (strlist[i])
                 {
                     case "move":
-                        self.AddProcess(new Process((obj, dt) => { obj.X += float.Parse((string)strlist[i + 1]) * dt; }, 2.0f));
-                        self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse((string)strlist[i + 2]) * dt; }, 2.0f));
+                        self.AddProcess(new Process((obj, dt) => { obj.X += float.Parse(strlist[i + 1]) * dt; }, 2.0f));
+                        self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse(strlist[i + 2]) * dt; }, 2.0f));
                         break;
 
                     case "size":
-                        self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse((string)strlist[i + 1]), float.Parse((string)strlist[i + 2])); }, 2.0f));
+                        self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[i + 1]), float.Parse(strlist[i + 2])); }, 2.0f));
+                        break;
+
+                    default:
                         break;
                 }
             }
-            */
+
 
         }
 
