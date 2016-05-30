@@ -118,6 +118,7 @@ namespace HackTheWorld
             strlist.Add("move");
             strlist.Add("100");
             strlist.Add("100");
+            strlist.Add("kitsui");
             //strlist.Add("move");
             //strlist.Add("50");
             //strlist.Add("100");
@@ -127,6 +128,14 @@ namespace HackTheWorld
 
             for (int i = 0; i < strlist.Count; i++)
             {
+
+                if (strlist.Contains<string>("move"))
+                {
+                    self.AddProcess(new Process((obj, dt) => { obj.Position = new Vector(float.Parse(strlist[i+1]), float.Parse(strlist[i+2])); }, 2.0f));
+                }
+
+                /*
+                 //switch文でindexが合ってるはずなのにArgumentOutOfRangeExceptionエラー
                 switch (strlist[i])
                 {
                     case "move":
@@ -140,7 +149,9 @@ namespace HackTheWorld
 
                     default:
                         break;
-                }
+                
+            }
+            */
             }
 
 
