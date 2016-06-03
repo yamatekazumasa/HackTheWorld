@@ -66,7 +66,7 @@ namespace HackTheWorld
 
         public static bool CanExecute(this IEditable self)
         {
-            return  self.Routine != null;
+            return self.Routine != null;
         }
 
         public static void SetProcesses(this IEditable self, Process[] processes)
@@ -88,12 +88,12 @@ namespace HackTheWorld
         {
             if (self.Processes == null) return;
             var process = self.Processes[self.ProcessPtr];
-            if (process.ElapsedTime*1000 <= process.MilliSeconds)
+            if (process.ElapsedTime * 1000 <= process.MilliSeconds)
             {
                 process.ExecuteWith(self, dt);
                 process.ElapsedTime += dt;
             }
-            else if(self.ProcessPtr + 1 < self.Processes.Count)
+            else if (self.ProcessPtr + 1 < self.Processes.Count)
             {
                 self.ProcessPtr++;
             }
@@ -104,10 +104,57 @@ namespace HackTheWorld
 
         public static void Compile(this IEditable self)
         {
-            string str = self.Codebox.GetString();
+            //string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
-            CodeParser.yomitori(str);
+            // CodeParserで生成されたArrayListの中身は<move><X><Y><time>の形
+            //<"if¥s*¥(¥s*touch¥s*¥)"><move><X><Y>
+
+            //CodeParser.yomitori(str);
+
             // self.SetProcesses(new Process[] {});
+
+            //ちょっと動いてくれるか試すよ
+            var strlist = new List<string>();
+            strlist.Add("move");
+            strlist.Add("100");
+            strlist.Add("100");
+            strlist.Add("kitsui");
+            //strlist.Add("move");
+            //strlist.Add("50");
+            //strlist.Add("100");
+            self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[1]), float.Parse(strlist[2])); }, 2.0f));
+
+
+
+            for (int i = 0; i < strlist.Count; i++)
+            {
+
+                if (strlist.Contains<string>("move"))
+                {
+                    self.AddProcess(new Process((obj, dt) => { obj.Position = new Vector(float.Parse(strlist[i+1]), float.Parse(strlist[i+2])); }, 2.0f));
+                }
+
+                /*
+                 //switch文でindexが合ってるはずなのにArgumentOutOfRangeExceptionエラー
+                switch (strlist[i])
+                {
+                    case "move":
+                        self.AddProcess(new Process((obj, dt) => { obj.X += float.Parse(strlist[i + 1]) * dt; }, 2.0f));
+                        self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse(strlist[i + 2]) * dt; }, 2.0f));
+                        break;
+
+                    case "size":
+                        self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[i + 1]), float.Parse(strlist[i + 2])); }, 2.0f));
+                        break;
+
+                    default:
+                        break;
+                
+            }
+            */
+            }
+
+
         }
 
 
