@@ -21,7 +21,7 @@ namespace HackTheWorld
     /// </summary>
     class MapEditor : GameObject
     {
-        private readonly Palette[] _palettes;
+        private readonly List<Palette> _palettes;
         private readonly Type[,] _map;
         private int _cursorX;
         private int _cursorY;
@@ -43,15 +43,20 @@ namespace HackTheWorld
                 var tmp = JObject.Parse(json);
                 foreach (var p in tmp["palettes"])
                 {
-                    Palette.ColorTable.Add(Type.GetType((string) p["type"]), new SolidBrush(Color.FromName((string) p["color"])));
+                    if (Type.GetType((string)p["type"]) != null && !Palette.ColorTable.ContainsKey(Type.GetType((string) p["type"])))
+                    {
+                        Palette.ColorTable.Add(Type.GetType((string)p["type"]), new SolidBrush(Color.FromName((string)p["color"])));
+                    }
                 }
             }
 
-            _palettes = new Palette[5];
-            for (int i = 0; i < 5; i++)
+            _palettes = new List<Palette>();
+            for (int i = 0; i < Palette.ColorTable.Count; i++)
             {
-                _palettes[i] = new Palette(Palette.ColorTable.ElementAt(i).Key);
-                _palettes[i].Position = new Vector(500 + 30 * i, 50);
+                Palette p = new Palette(Palette.ColorTable.ElementAt(i).Key) {
+                    Position = new Vector(500 + 30*(i%16), 40 + i/16*30)
+                };
+                _palettes.Add(p);
             }
 
             _map = new Type[CellNumY, CellNumX];
@@ -83,19 +88,21 @@ namespace HackTheWorld
                         Block b = new Block(CellSize * i, CellSize * j);
                         s.Blocks.Add(b);
                         s.Objects.Add(b);
+                        continue;
                     }
                     if (obj == typeof(Enemy))
                     {
                         Enemy e = new Enemy(CellSize * i, CellSize * j);
                         s.Enemies.Add(e);
                         s.Objects.Add(e);
-                        break;
+                        continue;
                     }
                     if (obj == typeof(Item))
                     {
                         Item item = new Item(CellSize * i + CellSize/4, CellSize * j + CellSize/2, ItemEffects.Bigger);
                         s.Items.Add(item);
                         s.Objects.Add(item);
+                        continue;
                     }
                 }
             }
@@ -106,7 +113,7 @@ namespace HackTheWorld
         {
             _cursorX = (Input.Mouse.X - (int)X) / 30;
             _cursorY = (Input.Mouse.Y - (int)Y) / 30;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < _palettes.Count; i++)
             {
                 if (_palettes[i].Clicked)
                 {
@@ -136,9 +143,9 @@ namespace HackTheWorld
                     GraphicsContext.FillRectangle(Palette.ColorOf(_map[j, i]), X + i*30, Y + j*30, 30, 30);
                 }
             }
-            for (int i = 0; i < 5; i++)
+            foreach(var p in _palettes)
             {
-                _palettes[i].Draw();
+                p.Draw();
             }
             if (Contains(Input.Mouse.Position))
             {
@@ -147,10 +154,16 @@ namespace HackTheWorld
             GraphicsContext.DrawString("消しゴムは右クリック", new Font("Courier New", 12), Brushes.Black, X, MaxY + 20);
         }
 
+        /// <summary>
+        /// 一つ一つのカラーパレット。
+        /// </summary>
         private class Palette : GameObject
         {
             public readonly Type Type;
 
+            /// <summary>
+            /// 型と色の対応付けを保存している。
+            /// </summary>
             public static readonly Dictionary<Type, Brush> ColorTable = new Dictionary<Type, Brush>();
 
             public Palette(Type type)
