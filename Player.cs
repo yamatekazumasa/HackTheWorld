@@ -15,7 +15,7 @@ namespace HackTheWorld
         public int Speed = CellSize * 3;
         public int Jumpspeed = -CellSize * 11; // h=v^2/2g
 
-        public Player()
+        public Player() : base(0,0)
         {
             ObjectType = ObjectType.Player;
             _img = Image.FromFile(@"image\masato1.jpg");
@@ -30,7 +30,8 @@ namespace HackTheWorld
             if (Input.Up.Pushed && OnGround) VY = Jumpspeed;
             
             // 自動で動く部分
-            if(!OnGround) VY += Gravity * dt;
+            if (!OnGround) VY += Gravity * dt;
+           // if (!OnGround) VX = 0;
             Move(dt);
         }
 

@@ -231,10 +231,10 @@ namespace HackTheWorld
 
         private void DebugWrite()
         {
-            string PX = " X: " + ((int)(_player.X * 1000 / CellSize)).ToString("D6") + "#";
-            string PY = " Y: " + ((int)(_player.Y * 1000 / CellSize)).ToString("D6") + "#";
-            string PVX = "VX: " + ((int)(_player.VX * 1000 / CellSize)).ToString("D6") + "#";
-            string PVY = "VY: " + ((int)(_player.VY * 1000 / CellSize)).ToString("D6") + "#";
+            string PX = " X: " + ((int)(_player.X * 1000)).ToString("D6") + "#";
+            string PY = " Y: " + ((int)(_player.Y * 1000)).ToString("D6") + "#";
+            string PVX = "VX: " + ((int)(_player.VX * 1000)).ToString("D6") + "#";
+            string PVY = "VY: " + ((int)(_player.VY * 1000)).ToString("D6") + "#";
             Font font = new Font("Courier New", 12);
             GraphicsContext.DrawString(PX, font, Brushes.Black, ScreenWidth - 180, 100);
             GraphicsContext.DrawString(PY, font, Brushes.Black, ScreenWidth - 180, 120);
