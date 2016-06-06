@@ -9,6 +9,9 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// アニメーションするオブジェクト。
+    /// </summary>
     public interface IAnimatable
     {
         float X { get; set; }
@@ -26,6 +29,9 @@ namespace HackTheWorld
         }
     }
 
+    /// <summary>
+    /// アニメーション
+    /// </summary>
     public class Animation
     {
         private float _elapsedTime;
@@ -53,6 +59,9 @@ namespace HackTheWorld
             _subject = obj;
         }
 
+        /// <summary>
+        /// アニメーションを開始する。
+        /// </summary>
         public void Start()
         {
             _elapsedTime = 0.0f;
@@ -60,17 +69,26 @@ namespace HackTheWorld
             IsPlaying = true;
         }
 
+        /// <summary>
+        /// アニメーションを停止する。
+        /// </summary>
         public void Stop()
         {
             IsPlaying = false;
         }
 
+        /// <summary>
+        /// 最初からアニメーションをする。
+        /// </summary>
         public void Rewind()
         {
             _elapsedTime = 0.0f;
             _current = 0;
         }
 
+        /// <summary>
+        /// アニメーションを dt 進める。
+        /// </summary>
         public void Advance(float dt)
         {
             _elapsedTime += dt;
