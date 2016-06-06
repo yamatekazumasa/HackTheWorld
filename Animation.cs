@@ -11,6 +11,8 @@ namespace HackTheWorld
 {
     /// <summary>
     /// アニメーションするオブジェクト。
+    /// コンストラクタまたは Initialize メソッドの中で、
+    /// `this.SetAnimation()` をすることでアニメーションをセットできる。
     /// </summary>
     public interface IAnimatable
     {
