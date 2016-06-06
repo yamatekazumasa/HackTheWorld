@@ -21,7 +21,7 @@ namespace HackTheWorld
         /// <summary>
         /// スケール。
         /// </summary>
-        public static readonly int Scale = 100;
+        public static readonly int Scale = 100000;
 
         /// <summary>
         /// ウィンドウサイズ。

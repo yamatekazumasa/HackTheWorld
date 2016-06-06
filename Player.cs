@@ -38,6 +38,8 @@ namespace HackTheWorld
             if(!OnGround) VY += Gravity * dt;
             Move(dt);
 
+            if (!InWindow()) Die();
+
             // アニメーションを dt 進める
             Anim.Advance(dt);
         }
