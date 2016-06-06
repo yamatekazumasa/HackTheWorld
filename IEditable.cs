@@ -104,12 +104,12 @@ namespace HackTheWorld
 
         public static void Compile(this IEditable self)
         {
-            //string str = self.Codebox.GetString();
+            string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
             // CodeParserで生成されたArrayListの中身は<move><X><Y><time>の形
             //<"if¥s*¥(¥s*touch¥s*¥)"><move><X><Y>
 
-            //CodeParser.yomitori(str);
+           CodeParser.yomitori(str);
 
             // self.SetProcesses(new Process[] {});
 
@@ -122,37 +122,37 @@ namespace HackTheWorld
             //strlist.Add("move");
             //strlist.Add("50");
             //strlist.Add("100");
-            self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[1]), float.Parse(strlist[2])); }, 2.0f));
+            //self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[1]), float.Parse(strlist[2])); }, 2.0f));
 
 
 
-            for (int i = 0; i < strlist.Count; i++)
-            {
+            //for (int i = 0; i < strlist.Count; i++)
+            //{
 
-                if (strlist.Contains<string>("move"))
-                {
-                    self.AddProcess(new Process((obj, dt) => { obj.Position = new Vector(float.Parse(strlist[i+1]), float.Parse(strlist[i+2])); }, 2.0f));
-                }
+            //    if (strlist.Contains<string>("move"))
+            //    {
+            //        self.AddProcess(new Process((obj, dt) => { obj.Position = new Vector(float.Parse(strlist[i+1]), float.Parse(strlist[i+2])); }, 2.0f));
+            //    }
 
-                /*
-                 //switch文でindexが合ってるはずなのにArgumentOutOfRangeExceptionエラー
-                switch (strlist[i])
-                {
-                    case "move":
-                        self.AddProcess(new Process((obj, dt) => { obj.X += float.Parse(strlist[i + 1]) * dt; }, 2.0f));
-                        self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse(strlist[i + 2]) * dt; }, 2.0f));
-                        break;
+            //    /*
+            //     //switch文でindexが合ってるはずなのにArgumentOutOfRangeExceptionエラー
+            //    switch (strlist[i])
+            //    {
+            //        case "move":
+            //            self.AddProcess(new Process((obj, dt) => { obj.X += float.Parse(strlist[i + 1]) * dt; }, 2.0f));
+            //            self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse(strlist[i + 2]) * dt; }, 2.0f));
+            //            break;
 
-                    case "size":
-                        self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[i + 1]), float.Parse(strlist[i + 2])); }, 2.0f));
-                        break;
+            //        case "size":
+            //            self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[i + 1]), float.Parse(strlist[i + 2])); }, 2.0f));
+            //            break;
 
-                    default:
-                        break;
+            //        default:
+            //            break;
                 
-            }
-            */
-            }
+            //}
+            //*/
+            //}
 
 
         }
