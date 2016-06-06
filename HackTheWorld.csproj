@@ -76,6 +76,7 @@
     <Compile Include="EditMapScene.cs" />
     <Compile Include="EditScene.cs" />
     <Compile Include="Enemy.cs" />
+    <Compile Include="Gate.cs" />
     <Compile Include="IEditable.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="MapEditor.cs" />

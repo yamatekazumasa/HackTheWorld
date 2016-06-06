@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -27,6 +28,7 @@ namespace HackTheWorld
         private List<Enemy> _enemies;
         private List<Bullet> _bullets;
         private List<Item> _items;
+        private List<Gate> _gates;
 
         public GameScene()
         {
@@ -73,10 +75,11 @@ namespace HackTheWorld
             _enemies = s.Enemies;
             _bullets = s.Bullets;
             _items = s.Items;
+            _gates = s.Gates;
 
             foreach (var o in _editableObjects)
             {
-                if (o is EditableEnemy)
+                if (o.Processes == null || o.Processes.Count == 0)
                 {
                     o.SetDemoProcesses(s);
                     o.Execute();
@@ -113,6 +116,7 @@ namespace HackTheWorld
                     _editableObjects = stage.EditableObjects;
                     _enemies = stage.Enemies;
                     _items = stage.Items;
+                    _gates = stage.Gates;
                 }
                 if (Input.S.Pushed)
                 {
@@ -122,10 +126,16 @@ namespace HackTheWorld
                         Blocks = _blocks,
                         EditableObjects = _editableObjects,
                         Enemies = _enemies,
-                        Items = _items
+                        Items = _items,
+                        Gates = _gates
                     };
-                    Stage.Save(stage);
+                    stage.Save(DateTime.Now.ToString("MMddHHmmss") + ".json");
                 }
+            }
+
+            if (Input.Control.Pressed && Input.Shift.Pressed && Input.S.Pushed)
+            {
+
             }
 
             if (_player == null) return;
@@ -166,6 +176,14 @@ namespace HackTheWorld
             foreach (var obj in _editableObjects)
             {
                 obj.Update(dt);
+            }
+
+            foreach (var g in _gates)
+            {
+                if (_player.Intersects(g))
+                {
+                    Scene.Push(new EditScene(g.NextStage));
+                }
             }
 
             // PlayerとBlockが重ならないように位置を調整

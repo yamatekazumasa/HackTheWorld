@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,7 @@ namespace HackTheWorld
         public List<Enemy> Enemies { get; set; }
         public List<Bullet> Bullets { get; set; }
         public List<Item> Items { get; set; }
+        public List<Gate> Gates { get; set; }
 
         public Stage()
         {
@@ -46,6 +48,7 @@ namespace HackTheWorld
             Enemies = new List<Enemy>();
             Bullets = new List<Bullet>();
             Items = new List<Item>();
+            Gates = new List<Gate>();
         }
 
         /// <summary>
@@ -62,6 +65,7 @@ namespace HackTheWorld
             Enemies = new List<Enemy>();
             Bullets = new List<Bullet>();
             Items = new List<Item>();
+            Gates = new List<Gate>();
         }
 
         /// <summary>
@@ -74,11 +78,23 @@ namespace HackTheWorld
         /// <summary>
         /// ステージを保存する。
         /// </summary>
-        public static void Save(Stage stage)
+        public void Save()
         {
-            string json = JsonConvert.SerializeObject(stage, Formatting.Indented);
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
             if (!Directory.Exists(@".\stage")) Directory.CreateDirectory(@".\stage");
             StreamWriter sw = new StreamWriter(@".\stage\test.json", false, Encoding.GetEncoding("utf-8"));
+            sw.Write(json);
+            sw.Close();
+        }
+
+        /// <summary>
+        /// パスを指定してステージを保存する。
+        /// </summary>
+        public void Save(string path)
+        {
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            if (!Directory.Exists(@".\stage")) Directory.CreateDirectory(@".\stage");
+            StreamWriter sw = new StreamWriter(@".\stage\" + path, false, Encoding.GetEncoding("utf-8"));
             sw.Write(json);
             sw.Close();
         }
@@ -90,6 +106,15 @@ namespace HackTheWorld
         {
             if (!File.Exists(@".\stage\test.json")) return null;
             StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
+            string json = sr.ReadToEnd();
+            sr.Close();
+            return Parse(json);
+        }
+
+        public static Stage Load(string path)
+        {
+            Debug.Assert(File.Exists(@".\stage\" + path), "The requested path not exists.");
+            StreamReader sr = new StreamReader(@".\stage\" + path, Encoding.GetEncoding("utf-8"));
             string json = sr.ReadToEnd();
             sr.Close();
             return Parse(json);
@@ -143,6 +168,13 @@ namespace HackTheWorld
                             var p = new Player();
                             stage.Player = p;
                             stage.Objects.Add(p);
+                            break;
+                        }
+                    case "Gate":
+                        {
+                            var g = new Gate((float) obj["x"], (float) obj["y"]) {NextStage = (string) obj["code"]};
+                            stage.Gates.Add(g);
+                            stage.Objects.Add(g);
                             break;
                         }
 
@@ -220,6 +252,11 @@ namespace HackTheWorld
             var player = new Player();
             stage.Player = player;
             stage.Objects.Add(player);
+
+            var gate = new Gate(CellSize*15, CellSize*5);
+            gate.NextStage = "stage_1_1.json";
+            stage.Gates.Add(gate);
+            stage.Objects.Add(gate);
 
             return stage;
         }

@@ -16,6 +16,16 @@ namespace HackTheWorld
         private List<MenuItem> _menuItem;
         private Stage _stage;
 
+        public EditScene()
+        {
+            _stage = Stage.CreateDemoStage();
+        }
+
+        public EditScene(string path)
+        {
+            _stage = Stage.Load(path);
+        }
+
         public override void Cleanup()
         {
         }
@@ -31,8 +41,6 @@ namespace HackTheWorld
                 Position = new Vector(75, 500)
             };
             _menuItem = new List<MenuItem> {_backButton, _startButton};
-
-            _stage = Stage.CreateDemoStage();
         }
 
         public override void Update(float dt)
@@ -62,7 +70,7 @@ namespace HackTheWorld
                 }
                 if (Input.S.Pushed)
                 {
-                    Stage.Save(_stage);
+                    _stage.Save();
                 }
             }
 
@@ -71,7 +79,7 @@ namespace HackTheWorld
             if (Input.Control.Pressed)
             {
                 if (Input.R.Pushed) _stage = Stage.Load();
-                if (Input.S.Pushed) Stage.Save(_stage);
+                if (Input.S.Pushed) _stage.Save();
             }
 
             GraphicsContext.Clear(Color.White);
