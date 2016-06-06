@@ -68,7 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnimationServer.cs" />
+    <Compile Include="Animation.cs" />
     <Compile Include="Block.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="ContinueScene.cs" />
@@ -76,7 +76,6 @@
     <Compile Include="EditMapScene.cs" />
     <Compile Include="EditScene.cs" />
     <Compile Include="Enemy.cs" />
-    <Compile Include="IAnimatable.cs" />
     <Compile Include="IEditable.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="MapEditor.cs" />

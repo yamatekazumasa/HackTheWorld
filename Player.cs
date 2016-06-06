@@ -9,17 +9,21 @@ namespace HackTheWorld
     /// <summary>
     /// プレイヤー
     /// </summary>
-    public class Player : GameObject
+    public class Player : GameObject, IAnimatable
     {
-        private readonly Image _img;
         public int Speed = CellSize * 3;
         public int Jumpspeed = -CellSize * 11; // h=v^2/2g
+        public Animation Anim { get; set; }
 
         public Player()
         {
             ObjectType = ObjectType.Player;
-            _img = Image.FromFile(@"image\masato1.jpg");
+            Image img1 = Image.FromFile(@"image\masato1.jpg");
+            Image img2 = Image.FromFile(@"image\masato2.jpg");
+            Image img3 = Image.FromFile(@"image\masato3.jpg");
             Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
+            this.SetAnimation(new[] {img1, img2, img3}, new[] {0.5f, 1.0f, 1.5f});
+            Anim.Start();
         }
 
         public override void Update(float dt)
@@ -32,6 +36,8 @@ namespace HackTheWorld
             // 自動で動く部分
             if(!OnGround) VY += Gravity * dt;
             Move(dt);
+
+            Anim.Advance(dt);
         }
 
         /// <summary>
@@ -57,10 +63,11 @@ namespace HackTheWorld
 
         public override void Draw()
         {
-            if (Scene.Current is GameScene) GraphicsContext.DrawImage(_img, X, Y, Width, Height);
+            if (!(Scene.Current is GameScene || Scene.Current is EditMapScene)) return;
             //GraphicsContext.FillRectangle(Brushes.Aqua, X, Y, Width, Height);
             //GraphicsContext.DrawRectangle(Pens.LightBlue, X, Y, Width, Height);
             if (!IsAlive) GraphicsContext.FillRectangle(Brushes.Gray, X, Y, Width, Height);
+            Anim.Draw(VX < 0);
         }
 
     }

@@ -160,8 +160,6 @@ namespace HackTheWorld
             self.ProcessPtr = 0;
             self.CanExecute = true;
         }
-
-
     }
 
 }
