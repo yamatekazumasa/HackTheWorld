@@ -29,14 +29,16 @@ namespace HackTheWorld
         public override void Update(float dt)
         {
             // キーで動かす部分
-            if (Input.Left.Pressed)  X -= Speed * dt;
-            if (Input.Right.Pressed) X += Speed * dt;
+            if (Input.Left.Pressed)  VX = -Speed;
+            if (Input.Right.Pressed) VX = Speed;
+            if (Input.Left.Pressed == Input.Right.Pressed) VX = 0;
             if (Input.Up.Pushed && OnGround) VY = Jumpspeed;
             
             // 自動で動く部分
             if(!OnGround) VY += Gravity * dt;
             Move(dt);
 
+            // アニメーションを dt 進める
             Anim.Advance(dt);
         }
 
@@ -67,7 +69,7 @@ namespace HackTheWorld
             //GraphicsContext.FillRectangle(Brushes.Aqua, X, Y, Width, Height);
             //GraphicsContext.DrawRectangle(Pens.LightBlue, X, Y, Width, Height);
             if (!IsAlive) GraphicsContext.FillRectangle(Brushes.Gray, X, Y, Width, Height);
-            Anim.Draw(VX < 0);
+            Anim.Draw(VX > 0);
         }
 
     }

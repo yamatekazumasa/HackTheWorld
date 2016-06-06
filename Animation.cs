@@ -30,6 +30,7 @@ namespace HackTheWorld
     {
         private float _elapsedTime;
         private readonly Image[] _images;
+        private readonly Image[] _flippedImages;
         private readonly float[] _timeline;
         private readonly bool _loop;
         private int _current;
@@ -40,6 +41,12 @@ namespace HackTheWorld
         {
             Debug.Assert(images.Length == timeline.Length, "アニメーションの画像と時間情報の数が一致しません。");
             _images = images;
+            _flippedImages = new Image[images.Length];
+            for (int i = 0; i < images.Length; i++)
+            {
+                _flippedImages[i] = (Image)images[i].Clone();
+                _flippedImages[i].RotateFlip(RotateFlipType.RotateNoneFlipX);
+            }
             _timeline = timeline;
             _loop = true;
             _current = 0;
@@ -81,10 +88,7 @@ namespace HackTheWorld
 
         public void Draw(bool flipped)
         {
-            if (flipped) _images[_current].RotateFlip(RotateFlipType.RotateNoneFlipX);
-            GraphicsContext.DrawImage(_images[_current], _subject.X, _subject.Y, _subject.W, _subject.H);
-            if (flipped) _images[_current].RotateFlip(RotateFlipType.RotateNoneFlipX);
+            GraphicsContext.DrawImage(flipped ? _flippedImages[_current] : _images[_current], _subject.X, _subject.Y, _subject.W, _subject.H);
         }
-
     }
 }
