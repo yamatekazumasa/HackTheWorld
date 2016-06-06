@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace HackTheWorld
 {
@@ -117,20 +118,12 @@ namespace HackTheWorld
             }
 
             /// <summary>
-            /// 押されたボタンの状態を更新する。
+            /// マウスボタンの状態を更新する。
             /// </summary>
-            public static void ButtonAppend(MouseButtons b)
+            public static void Update(LinkedList<MouseButtons> pressedButtons)
             {
-                if (b == MouseButtons.Left) Left.Append(true);
-                if (b == MouseButtons.Right) Right.Append(true);
-            }
-            /// <summary>
-            /// 離されたボタンの状態を更新する。
-            /// </summary>
-            public static void ButtonDisappend(MouseButtons b)
-            {
-                if (b == MouseButtons.Left) Left.Append(false);
-                if (b == MouseButtons.Right) Right.Append(false);
+                Mouse.Left.Append(pressedButtons.Contains(MouseButtons.Left));
+                Mouse.Right.Append(pressedButtons.Contains(MouseButtons.Right));
             }
 
             /// <summary>

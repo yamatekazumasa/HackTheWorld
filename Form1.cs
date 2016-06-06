@@ -23,6 +23,7 @@ namespace HackTheWorld
     {
         private Bitmap _bmp;
         private LinkedList<Keys> _pressedKeys;
+        private LinkedList<MouseButtons> _pressedButtons;
 
         public Form1()
         {
@@ -46,6 +47,7 @@ namespace HackTheWorld
             _bmp = new Bitmap(ScreenWidth, ScreenHeight);
 
             _pressedKeys = new LinkedList<Keys>();
+            _pressedButtons = new LinkedList<MouseButtons>();
 
             Invoke((Action)(() => { GraphicsContext = Graphics.FromImage(_bmp); }));
             
@@ -62,6 +64,7 @@ namespace HackTheWorld
                 float dt = (currentTime - prevTime) / 1000.0F;
 
                 Input.Update(_pressedKeys);
+                Input.Mouse.Update(_pressedButtons);
                 Input.Mouse.Update(MousePosition, Location);
                 // プレイヤーとステージをアップデート
                 Scene.Current.Update(dt);
@@ -132,7 +135,7 @@ namespace HackTheWorld
         /// </summary>
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            Input.Mouse.ButtonAppend(e.Button);
+            if (!_pressedButtons.Contains(e.Button)) _pressedButtons.AddLast(e.Button);
         }
 
         /// <summary>
@@ -141,7 +144,7 @@ namespace HackTheWorld
         /// </summary>
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            Input.Mouse.ButtonDisappend(e.Button);
+            _pressedButtons.Remove(e.Button);
         }
 
         /// <summary>
