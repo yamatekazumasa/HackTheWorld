@@ -71,7 +71,6 @@ namespace HackTheWorld
 
             if (_subject == null) _isFocused = true;
 
-
             if (Input.Mouse.Left.Pressed && Contains(Input.Mouse.Position))
             {
                 _isFocused = true;
@@ -87,9 +86,9 @@ namespace HackTheWorld
 
             if (!_isFocused) return;
 
-            if (Input.Left.Pushed && current.Cursor > 0) current.Cursor--;
-            if (Input.Right.Pushed && current.Cursor < current.Text.Length) current.Cursor++;
-            if (Input.Up.Pushed)
+            if ((Input.Left.Pushed || Input.Left.Pressed && Counter() > 100 && Counter() % 10 == 0) && current.Cursor > 0) current.Cursor--;
+            if ((Input.Right.Pushed || Input.Right.Pressed && Counter() > 100 && Counter() % 10 == 0) && current.Cursor < current.Text.Length) current.Cursor++;
+            if (Input.Up.Pushed || Input.Up.Pressed && Counter() > 100 && Counter() % 10 == 0)
             {
                 if (pos.Item1 == 0) current.Cursor = 0;
                 else
@@ -98,7 +97,7 @@ namespace HackTheWorld
                     else                                          current.Cursor -= pos.Item2 + 1;
                 }
             }
-            if (Input.Down.Pushed)
+            if (Input.Down.Pushed || Input.Down.Pressed && Counter() > 100 && Counter() % 10 == 0)
             {
                 if (pos.Item1 == current.MaxLine - 1) current.Cursor = current.Text.Length;
                 else
@@ -108,14 +107,14 @@ namespace HackTheWorld
                 }
             }
 
-            if (Input.Enter.Pushed)
+            if (Input.Enter.Pushed || Input.Enter.Pressed && Counter() > 100 && Counter() % 10 == 0)
             {
                 Record(current);
                 current = _history[_current];
                 current.Text.Insert(current.Cursor++, '\n');
                 current.MaxLine++;
             }
-            if (Input.Back.Pushed && current.Cursor > 0)
+            if ((Input.Back.Pushed || Input.Back.Pressed && Counter() > 100 && Counter() % 10 == 0) && current.Cursor > 0)
             {
                 Record(current);
                 current = _history[_current];
@@ -135,7 +134,7 @@ namespace HackTheWorld
                 else current.Text.Remove(--current.Cursor, 1);
                 current.MaxLine = current.Lines.Length;
             }
-            if (Input.Delete.Pushed && current.Cursor < current.Text.Length)
+            if ((Input.Delete.Pushed || Input.Delete.Pressed && Counter() > 100 && Counter() % 10 == 0) && current.Cursor < current.Text.Length)
             {
                 Record(current);
                 current = _history[_current];
@@ -161,6 +160,11 @@ namespace HackTheWorld
                 current = _history[_current];
                 current.Text.Insert(current.Cursor, "  ");
                 current.Cursor += 2;
+            }
+
+            if (Input.Left.Released || Input.Right.Released || Input.Up.Released || Input.Down.Released || Input.Delete.Released || Input.Back.Released || Input.Enter.Released)
+            {
+                Counter = CreateCounter();
             }
 
             // 選択範囲の設定

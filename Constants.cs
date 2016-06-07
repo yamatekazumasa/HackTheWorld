@@ -67,5 +67,14 @@ namespace HackTheWorld
         /// </summary>
         public static Form WindowContext;
 
+
+        public static Func<int> CreateCounter()
+        {
+            var i = 0;
+            return () => i++;
+        }
+
+        public static Func<int> Counter = CreateCounter();
+
     }
 }
