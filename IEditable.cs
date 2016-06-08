@@ -109,50 +109,52 @@ namespace HackTheWorld
             // CodeParserで生成されたArrayListの中身は<move><X><Y><time>の形
             //<"if¥s*¥(¥s*touch¥s*¥)"><move><X><Y>
 
-           CodeParser.yomitori(str);
+            CodeParser.yomitori(str);
 
             // self.SetProcesses(new Process[] {});
 
             //ちょっと動いてくれるか試すよ
             var strlist = new List<string>();
-            strlist.Add("move");
-            strlist.Add("100");
-            strlist.Add("100");
-            strlist.Add("kitsui");
-            //strlist.Add("move");
-            //strlist.Add("50");
-            //strlist.Add("100");
-            //self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[1]), float.Parse(strlist[2])); }, 2.0f));
 
 
+            for (int i = 0; i < strlist.Count; i++)
+            {
 
-            //for (int i = 0; i < strlist.Count; i++)
-            //{
+                if (strlist.Contains<string>("move"))
+                {
+                    self.AddProcess(new Process((obj, dt) => { obj.Position = new Vector(float.Parse(strlist[i + 1]), float.Parse(strlist[i + 2])); }, 2.0f));
+                }
 
-            //    if (strlist.Contains<string>("move"))
-            //    {
-            //        self.AddProcess(new Process((obj, dt) => { obj.Position = new Vector(float.Parse(strlist[i+1]), float.Parse(strlist[i+2])); }, 2.0f));
-            //    }
 
-            //    /*
-            //     //switch文でindexが合ってるはずなのにArgumentOutOfRangeExceptionエラー
-            //    switch (strlist[i])
-            //    {
-            //        case "move":
-            //            self.AddProcess(new Process((obj, dt) => { obj.X += float.Parse(strlist[i + 1]) * dt; }, 2.0f));
-            //            self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse(strlist[i + 2]) * dt; }, 2.0f));
-            //            break;
+                //switch文でindexが合ってるはずなのにArgumentOutOfRangeExceptionエラー
+                switch (strlist[i])
+                {
+                    case "move":
+                        self.AddProcess(new Process((obj, dt) => { obj.X += float.Parse(strlist[i + 1]) * dt; }, 2.0f));
+                        self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse(strlist[i + 2]) * dt; }, 2.0f));
+                        break;
 
-            //        case "size":
-            //            self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[i + 1]), float.Parse(strlist[i + 2])); }, 2.0f));
-            //            break;
+                    case "size":
+                        self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[i + 1]), float.Parse(strlist[i + 2])); }, 2.0f));
+                        break;
 
-            //        default:
-            //            break;
-                
-            //}
-            //*/
-            //}
+                    case "velocity":
+                        self.AddProcess(new Process((obj, dt) => { obj.Position += new Vector(double.Parse(strlist[i + 1]), double.Parse(strlist[i + 2])); }, 2.0f));
+                        break;
+
+                    case "stamina":
+
+                        break;
+                    case @"if(\s*touch*\s)":
+
+                        break;
+
+                    default:
+                        break;
+
+                }
+
+            }
 
 
         }
