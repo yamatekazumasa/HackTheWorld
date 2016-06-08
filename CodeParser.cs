@@ -600,21 +600,40 @@ namespace HackTheWorld
         public static void While(ArrayList sArray,ArrayList result,int home)
         {
             ArrayList tArray = new ArrayList();
+            ArrayList uArray = new ArrayList();
             string s = (string)sArray[home];
+            Regex r = new Regex(@"(?<jouken>\w+\s*(<|>|(<=)|(>=)|(==))\s*\d+)");
+            Match m = r.Match(s);
             bool yesbreak = false;
             while(!yesbreak)
             {
+               //条件式だけを入れてdainyu hanteiに入れられるように
                 tArray.Clear();
-                tArray.Add(s);
+                tArray.Add(m.Value);
                 dainyu(tArray,0);
                 if(hantei((string)tArray[0]))
                 {
+                    //dainyu後はもとの文でリセットしないと4++などはi++扱いされないので抜けない
+                    //Hasに入れると3=3などを除くために書いた目印がついてしまう
+                    //(あとでHasじゃないところに目印つけまくる場所を作ればいい気がする)
+                    //とりあえずsArray(何回か読むから書き換わると困る)→tArray(Has担当)→uArray(dainyu担当)
+                    tArray.Clear();
+                    for(int j = 0;j < sArray.Count;j++)
+                    {
+                        tArray.Add(sArray[j]);
+                    }
+                    uArray.Clear();
+                    for(int j = 0;j < tArray.Count;j++)
+                    {
+                        uArray.Add(tArray[j]);
+                    }
+
                     int i = 1;
                     while(!firstend(sArray,home + i) && !firstbreak(sArray,home + i - 1))
                     {
                         //home+iまで同じことをする
-                        Has(sArray,home + i);
-                        dainyu(sArray,home + i);
+                        Has(tArray,home + i);
+                        dainyu(uArray,home + i);
                         kakkoread(sArray);
 
                         switch(bunki(sArray,home + i))
@@ -632,7 +651,7 @@ namespace HackTheWorld
                                 i += nextend(home + i) - (home + i) + 1;
                                 break;
                             default:
-                                result.Add(sArray[home + i]);
+                                result.Add(uArray[home + i]);
                                 i++;
                                 break;
                         }
