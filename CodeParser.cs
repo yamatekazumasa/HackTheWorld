@@ -466,8 +466,12 @@ namespace HackTheWorld
                     Match m3 = re3.Match((string)sArray[home]);
                     int n = 0;
                     if(hash.ContainsKey(m3.Groups["repeat"].Value)) n = Convert.ToInt32(hash[m3.Groups["repeat"].Value]);
-                    else n = int.Parse(m3.Groups["repeat"].Value);
-                    yesbreak = false;
+                    else if(!int.TryParse((string)m3.Groups["repeat"].Value,out n))
+                    {
+                        MessageBox.Show("(For type3)数字代入してますか？");
+                        return;
+                    }
+                        yesbreak = false;
                     tArray = new ArrayList();
                     tArray.Clear();
 
@@ -570,8 +574,7 @@ namespace HackTheWorld
         {
             //homeまで読んでhash登録、代入、forとendの対応の取り直し
             Has(sArray,home);
-            dainyu(sArray,home);
-            kakkoread(sArray);
+
 
             if(!boolif(sArray,home))
             {
@@ -603,6 +606,7 @@ namespace HackTheWorld
                             i += nextend(home + i) - (home + i) + 1;
                             break;
                         default:
+                            dainyu(sArray,home + i);
                             result.Add(sArray[home + i]);
                             i++;
                             break;
@@ -627,8 +631,6 @@ namespace HackTheWorld
                 {
                     //home+iまで同じことをする
                     Has(sArray,home + i);
-                    dainyu(sArray,home + i);
-                    kakkoread(sArray);
 
                     switch(bunki(sArray,home + i))
                     {
@@ -645,6 +647,7 @@ namespace HackTheWorld
                             i += nextend(home + i) - (home + i) + 1;
                             break;
                         default:
+                            dainyu(sArray,home + i);
                             result.Add(sArray[home + i]);
                             i++;
                             break;
