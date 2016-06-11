@@ -34,7 +34,6 @@ namespace HackTheWorld
 
         public static void Has(ArrayList sArray,int i)
         {
-            bool yeshash = false;
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*\w+\s*=\s*\d+\s*"))
             {
 
@@ -46,7 +45,6 @@ namespace HackTheWorld
                 m2 = mat2.Value;
 
                 hash[m1] = m2;
-                yeshash = true;
             }
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*=\s*(?<value>[a-zA-z]+)\s*"))
 
@@ -61,7 +59,6 @@ namespace HackTheWorld
                 {
                     hash[m1] = hash[m2];
                 }
-                yeshash = true;
             }
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\+"))
             {
@@ -69,7 +66,6 @@ namespace HackTheWorld
                 Match m = r.Match((string)sArray[i]);
                 m1 = m.Groups["name"].Value;
                 hash[m1] = Convert.ToInt32(hash[m1]) + 1;
-                yeshash = true;
             }
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\-"))
             {
@@ -77,7 +73,6 @@ namespace HackTheWorld
                 Match m = r.Match((string)sArray[i]);
                 m1 = m.Groups["name"].Value;
                 hash[m1] = Convert.ToInt32(hash[m1]) - 1;
-                yeshash = true;
             }
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)"))
             {
@@ -86,7 +81,6 @@ namespace HackTheWorld
                 m1 = m.Groups["name"].Value;
                 m2 = m.Groups["value"].Value;
                 hash[m1] = Convert.ToInt32(hash[m1]) + int.Parse(m2);
-                yeshash = true;
             }
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\=\s*(?<value>\d+)"))
             {
@@ -95,10 +89,8 @@ namespace HackTheWorld
                 m1 = m.Groups["name"].Value;
                 m2 = m.Groups["value"].Value;
                 hash[m1] = Convert.ToInt32(hash[m1]) - int.Parse(m2);
-                yeshash = true;
             }
-            //あとで4++とか書いてあるとかっこ悪いから消すための目印
-            if(yeshash) sArray[i] += "悲";
+
         }
 
         public static void dainyu(ArrayList sArray,int x)
@@ -126,7 +118,7 @@ namespace HackTheWorld
                         string result = Regex.Replace(input,pattern,s);
                         sArray[x] = result;
                     }
-                   
+
                 }
             }
 
@@ -289,7 +281,7 @@ namespace HackTheWorld
             for(int i = 0;i < sArray.Count;i++)
             {
                 Has(sArray,i);
-                dainyu(sArray,i);
+
                 kakkoread(sArray);
                 //FourOperations(sArray,0);
                 //i行目が関数で始まってるかどうか
@@ -308,16 +300,17 @@ namespace HackTheWorld
                         i = nextend(i);
                         break;
                     default:
+                        dainyu(sArray,i);
                         result.Add(sArray[i]);
                         break;
                 }
             }
-            //見た目だけの話 最後に目印がついているhashにかかわった行を消す
+            //見た目だけの話
             ArrayList result2 = new ArrayList();
             for(int i = 0;i < result.Count;i++)
             {
                 string s = (string)result[i];
-                if(!s.EndsWith("悲")) result2.Add(result[i]);
+                if(!s.Contains("=") && !s.Contains("+")) result2.Add(result[i]);
             }
             result.Clear();
             for(int i = 0;i < result2.Count;i++)
@@ -329,10 +322,7 @@ namespace HackTheWorld
 
         public static void For(ArrayList sArray,ArrayList result,int home)
         {
-            //homeまで読んでhash登録、代入、forとendの対応の取り直し
-            Has(sArray,home);
-            dainyu(sArray,home);
-            kakkoread(sArray);
+
             if(!boolfor(sArray,home))
             {
                 result.Add("boolforひっかかった");
@@ -345,59 +335,71 @@ namespace HackTheWorld
             //typeを3つ作ることにする
 
             //for(i=0;i<5;i++)がtype1
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|(<=)|(>=)|(==)" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)")) type = 1;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\(\s*\w+\s*\=\s*\w+\s*;\s*\w+\s*" + @"<|>|(<=)|(>=)|(==)" + @"\s*\w+\s*;\s*\w+[\+\+|\-\-|\+=\w+|\-=\w+]\)")) type = 1;
             //for i=0 to 3がtype2
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\w+\s*=\s*\d+\s*to\s*\d+")) type = 2;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\w+\s*=\s*\w+\s*to\s*\w+")) type = 2;
             //for 2とかをtype3とする
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\d+")) type = 3;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\w+")) type = 3;
 
             switch(type)
             {
                 case 1:
-                    Regex re1_1 = new Regex(@"(?<start>\w+\s*\=\s*\d+)");
-                    Regex re1_2 = new Regex(@"(?<jouken>\w+\s*(<|>|(<=)|(>=)|(==))\s*\d+)");
-                    Regex re1_3 = new Regex(@"(?<update>\w+(\+\+)|(\-\-)|(\+=\d+)|(\-=\d+))");
+                    Regex re1_1 = new Regex(@"(?<start>\w+\s*\=\s*\w+)");
+                    Regex re1_2 = new Regex(@"(?<jouken>\w+\s*(<|>|(<=)|(>=)|(==))\s*\w+)");
+                    Regex re1_3 = new Regex(@"(?<update>\w+(\+\+)|(\-\-)|(\+=\w+)|(\-=\w+))");
                     Match m1_1 = re1_1.Match((string)sArray[home]);
                     Match m1_2 = re1_2.Match((string)sArray[home]);
                     Match m1_3 = re1_3.Match((string)sArray[home]);
                     ArrayList tArray = new ArrayList();
+                    ArrayList uArray = new ArrayList();
                     bool yesbreak = false;
+
+                    //homeまで読む(条件取り終わったから)
+                    Has(sArray,home);
+
 
                     //初期条件をHasにぶち込んでリセット
                     tArray.Add(m1_1.Groups["start"].Value);
                     Has(tArray,0);
 
-
+                    //判定式に入れるとき数字＜数字とかになってないと困るじゃん、と思った
+                    uArray.Add(m1_2.Groups["jouken"].Value);
+                    dainyu(uArray,0);
                     //ここからループ
-                    while(hantei(m1_2.Groups["jouken"].Value))
+                    while(hantei((string)uArray[0]))
                     {
                         //reset
                         tArray.Clear();
                         int i = 1;
+                        int kakko = 1;
                         while(true)
                         {
+                            if(firstfor(sArray,home + i) || firstif(sArray,home + i) || firstwhile(sArray,home + i)) kakko++;
+                            if(firstend(sArray,home + i)) kakko--;
+
                             tArray.Add(sArray[home + i]);
+
+                            if(kakko == 0) break;
                             i++;
-                            if(nextend(home) == i) break;
+
                         }
-                        tArray.Add(m1_3.Groups["update"].Value);
+                        tArray.Insert(tArray.Count - 1,m1_3.Groups["update"].Value);
                         //1行ずつ読む
                         for(i = 0;i < tArray.Count;i++)
                         {
-                            int j = 1;
-                            while(!firstend(tArray,j))
+                            while(!firstend(tArray,i))
                             {
                                 //home+jまで同じことをする
-                                Has(tArray,j);
-                                dainyu(sArray,home + j);
+                                Has(tArray,i);
 
-                                switch(bunki(tArray,j))
+
+                                switch(bunki(tArray,i))
                                 {
                                     case 1:
-                                        For(tArray,result,j);
-                                        int kakko = 1;
+                                        For(tArray,result,i);
+                                        kakko = 1;
                                         int k = 0;
-                                        for(k = j + 1;k < sArray.Count;k++)
+                                        for(k = i + 1;k < tArray.Count;k++)
                                         {
                                             if(firstfor(tArray,k) || firstif(tArray,k) || firstwhile(tArray,k)) kakko++;
                                             if(firstend(tArray,k)) kakko--;
@@ -406,13 +408,13 @@ namespace HackTheWorld
                                                 break;
                                             }
                                         }
-                                        j = k + 1;
+                                        i = k + 1;
                                         break;
                                     case 2:
-                                        If(sArray,result,home + j);
+                                        If(tArray,result,i);
                                         kakko = 1;
                                         k = 0;
-                                        for(k = j + 1;k < sArray.Count;k++)
+                                        for(k = i + 1;k < tArray.Count;k++)
                                         {
                                             if(firstfor(tArray,k) || firstif(tArray,k) || firstwhile(tArray,k)) kakko++;
                                             if(firstend(tArray,k)) kakko--;
@@ -421,13 +423,13 @@ namespace HackTheWorld
                                                 break;
                                             }
                                         }
-                                        j = k + 1;
+                                        i = k + 1;
                                         break;
                                     case 3:
-                                        While(sArray,result,home + j);
+                                        While(tArray,result,i);
                                         kakko = 1;
                                         k = 0;
-                                        for(k = j + 1;k < sArray.Count;k++)
+                                        for(k = i + 1;k < tArray.Count;k++)
                                         {
                                             if(firstfor(tArray,k) || firstif(tArray,k) || firstwhile(tArray,k)) kakko++;
                                             if(firstend(tArray,k)) kakko--;
@@ -436,11 +438,12 @@ namespace HackTheWorld
                                                 break;
                                             }
                                         }
-                                        j = k + 1;
+                                        i = k + 1;
                                         break;
                                     default:
-                                        result.Add(tArray[j]);
-                                        j++;
+                                        dainyu(tArray,i);
+                                        result.Add(tArray[i]);
+                                        i++;
                                         break;
                                 }
                                 if(result[result.Count - 1].ToString() == "break")
@@ -453,39 +456,95 @@ namespace HackTheWorld
                             if(yesbreak) break;
                         }
                         if(yesbreak) break;
+                        uArray.Clear();
+                        uArray.Add(m1_2.Groups["jouken"].Value);
+                        dainyu(uArray,0);
                     }
                     return;
                 case 3:
-                    Regex re3 = new Regex(@"for\s*(?<repeat>\d+)");
+                    Regex re3 = new Regex(@"for\s*(?<repeat>\w+)");
                     Match m3 = re3.Match((string)sArray[home]);
-                    int n = int.Parse(m3.Groups["repeat"].Value);
+                    int n = 0;
+                    if(hash.ContainsKey(m3.Groups["repeat"].Value)) n = Convert.ToInt32(hash[m3.Groups["repeat"].Value]);
+                    else n = int.Parse(m3.Groups["repeat"].Value);
                     yesbreak = false;
+                    tArray = new ArrayList();
+                    tArray.Clear();
+
+                    //homeまで読んでhash登録、代入、forとendの対応の取り直し
+                    Has(sArray,home);
                     for(int i = 0;i < n;i++)
                     {
                         int j = 1;
-                        while(!firstend(sArray,home + j))
+                        int kakko = 1;
+                        tArray.Clear();
+                        while(true)
+                        {
+                            if(firstfor(sArray,home + j) || firstif(sArray,home + j) || firstwhile(sArray,home + j)) kakko++;
+                            if(firstend(sArray,home + j)) kakko--;
+
+                            tArray.Add(sArray[home + j]);
+
+                            if(kakko == 0) break;
+                            j++;
+
+                        }
+                        j = 0;
+                        while(!firstend(tArray,j))
                         {
                             //home+jまで同じことをする
-                            Has(sArray,home + j);
-                            dainyu(sArray,home + j);
-                            kakkoread(sArray);
+                            Has(tArray,j);
 
-                            switch(bunki(sArray,home + j))
+                            switch(bunki(tArray,j))
                             {
                                 case 1:
-                                    For(sArray,result,home + j);
-                                    j += nextend(home + j) - (home + j) + 1;
+                                    For(tArray,result,j);
+                                    kakko = 1;
+                                    int k = 0;
+                                    for(k = j + 1;k < tArray.Count;k++)
+                                    {
+                                        if(firstfor(tArray,k) || firstif(tArray,k) || firstwhile(tArray,k)) kakko++;
+                                        if(firstend(tArray,k)) kakko--;
+                                        if(kakko == 0)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    j = k + 1;
                                     break;
                                 case 2:
-                                    If(sArray,result,home + j);
-                                    j += nextend(home + j) - (home + j) + 1;
+                                    If(tArray,result,j);
+                                    kakko = 1;
+                                    k = 0;
+                                    for(k = j + 1;k < tArray.Count;k++)
+                                    {
+                                        if(firstfor(tArray,k) || firstif(tArray,k) || firstwhile(tArray,k)) kakko++;
+                                        if(firstend(tArray,k)) kakko--;
+                                        if(kakko == 0)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    j = k + 1;
                                     break;
                                 case 3:
-                                    While(sArray,result,home + j);
-                                    j += nextend(home + j) - (home + j) + 1;
+                                    While(tArray,result,j);
+                                    kakko = 1;
+                                    k = 0;
+                                    for(k = j + 1;k < tArray.Count;k++)
+                                    {
+                                        if(firstfor(tArray,k) || firstif(tArray,k) || firstwhile(tArray,k)) kakko++;
+                                        if(firstend(tArray,k)) kakko--;
+                                        if(kakko == 0)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    j = k + 1;
                                     break;
                                 default:
-                                    result.Add(sArray[home + j]);
+                                    dainyu(tArray,j);
+                                    result.Add(tArray[j]);
                                     j++;
                                     break;
                             }
@@ -600,40 +659,41 @@ namespace HackTheWorld
         public static void While(ArrayList sArray,ArrayList result,int home)
         {
             ArrayList tArray = new ArrayList();
-            ArrayList uArray = new ArrayList();
+            //条件を抜き出す
             string s = (string)sArray[home];
             Regex r = new Regex(@"(?<jouken>\w+\s*(<|>|(<=)|(>=)|(==))\s*\d+)");
             Match m = r.Match(s);
             bool yesbreak = false;
+
+            //homeまで読んでhash登録、代入、forとendの対応の取り直し
+            Has(sArray,home);
+            dainyu(sArray,home);
+            kakkoread(sArray);
+
             while(!yesbreak)
             {
-               //条件式だけを入れてdainyu hanteiに入れられるように
+                //条件式だけを入れてdainyu hanteiに入れられるように
                 tArray.Clear();
                 tArray.Add(m.Value);
                 dainyu(tArray,0);
                 if(hantei((string)tArray[0]))
                 {
-                    //dainyu後はもとの文でリセットしないと4++などはi++扱いされないので抜けない
-                    //Hasに入れると3=3などを除くために書いた目印がついてしまう
+                    //dainyu後はもとの文でリセットしないと4++などはi++扱いされない
                     //(あとでHasじゃないところに目印つけまくる場所を作ればいい気がする)
-                    //とりあえずsArray(何回か読むから書き換わると困る)→tArray(Has担当)→uArray(dainyu担当)
+                    //とりあえずsArray(何回か読むから書き換わると困る)→tArray(dainyu用)
                     tArray.Clear();
                     for(int j = 0;j < sArray.Count;j++)
                     {
                         tArray.Add(sArray[j]);
                     }
-                    uArray.Clear();
-                    for(int j = 0;j < tArray.Count;j++)
-                    {
-                        uArray.Add(tArray[j]);
-                    }
+
 
                     int i = 1;
                     while(!firstend(sArray,home + i) && !firstbreak(sArray,home + i - 1))
                     {
                         //home+iまで同じことをする
-                        Has(tArray,home + i);
-                        dainyu(uArray,home + i);
+                        Has(sArray,home + i);
+                        dainyu(tArray,home + i);
                         kakkoread(sArray);
 
                         switch(bunki(sArray,home + i))
@@ -651,7 +711,7 @@ namespace HackTheWorld
                                 i += nextend(home + i) - (home + i) + 1;
                                 break;
                             default:
-                                result.Add(uArray[home + i]);
+                                result.Add(tArray[home + i]);
                                 i++;
                                 break;
                         }
@@ -797,9 +857,9 @@ namespace HackTheWorld
         public static bool boolfor(ArrayList sArray,int home)
         {
             //一致してるかは知りたいけどうしろに余計なのがついてたらはじきたい
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\(\s*\w+\s*\=\s*\d+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\d+\s*;\s*\w+[\+\+|\-\-|\+=\d+|\-=\d+]\)\s*$")) return true;
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\w+\s*=\s*\d+\s*to\s*\d+\s*$")) return true;
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\d+\s*$")) return true;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\(\s*\w+\s*\=\s*\w+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\w+\s*;\s*\w+[\+\+|\-\-|\+=\w+|\-=\w+]\)\s*$")) return true;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\w+\s*=\s*\w+\s*to\s*\w+\s*$")) return true;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\w+\s*$")) return true;
             misfor = true;
             return false;
         }
