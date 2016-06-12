@@ -113,51 +113,36 @@ namespace HackTheWorld
 
             // self.SetProcesses(new Process[] {});
 
-            //ちょっと動いてくれるか試すよ
-            var strlist = new List<string>();
+            //以下のリストの中身("move, x, y")を小集合とする
+            var array = new string[] { "size,50,30", "move,1,1,2" };
 
 
-            for (int i = 0; i < strlist.Count; i++)
+            //各小集合に対して、以下の分割処理を行う。
+            foreach (var s in array)
             {
+                //小集合を要素に分割して、要素数3または4の配列を作成
+                string[] tmp = s.Split(',');
 
-                if (strlist.Contains<string>("move"))
+                //具体的に配列の数字 tmp[1], tmp[2]を与えることで、正確にインデックスの範囲内で処理を完結させる
+                //ArgumentOutOfRangeExceptionエラーを回避
+                switch (tmp[0])
                 {
-                    self.AddProcess(new Process((obj, dt) => { obj.Position = new Vector(float.Parse(strlist[i + 1]), float.Parse(strlist[i + 2])); }, 2.0f));
-                }
-
-
-                //switch文でindexが合ってるはずなのにArgumentOutOfRangeExceptionエラー
-                switch (strlist[i])
-                {
-                    case "move":
-                        self.AddProcess(new Process((obj, dt) => { obj.X += float.Parse(strlist[i + 1]) * dt; }, 2.0f));
-                        self.AddProcess(new Process((obj, dt) => { obj.Y += float.Parse(strlist[i + 2]) * dt; }, 2.0f));
-                        break;
-
                     case "size":
-                        self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(strlist[i + 1]), float.Parse(strlist[i + 2])); }, 2.0f));
+                        self.AddProcess(new Process((obj, dt) => { obj.Size = new Vector(float.Parse(tmp[1]), float.Parse(tmp[2])); }, 2.0f));
                         break;
 
-                    case "velocity":
-                        self.AddProcess(new Process((obj, dt) => { obj.Position += new Vector(double.Parse(strlist[i + 1]), double.Parse(strlist[i + 2])); }, 2.0f));
-                        break;
-
-                    case "stamina":
-
-                        break;
-                    case @"if(\s*touch*\s)":
-
+                    case "move":
+                        self.AddProcess(new Process((obj, dt) => { obj.Position += new Vector(float.Parse(tmp[1]), float.Parse(tmp[2])); }, 2.0f));
                         break;
 
                     default:
                         break;
-
                 }
-
             }
-
+            
 
         }
+
 
 
 
