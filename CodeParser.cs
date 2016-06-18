@@ -289,15 +289,48 @@ namespace HackTheWorld
                 {
                     case 1:
                         For(sArray,result,i);
-                        i = nextend(i);
+                        int kakko = 1;
+                        int k = 0;
+                        for(k = i + 1;k < sArray.Count;k++)
+                        {
+                            if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                            if(firstend(sArray,k)) kakko--;
+                            if(kakko == 0)
+                            {
+                                break;
+                            }
+                        }
+                        i = k ;
                         break;
                     case 2:
                         If(sArray,result,i);
-                        i = nextend(i);
+                        kakko = 1;
+                        k = 0;
+                        for(k = i + 1;k < sArray.Count;k++)
+                        {
+                            if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                            if(firstend(sArray,k)) kakko--;
+                            if(kakko == 0)
+                            {
+                                break;
+                            }
+                        }
+                        i = k ;
                         break;
                     case 3:
                         While(sArray,result,i);
-                        i = nextend(i);
+                        kakko = 1;
+                         k = 0;
+                        for(k = i + 1;k < sArray.Count;k++)
+                        {
+                            if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                            if(firstend(sArray,k)) kakko--;
+                            if(kakko == 0)
+                            {
+                                break;
+                            }
+                        }
+                        i = k ;
                         break;
                     default:
                         dainyu(sArray,i);
@@ -581,7 +614,17 @@ namespace HackTheWorld
                 result.Add("boolifひっかかった");
                 return;
             }
-            if(hantei((string)sArray[home]))
+
+            ArrayList tArray = new ArrayList();
+            //条件を抜き出す
+            string s = (string)sArray[home];
+            Regex r = new Regex(@"(?<jouken>\w+\s*(<|>|(<=)|(>=)|(==))\s*\d+)");
+            Match m = r.Match(s);
+
+            tArray.Add(m.Value);
+            dainyu(tArray,0);
+
+            if(hantei((string)tArray[0]))
             {
                 int i = 1;
                 while(!firstend(sArray,home + i) && !firstbreak(sArray,home + i - 1))
@@ -595,15 +638,48 @@ namespace HackTheWorld
                     {
                         case 1:
                             For(sArray,result,home + i);
-                            i += nextend(home + i) - (home + i) + 1;
+                            int kakko = 1;
+                            int k = 0;
+                            for(k = home+i + 1;k < sArray.Count;k++)
+                            {
+                                if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                                if(firstend(sArray,k)) kakko--;
+                                if(kakko == 0)
+                                {
+                                    break;
+                                }
+                            }
+                            i = k ;
                             break;
                         case 2:
                             If(sArray,result,home + i);
-                            i += nextend(home + i) - (home + i) + 1;
+                            kakko = 1;
+                            k = 0;
+                            for(k = home + i + 1;k < sArray.Count;k++)
+                            {
+                                if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                                if(firstend(sArray,k)) kakko--;
+                                if(kakko == 0)
+                                {
+                                    break;
+                                }
+                            }
+                            i = k ;
                             break;
                         case 3:
                             While(sArray,result,home + i);
-                            i += nextend(home + i) - (home + i) + 1;
+                            kakko = 1;
+                            k = 0;
+                            for(k = home + i + 1;k < sArray.Count;k++)
+                            {
+                                if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                                if(firstend(sArray,k)) kakko--;
+                                if(kakko == 0)
+                                {
+                                    break;
+                                }
+                            }
+                            i = k ;
                             break;
                         default:
                             dainyu(sArray,home + i);
@@ -636,15 +712,48 @@ namespace HackTheWorld
                     {
                         case 1:
                             For(sArray,result,home + i);
-                            i += nextend(home + i) - (home + i) + 1;
+                            int kakko = 1;
+                            int k = 0;
+                            for(k = home + i + 1;k < sArray.Count;k++)
+                            {
+                                if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                                if(firstend(sArray,k)) kakko--;
+                                if(kakko == 0)
+                                {
+                                    break;
+                                }
+                            }
+                            i = k ;
                             break;
                         case 2:
                             If(sArray,result,home + i);
-                            i += nextend(home + i) - (home + i) + 1;
+                            kakko = 1;
+                            k = 0;
+                            for(k = home + i + 1;k < sArray.Count;k++)
+                            {
+                                if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                                if(firstend(sArray,k)) kakko--;
+                                if(kakko == 0)
+                                {
+                                    break;
+                                }
+                            }
+                            i = k ;
                             break;
                         case 3:
                             While(sArray,result,home + i);
-                            i += nextend(home + i) - (home + i) + 1;
+                            kakko = 1;
+                            k = 0;
+                            for(k = home + i + 1;k < sArray.Count;k++)
+                            {
+                                if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                                if(firstend(sArray,k)) kakko--;
+                                if(kakko == 0)
+                                {
+                                    break;
+                                }
+                            }
+                            i = k ;
                             break;
                         default:
                             dainyu(sArray,home + i);
@@ -670,8 +779,7 @@ namespace HackTheWorld
 
             //homeまで読んでhash登録、代入、forとendの対応の取り直し
             Has(sArray,home);
-            dainyu(sArray,home);
-            kakkoread(sArray);
+
 
             while(!yesbreak)
             {
@@ -696,24 +804,56 @@ namespace HackTheWorld
                     {
                         //home+iまで同じことをする
                         Has(sArray,home + i);
-                        dainyu(tArray,home + i);
-                        kakkoread(sArray);
 
                         switch(bunki(sArray,home + i))
                         {
                             case 1:
                                 For(sArray,result,home + i);
-                                i += nextend(home + i) - (home + i) + 1;
+                                int kakko = 1;
+                                int k = 0;
+                                for(k = home + i + 1;k < sArray.Count;k++)
+                                {
+                                    if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                                    if(firstend(sArray,k)) kakko--;
+                                    if(kakko == 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                                i = k;
                                 break;
                             case 2:
                                 If(sArray,result,home + i);
-                                i += nextend(home + i) - (home + i) + 1;
+                                kakko = 1;
+                                k = 0;
+                                for(k = home + i + 1;k < sArray.Count;k++)
+                                {
+                                    if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                                    if(firstend(sArray,k)) kakko--;
+                                    if(kakko == 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                                i = k;
                                 break;
                             case 3:
                                 While(sArray,result,home + i);
-                                i += nextend(home + i) - (home + i) + 1;
+                                kakko = 1;
+                                k = 0;
+                                for(k = home + i + 1;k < sArray.Count;k++)
+                                {
+                                    if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                                    if(firstend(sArray,k)) kakko--;
+                                    if(kakko == 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                                i = k;
                                 break;
                             default:
+                                dainyu(tArray,home + i);
                                 result.Add(tArray[home + i]);
                                 i++;
                                 break;
