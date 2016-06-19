@@ -90,6 +90,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GameObject.cs" />
+    <Compile Include="CodeParser.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="GameScene.cs" />
     <Compile Include="Input.cs" />

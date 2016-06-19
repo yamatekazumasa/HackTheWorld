@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
+using static HackTheWorld.CodeParser;
 
 namespace HackTheWorld
 {
@@ -13,8 +15,11 @@ namespace HackTheWorld
     {
         private MenuItem _backButton;
         private MenuItem _startButton;
+        private MenuItem _runButton;
         private List<MenuItem> _menuItem;
         private Stage _stage;
+        private bool _isRunning;
+        private ArrayList _str;
 
         public EditScene()
         {
@@ -40,7 +45,12 @@ namespace HackTheWorld
                 Size = new Vector(50, 50),
                 Position = new Vector(75, 500)
             };
-            _menuItem = new List<MenuItem> {_backButton, _startButton};
+            _runButton = new MenuItem(Image.FromFile(@"image\run.PNG"))
+            {
+                Size = new Vector(75 , 75) ,
+                Position = new Vector(125 , 500)
+            };
+            _menuItem = new List<MenuItem> {_backButton, _startButton,_runButton};
         }
 
         public override void Update(float dt)
@@ -51,6 +61,16 @@ namespace HackTheWorld
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_startButton.Clicked) Scene.Push(new GameScene(_stage));
+            if (_runButton.Clicked)
+            {
+                if (_isRunning == false)
+                {
+                    //文字列をkakikae.csにもってく
+                    _isRunning = true;
+                    string str = _stage.EditableObjects[0].Codebox.GetString();
+                    yomitori(str);
+                }
+            }
             if (Input.X.Pushed || Input.Back.Pushed)
             {
                 bool isFocused = false;
@@ -89,6 +109,7 @@ namespace HackTheWorld
             }
             _backButton.Draw();
             _startButton.Draw();
+            _runButton.Draw( );
         }
     }
 }

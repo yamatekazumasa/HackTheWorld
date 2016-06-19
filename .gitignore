@@ -10,7 +10,6 @@ doc/
 
 !App.config
 packages/
-Newtonsoft.Json.xml
 *.stackdump
 stage/
 code.json
