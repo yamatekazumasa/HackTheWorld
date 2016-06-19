@@ -14,26 +14,163 @@ namespace HackTheWorld
 {
     public static class CodeParser
     {
-        //forとかifとかのかっこの組が配列の何行目か
-        //arraylistのなかにTuple<int,int>をもたせる
-        public static ArrayList forArray = new ArrayList();
-        public static ArrayList ifArray = new ArrayList();
-        public static ArrayList whileArray = new ArrayList();
-        //まとめた
-        public static ArrayList funcArray = new ArrayList();
-        static bool mismatch = false;
-        static bool misfor = false;
-        static bool misif = false;
 
-        //ジョンの
-        public static Hashtable hash = new Hashtable();
-        public static ICollection keycall = hash.Keys;
-        public static ICollection valuecall = hash.Values;
-        static string m1;
-        static string m2;
 
-        public static void Has(ArrayList sArray,int i)
+
+        public static Tuple<int,int>[] forset(ArrayList sArray)
         {
+            ArrayList forArray = new ArrayList();
+
+            int countfunction = 0;
+            int kakko = 0;
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                //関数の数を数える(今はforとif)
+                if(firstfor(sArray,i) || firstif(sArray,i) || firstwhile(sArray,i)) countfunction++;
+            }
+            //初めのほうから順番に見ていく
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                //i行目がforで始まってるかどうか
+                if(firstfor(sArray,i))
+                {
+                    kakko++;
+                    for(int j = i + 1;j < sArray.Count;j++)
+                    {
+                        //閉じる前にまた関数っぽいのがいたらカウント増やす
+                        if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
+                        //endがいたらへらす
+                        if(firstend(sArray,j)) kakko--;
+                        if(kakko == 0)
+                        {
+                            //tupleの中に行番号を入れる
+                            forArray.Add(new Tuple<int,int>(i,j));
+                            countfunction--;
+                            break;
+                        }
+                    }
+                }
+            }
+            Tuple<int,int>[] t = new Tuple<int,int>[forArray.Count];
+            for(int i = 0;i < forArray.Count;i++)
+            {
+                t[i] = (Tuple<int,int>)forArray[i];
+            }
+            return t;
+        }
+        public static Tuple<int,int>[] ifset(ArrayList sArray)
+        {
+            ArrayList ifArray = new ArrayList();
+
+            int countfunction = 0;
+            int kakko = 0;
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                //関数の数を数える(今はforとif)
+                if(firstfor(sArray,i) || firstif(sArray,i) || firstwhile(sArray,i)) countfunction++;
+            }
+            //初めのほうから順番に見ていく
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                //i行目がforで始まってるかどうか
+                if(firstif(sArray,i))
+                {
+                    kakko++;
+                    for(int j = i + 1;j < sArray.Count;j++)
+                    {
+                        //閉じる前にまた関数っぽいのがいたらカウント増やす
+                        if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
+                        //endがいたらへらす
+                        if(firstend(sArray,j)) kakko--;
+                        if(kakko == 0)
+                        {
+                            //tupleの中に行番号を入れる
+                            ifArray.Add(new Tuple<int,int>(i,j));
+                            countfunction--;
+                            break;
+                        }
+                    }
+                }
+            }
+            Tuple<int,int>[] t = new Tuple<int,int>[ifArray.Count];
+            for(int i = 0;i < ifArray.Count;i++)
+            {
+                t[i] = (Tuple<int,int>)ifArray[i];
+            }
+            return t;
+        }
+        public static Tuple<int,int>[] whileset(ArrayList sArray)
+        {
+            ArrayList whileArray = new ArrayList();
+
+            int countfunction = 0;
+            int kakko = 0;
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                //関数の数を数える(今はforとif)
+                if(firstfor(sArray,i) || firstif(sArray,i) || firstwhile(sArray,i)) countfunction++;
+            }
+            //初めのほうから順番に見ていく
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                //i行目がforで始まってるかどうか
+                if(firstwhile(sArray,i))
+                {
+                    kakko++;
+                    for(int j = i + 1;j < sArray.Count;j++)
+                    {
+                        //閉じる前にまた関数っぽいのがいたらカウント増やす
+                        if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
+                        //endがいたらへらす
+                        if(firstend(sArray,j)) kakko--;
+                        if(kakko == 0)
+                        {
+                            //tupleの中に行番号を入れる
+                            whileArray.Add(new Tuple<int,int>(i,j));
+                            countfunction--;
+                            break;
+                        }
+                    }
+                }
+            }
+            Tuple<int,int>[] t = new Tuple<int,int>[whileArray.Count];
+            for(int i = 0;i < whileArray.Count;i++)
+            {
+                t[i] = (Tuple<int,int>)whileArray[i];
+            }
+            return t;
+        }
+        public static Tuple<int,int>[] allset(ArrayList sArray)
+        {
+            ArrayList allArray = new ArrayList();
+
+            Tuple<int,int>[] t1 = forset(sArray);
+            Tuple<int,int>[] t2 = ifset(sArray);
+            Tuple<int,int>[] t3 = whileset(sArray);
+
+            for(int i = 0;i < t1.Length;i++)
+            {
+                allArray.Add(t1[i]);
+            }
+            for(int i = 0;i < t2.Length;i++)
+            {
+                allArray.Add(t2[i]);
+            }
+            for(int i = 0;i < t3.Length;i++)
+            {
+                allArray.Add(t3[i]);
+            }
+
+            Tuple<int,int>[] t = new Tuple<int,int>[allArray.Count];
+            for(int i = 0;i < allArray.Count;i++)
+            {
+                t[i] = (Tuple<int,int>)allArray[i];
+            }
+            return t;
+        }
+        public static void Has(ArrayList sArray,int i,Hashtable hash)
+        {
+            string m1, m2;
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*\w+\s*=\s*\d+\s*"))
             {
 
@@ -41,6 +178,7 @@ namespace HackTheWorld
                 Regex reg2 = new Regex(@"\d+");
                 Match mat1 = reg1.Match((string)sArray[i]);
                 Match mat2 = reg2.Match((string)sArray[i]);
+
                 m1 = mat1.Value;
                 m2 = mat2.Value;
 
@@ -93,8 +231,9 @@ namespace HackTheWorld
 
         }
 
-        public static void dainyu(ArrayList sArray,int x)
+        public static void dainyu(ArrayList sArray,int x,Hashtable hash)
         {
+            ICollection keycall = hash.Keys;
             //hashになにか入ってたら
             if(keycall.Count > 0)
             {
@@ -129,10 +268,10 @@ namespace HackTheWorld
 
         public static ArrayList yomitori(string s1)
         {
+            Hashtable hash = new Hashtable();
+
+            ICollection valuecall = hash.Values;
             //連続で入力してデバックしたいからいる奴ら
-            mismatch = false;
-            misfor = false;
-            misif = false;
             hash.Clear();
 
             //行で分割
@@ -149,35 +288,25 @@ namespace HackTheWorld
             {
                 sArray.Add(s2[i]);
             }
-
-            //for、ifとendが組になってるかと組がどこの行か
-            kakkoread(sArray);
-            if(mismatch)
-            {
-                MessageBox.Show("関数の始まりと終わりの対応が乱れてる");
-                result.Clear();
-                result.Add("関数乱れマン");
-                return result;
-            }
-
-
-            //割り振る
-            warifuri(sArray,result);
-            if(misfor)
-            {
-                MessageBox.Show("forとendはいるみたいだけど\n文の中身が違う");
-                result.Clear();
-                result.Add("for間違えマン");
-                return result;
-            }
-            if(misif)
-            {
-                MessageBox.Show("ifとendはいるみたいだけど\n文の中身が違う");
-                result.Clear();
-                result.Add("if間違えマン");
-                return result;
-            }
             string str = "";
+            //for、ifとendが組になってるかと組がどこの行か
+            if(!isValidScript(sArray))
+            {
+
+                result.Clear();
+                result.Add("構文エラー");
+                str = "";
+                for(int i = 0;i < result.Count;i++)
+                {
+                    str += (string)result[i] + "\n";
+                }
+                MessageBox.Show(str);
+                return result;
+            }
+            //割り振る
+            warifuri(sArray,result,hash);
+
+            str = "";
             for(int i = 0;i < result.Count;i++)
             {
                 str += (string)result[i] + "\n";
@@ -187,13 +316,8 @@ namespace HackTheWorld
         }
 
 
-        public static void kakkoread(ArrayList sArray)
+        public static bool isValidScript(ArrayList sArray)
         {
-            forArray.Clear();
-            ifArray.Clear();
-            whileArray.Clear();
-            funcArray.Clear();
-
             int countfunction = 0;
             int kakko = 0;
             for(int i = 0;i < sArray.Count;i++)
@@ -204,11 +328,12 @@ namespace HackTheWorld
             //初めのほうから順番に見ていく
             for(int i = 0;i < sArray.Count;i++)
             {
+                int j = 0;
                 //i行目がforで始まってるかどうか
                 if(firstfor(sArray,i))
                 {
                     kakko++;
-                    for(int j = i + 1;j < sArray.Count;j++)
+                    for(j = i + 1;j < sArray.Count;j++)
                     {
                         //閉じる前にまた関数っぽいのがいたらカウント増やす
                         if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
@@ -216,9 +341,11 @@ namespace HackTheWorld
                         if(firstend(sArray,j)) kakko--;
                         if(kakko == 0)
                         {
-                            //tupleの中に行番号を入れる
-                            forArray.Add(new Tuple<int,int>(i,j));
-                            funcArray.Add(new Tuple<int,int>(i,j));
+                            if(!boolfor(sArray,i))
+                            {
+                                MessageBox.Show("forとendはいるみたいだけど\n文の中身が違う");
+                                return false;
+                            }
                             countfunction--;
                             break;
                         }
@@ -228,14 +355,17 @@ namespace HackTheWorld
                 if(firstif(sArray,i))
                 {
                     kakko++;
-                    for(int j = i + 1;j < sArray.Count;j++)
+                    for(j = i + 1;j < sArray.Count;j++)
                     {
                         if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
                         if(firstend(sArray,j)) kakko--;
                         if(kakko == 0)
                         {
-                            ifArray.Add(new Tuple<int,int>(i,j));
-                            funcArray.Add(new Tuple<int,int>(i,j));
+                            if(!boolif(sArray,i))
+                            {
+                                MessageBox.Show("ifとendはいるみたいだけど\n文の中身が違う");
+                                return false;
+                            }
                             countfunction--;
                             break;
                         }
@@ -244,24 +374,33 @@ namespace HackTheWorld
                 if(firstwhile(sArray,i))
                 {
                     kakko++;
-                    for(int j = i + 1;j < sArray.Count;j++)
+                    for(j = i + 1;j < sArray.Count;j++)
                     {
                         if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
                         if(firstend(sArray,j)) kakko--;
                         if(kakko == 0)
                         {
-                            whileArray.Add(new Tuple<int,int>(i,j));
-                            funcArray.Add(new Tuple<int,int>(i,j));
                             countfunction--;
                             break;
                         }
                     }
                 }
-                //関数っぽいのが全部なくなったら早くぬける
-                if(countfunction == 0) break;
+                //関数っぽいのが全部なくなったら
+                if(countfunction == 0)
+                {
+                    bool remainend = false;
+                    for(int k=j+1;j < sArray.Count;j++)
+                    {
+                        if(firstend(sArray,k)) remainend = true;
+                    }
+                    if(remainend) return false;
+                    return true;
+                }
+
             }
-            //ループ終わったのにcountfunctionが残ってたらmismatch
-            if(countfunction != 0) mismatch = true;
+            //ループ回り切ったらだめ
+            MessageBox.Show("関数とendの対応がだめ");
+            return false;
         }
 
 
@@ -275,20 +414,18 @@ namespace HackTheWorld
         }
 
 
-        public static void warifuri(ArrayList sArray,ArrayList result)
+        public static void warifuri(ArrayList sArray,ArrayList result,Hashtable hash)
         {
             //基本1行ずつ読む
             for(int i = 0;i < sArray.Count;i++)
             {
-                Has(sArray,i);
-
-                kakkoread(sArray);
+                Has(sArray,i,hash);
                 //FourOperations(sArray,0);
                 //i行目が関数で始まってるかどうか
                 switch(bunki(sArray,i))
                 {
                     case 1:
-                        For(sArray,result,i);
+                        For(sArray,result,i,hash);
                         int kakko = 1;
                         int k = 0;
                         for(k = i + 1;k < sArray.Count;k++)
@@ -300,10 +437,10 @@ namespace HackTheWorld
                                 break;
                             }
                         }
-                        i = k ;
+                        i = k;
                         break;
                     case 2:
-                        If(sArray,result,i);
+                        If(sArray,result,i,hash);
                         kakko = 1;
                         k = 0;
                         for(k = i + 1;k < sArray.Count;k++)
@@ -315,12 +452,12 @@ namespace HackTheWorld
                                 break;
                             }
                         }
-                        i = k ;
+                        i = k;
                         break;
                     case 3:
-                        While(sArray,result,i);
+                        While(sArray,result,i,hash);
                         kakko = 1;
-                         k = 0;
+                        k = 0;
                         for(k = i + 1;k < sArray.Count;k++)
                         {
                             if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
@@ -330,10 +467,10 @@ namespace HackTheWorld
                                 break;
                             }
                         }
-                        i = k ;
+                        i = k;
                         break;
                     default:
-                        dainyu(sArray,i);
+                        dainyu(sArray,i,hash);
                         result.Add(sArray[i]);
                         break;
                 }
@@ -353,14 +490,9 @@ namespace HackTheWorld
         }
 
 
-        public static void For(ArrayList sArray,ArrayList result,int home)
+        public static void For(ArrayList sArray,ArrayList result,int home,Hashtable hash)
         {
 
-            if(!boolfor(sArray,home))
-            {
-                result.Add("boolforひっかかった");
-                return;
-            }
             int type = 0;
             //sArray[home]はforから始まっていて繰り返し回数を指定している行
             //どんな書き方をしているかの正規表現を用いた場合分けをしたい
@@ -388,16 +520,16 @@ namespace HackTheWorld
                     bool yesbreak = false;
 
                     //homeまで読む(条件取り終わったから)
-                    Has(sArray,home);
+                    Has(sArray,home,hash);
 
 
                     //初期条件をHasにぶち込んでリセット
                     tArray.Add(m1_1.Groups["start"].Value);
-                    Has(tArray,0);
+                    Has(tArray,0,hash);
 
                     //判定式に入れるとき数字＜数字とかになってないと困るじゃん、と思った
                     uArray.Add(m1_2.Groups["jouken"].Value);
-                    dainyu(uArray,0);
+                    dainyu(uArray,0,hash);
                     //ここからループ
                     while(hantei((string)uArray[0]))
                     {
@@ -423,13 +555,13 @@ namespace HackTheWorld
                             while(!firstend(tArray,i))
                             {
                                 //home+jまで同じことをする
-                                Has(tArray,i);
+                                Has(tArray,i,hash);
 
 
                                 switch(bunki(tArray,i))
                                 {
                                     case 1:
-                                        For(tArray,result,i);
+                                        For(tArray,result,i,hash);
                                         kakko = 1;
                                         int k = 0;
                                         for(k = i + 1;k < tArray.Count;k++)
@@ -444,7 +576,7 @@ namespace HackTheWorld
                                         i = k + 1;
                                         break;
                                     case 2:
-                                        If(tArray,result,i);
+                                        If(tArray,result,i,hash);
                                         kakko = 1;
                                         k = 0;
                                         for(k = i + 1;k < tArray.Count;k++)
@@ -459,7 +591,7 @@ namespace HackTheWorld
                                         i = k + 1;
                                         break;
                                     case 3:
-                                        While(tArray,result,i);
+                                        While(tArray,result,i,hash);
                                         kakko = 1;
                                         k = 0;
                                         for(k = i + 1;k < tArray.Count;k++)
@@ -474,7 +606,7 @@ namespace HackTheWorld
                                         i = k + 1;
                                         break;
                                     default:
-                                        dainyu(tArray,i);
+                                        dainyu(tArray,i,hash);
                                         result.Add(tArray[i]);
                                         i++;
                                         break;
@@ -491,7 +623,7 @@ namespace HackTheWorld
                         if(yesbreak) break;
                         uArray.Clear();
                         uArray.Add(m1_2.Groups["jouken"].Value);
-                        dainyu(uArray,0);
+                        dainyu(uArray,0,hash);
                     }
                     return;
                 case 3:
@@ -504,12 +636,12 @@ namespace HackTheWorld
                         MessageBox.Show("(For type3)数字代入してますか？");
                         return;
                     }
-                        yesbreak = false;
+                    yesbreak = false;
                     tArray = new ArrayList();
                     tArray.Clear();
 
                     //homeまで読んでhash登録、代入、forとendの対応の取り直し
-                    Has(sArray,home);
+                    Has(sArray,home,hash);
                     for(int i = 0;i < n;i++)
                     {
                         int j = 1;
@@ -530,12 +662,12 @@ namespace HackTheWorld
                         while(!firstend(tArray,j))
                         {
                             //home+jまで同じことをする
-                            Has(tArray,j);
+                            Has(tArray,j,hash);
 
                             switch(bunki(tArray,j))
                             {
                                 case 1:
-                                    For(tArray,result,j);
+                                    For(tArray,result,j,hash);
                                     kakko = 1;
                                     int k = 0;
                                     for(k = j + 1;k < tArray.Count;k++)
@@ -550,7 +682,7 @@ namespace HackTheWorld
                                     j = k + 1;
                                     break;
                                 case 2:
-                                    If(tArray,result,j);
+                                    If(tArray,result,j,hash);
                                     kakko = 1;
                                     k = 0;
                                     for(k = j + 1;k < tArray.Count;k++)
@@ -565,7 +697,7 @@ namespace HackTheWorld
                                     j = k + 1;
                                     break;
                                 case 3:
-                                    While(tArray,result,j);
+                                    While(tArray,result,j,hash);
                                     kakko = 1;
                                     k = 0;
                                     for(k = j + 1;k < tArray.Count;k++)
@@ -580,7 +712,7 @@ namespace HackTheWorld
                                     j = k + 1;
                                     break;
                                 default:
-                                    dainyu(tArray,j);
+                                    dainyu(tArray,j,hash);
                                     result.Add(tArray[j]);
                                     j++;
                                     break;
@@ -603,17 +735,10 @@ namespace HackTheWorld
         }
 
 
-        public static void If(ArrayList sArray,ArrayList result,int home)
+        public static void If(ArrayList sArray,ArrayList result,int home,Hashtable hash)
         {
             //homeまで読んでhash登録、代入、forとendの対応の取り直し
-            Has(sArray,home);
-
-
-            if(!boolif(sArray,home))
-            {
-                result.Add("boolifひっかかった");
-                return;
-            }
+            Has(sArray,home,hash);
 
             ArrayList tArray = new ArrayList();
             //条件を抜き出す
@@ -622,7 +747,7 @@ namespace HackTheWorld
             Match m = r.Match(s);
 
             tArray.Add(m.Value);
-            dainyu(tArray,0);
+            dainyu(tArray,0,hash);
 
             if(hantei((string)tArray[0]))
             {
@@ -631,16 +756,15 @@ namespace HackTheWorld
                 {
                     if(firstelse(sArray,home + i)) break;
                     //home+iまで同じことをする
-                    Has(sArray,home + i);
-                    dainyu(sArray,home + i);
-                    kakkoread(sArray);
+                    Has(sArray,home + i,hash);
+                    dainyu(sArray,home + i,hash);
                     switch(bunki(sArray,home + i))
                     {
                         case 1:
-                            For(sArray,result,home + i);
+                            For(sArray,result,home + i,hash);
                             int kakko = 1;
                             int k = 0;
-                            for(k = home+i + 1;k < sArray.Count;k++)
+                            for(k = home + i + 1;k < sArray.Count;k++)
                             {
                                 if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
                                 if(firstend(sArray,k)) kakko--;
@@ -649,10 +773,10 @@ namespace HackTheWorld
                                     break;
                                 }
                             }
-                            i = k ;
+                            i = k;
                             break;
                         case 2:
-                            If(sArray,result,home + i);
+                            If(sArray,result,home + i,hash);
                             kakko = 1;
                             k = 0;
                             for(k = home + i + 1;k < sArray.Count;k++)
@@ -664,10 +788,10 @@ namespace HackTheWorld
                                     break;
                                 }
                             }
-                            i = k ;
+                            i = k;
                             break;
                         case 3:
-                            While(sArray,result,home + i);
+                            While(sArray,result,home + i,hash);
                             kakko = 1;
                             k = 0;
                             for(k = home + i + 1;k < sArray.Count;k++)
@@ -679,10 +803,10 @@ namespace HackTheWorld
                                     break;
                                 }
                             }
-                            i = k ;
+                            i = k;
                             break;
                         default:
-                            dainyu(sArray,home + i);
+                            dainyu(sArray,home + i,hash);
                             result.Add(sArray[home + i]);
                             i++;
                             break;
@@ -706,12 +830,12 @@ namespace HackTheWorld
                 while(!firstend(sArray,home + i) && !firstbreak(sArray,home + i - 1))
                 {
                     //home+iまで同じことをする
-                    Has(sArray,home + i);
+                    Has(sArray,home + i,hash);
 
                     switch(bunki(sArray,home + i))
                     {
                         case 1:
-                            For(sArray,result,home + i);
+                            For(sArray,result,home + i,hash);
                             int kakko = 1;
                             int k = 0;
                             for(k = home + i + 1;k < sArray.Count;k++)
@@ -723,10 +847,10 @@ namespace HackTheWorld
                                     break;
                                 }
                             }
-                            i = k ;
+                            i = k;
                             break;
                         case 2:
-                            If(sArray,result,home + i);
+                            If(sArray,result,home + i,hash);
                             kakko = 1;
                             k = 0;
                             for(k = home + i + 1;k < sArray.Count;k++)
@@ -738,10 +862,10 @@ namespace HackTheWorld
                                     break;
                                 }
                             }
-                            i = k ;
+                            i = k;
                             break;
                         case 3:
-                            While(sArray,result,home + i);
+                            While(sArray,result,home + i,hash);
                             kakko = 1;
                             k = 0;
                             for(k = home + i + 1;k < sArray.Count;k++)
@@ -753,10 +877,10 @@ namespace HackTheWorld
                                     break;
                                 }
                             }
-                            i = k ;
+                            i = k;
                             break;
                         default:
-                            dainyu(sArray,home + i);
+                            dainyu(sArray,home + i,hash);
                             result.Add(sArray[home + i]);
                             i++;
                             break;
@@ -768,7 +892,7 @@ namespace HackTheWorld
             return;
         }
 
-        public static void While(ArrayList sArray,ArrayList result,int home)
+        public static void While(ArrayList sArray,ArrayList result,int home,Hashtable hash)
         {
             ArrayList tArray = new ArrayList();
             //条件を抜き出す
@@ -778,7 +902,7 @@ namespace HackTheWorld
             bool yesbreak = false;
 
             //homeまで読んでhash登録、代入、forとendの対応の取り直し
-            Has(sArray,home);
+            Has(sArray,home,hash);
 
 
             while(!yesbreak)
@@ -786,7 +910,7 @@ namespace HackTheWorld
                 //条件式だけを入れてdainyu hanteiに入れられるように
                 tArray.Clear();
                 tArray.Add(m.Value);
-                dainyu(tArray,0);
+                dainyu(tArray,0,hash);
                 if(hantei((string)tArray[0]))
                 {
                     //dainyu後はもとの文でリセットしないと4++などはi++扱いされない
@@ -803,12 +927,12 @@ namespace HackTheWorld
                     while(!firstend(sArray,home + i) && !firstbreak(sArray,home + i - 1))
                     {
                         //home+iまで同じことをする
-                        Has(sArray,home + i);
+                        Has(sArray,home + i,hash);
 
                         switch(bunki(sArray,home + i))
                         {
                             case 1:
-                                For(sArray,result,home + i);
+                                For(sArray,result,home + i,hash);
                                 int kakko = 1;
                                 int k = 0;
                                 for(k = home + i + 1;k < sArray.Count;k++)
@@ -823,7 +947,7 @@ namespace HackTheWorld
                                 i = k;
                                 break;
                             case 2:
-                                If(sArray,result,home + i);
+                                If(sArray,result,home + i,hash);
                                 kakko = 1;
                                 k = 0;
                                 for(k = home + i + 1;k < sArray.Count;k++)
@@ -838,7 +962,7 @@ namespace HackTheWorld
                                 i = k;
                                 break;
                             case 3:
-                                While(sArray,result,home + i);
+                                While(sArray,result,home + i,hash);
                                 kakko = 1;
                                 k = 0;
                                 for(k = home + i + 1;k < sArray.Count;k++)
@@ -853,7 +977,7 @@ namespace HackTheWorld
                                 i = k;
                                 break;
                             default:
-                                dainyu(tArray,home + i);
+                                dainyu(tArray,home + i,hash);
                                 result.Add(tArray[home + i]);
                                 i++;
                                 break;
@@ -871,19 +995,6 @@ namespace HackTheWorld
             }
         }
 
-        //i行目と入れるとfuncArrayに入ってる組を探して対応するendがj行目にくるよ、と返す関数
-        public static int nextend(int i)
-        {
-            if(funcArray.Count != 0)
-            {
-                for(int tmp = 0;tmp < funcArray.Count;tmp++)
-                {
-                    Tuple<int,int> t = (Tuple<int,int>)funcArray[tmp];
-                    if(t.Item1 == i) return t.Item2;
-                }
-            }
-            return 0;
-        }
 
 
         //結果がintになる体で作る
@@ -1003,7 +1114,6 @@ namespace HackTheWorld
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\(\s*\w+\s*\=\s*\w+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\w+\s*;\s*\w+[\+\+|\-\-|\+=\w+|\-=\w+]\)\s*$")) return true;
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\w+\s*=\s*\w+\s*to\s*\w+\s*$")) return true;
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\w+\s*$")) return true;
-            misfor = true;
             return false;
         }
 
@@ -1023,7 +1133,6 @@ namespace HackTheWorld
                 {
                     if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"if\s*\(" + re[i] + @"\)\s*."))
                     {
-                        misif = true;
                         return false;
                     }
                     return true;
