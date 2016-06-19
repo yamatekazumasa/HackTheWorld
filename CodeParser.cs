@@ -21,13 +21,8 @@ namespace HackTheWorld
         {
             ArrayList forArray = new ArrayList();
 
-            int countfunction = 0;
             int kakko = 0;
-            for(int i = 0;i < sArray.Count;i++)
-            {
-                //関数の数を数える(今はforとif)
-                if(firstfor(sArray,i) || firstif(sArray,i) || firstwhile(sArray,i)) countfunction++;
-            }
+
             //初めのほうから順番に見ていく
             for(int i = 0;i < sArray.Count;i++)
             {
@@ -43,9 +38,7 @@ namespace HackTheWorld
                         if(firstend(sArray,j)) kakko--;
                         if(kakko == 0)
                         {
-                            //tupleの中に行番号を入れる
                             forArray.Add(new Tuple<int,int>(i,j));
-                            countfunction--;
                             break;
                         }
                     }
@@ -62,13 +55,8 @@ namespace HackTheWorld
         {
             ArrayList ifArray = new ArrayList();
 
-            int countfunction = 0;
             int kakko = 0;
-            for(int i = 0;i < sArray.Count;i++)
-            {
-                //関数の数を数える(今はforとif)
-                if(firstfor(sArray,i) || firstif(sArray,i) || firstwhile(sArray,i)) countfunction++;
-            }
+
             //初めのほうから順番に見ていく
             for(int i = 0;i < sArray.Count;i++)
             {
@@ -86,7 +74,6 @@ namespace HackTheWorld
                         {
                             //tupleの中に行番号を入れる
                             ifArray.Add(new Tuple<int,int>(i,j));
-                            countfunction--;
                             break;
                         }
                     }
@@ -103,13 +90,8 @@ namespace HackTheWorld
         {
             ArrayList whileArray = new ArrayList();
 
-            int countfunction = 0;
             int kakko = 0;
-            for(int i = 0;i < sArray.Count;i++)
-            {
-                //関数の数を数える(今はforとif)
-                if(firstfor(sArray,i) || firstif(sArray,i) || firstwhile(sArray,i)) countfunction++;
-            }
+
             //初めのほうから順番に見ていく
             for(int i = 0;i < sArray.Count;i++)
             {
@@ -127,7 +109,6 @@ namespace HackTheWorld
                         {
                             //tupleの中に行番号を入れる
                             whileArray.Add(new Tuple<int,int>(i,j));
-                            countfunction--;
                             break;
                         }
                     }
