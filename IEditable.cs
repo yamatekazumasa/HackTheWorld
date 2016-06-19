@@ -102,7 +102,7 @@ namespace HackTheWorld
             self.Codebox.Update();
         }
 
-        public static void Compile(this IEditable self, Stage s)
+        public static void Compile(this IEditable self)
         {
             string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
@@ -115,7 +115,7 @@ namespace HackTheWorld
 
 
             //以下のリストの中身("move, x, y")を小集合とする
-            var array = new List<string> { "size,1,1", "wait,1", "touch,move,1,1,2" };
+            var array = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
 
 
             //各小集合に対して、以下の分割処理を行う。
@@ -124,8 +124,13 @@ namespace HackTheWorld
                 //小集合を要素に分割して、要素数1-4程度の配列を作成
                 string[] tmp = elements.Split(',');
 
-                //具体的に配列の数字 tmp[1], tmp[2]を与えることで、正確にインデックスの範囲内で処理を完結させる
-                //ArgumentOutOfRangeExceptionエラーを回避
+                //基本関数でなければ特殊処理
+                if (tmp[0] != "size" && tmp[0] != "wait" && tmp[0] != "move")
+                {
+                    ConditionalAction(self,tmp);
+                }
+
+                BasicAction(self, tmp);
 
             }
         }
@@ -154,7 +159,6 @@ namespace HackTheWorld
                     self.AddProcess(new Process((obj, dt) => { obj.VY = CellSize * float.Parse(tmp[2]); }));
                     self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[3])));
                     break;
-
 
                 default:
                     break;
