@@ -129,10 +129,11 @@ namespace HackTheWorld
                 //基本関数でなければ特殊処理
                 if (tmp[0] != "size" && tmp[0] != "wait" && tmp[0] != "move")
                 {
-                    //条件達成時に行われるべき配列を作る
-                    List<string> strtmp = new List<string>();
-                    strtmp.AddRange(tmp);
-                    strtmp.RemoveAt(0);
+                    //条件達成時に行われるべき配列ctmpを作る
+                    List<string> listtmp = new List<string>();
+                    listtmp.AddRange(tmp);
+                    listtmp.RemoveAt(0);
+                    string[] ctmp = listtmp.ToArray(); 
 
                     switch (tmp[0])
                     {
@@ -141,7 +142,10 @@ namespace HackTheWorld
 
                             self.AddProcess(new Process((obj, dt) =>
                             {
-
+                                if (obj.CollidesWith(s.Player))
+                                {
+                                    
+                                }
                             }));
                             break;
                         //オブジェクトに乗った時の判定
@@ -155,10 +159,13 @@ namespace HackTheWorld
                             judge_area.H = CellSize / 8.0f;
 
                             //判定エリアにいるかどうかで処理するかを決める
-                            if (self.CollidesWith(judge_area))
+                            self.AddProcess(new Process((obj, dt) =>
                             {
+                                if (judge_area.CollidesWith(s.Player))
+                                {
 
-                            }
+                                }
+                            }));
                             break;
 
 
@@ -168,40 +175,38 @@ namespace HackTheWorld
                 }
                 #endregion
 
-                BasicAction(self, tmp);
+
+                #region 基本的な動作関数
+                switch (tmp[0])
+                {
+                    //大きさ
+                    case "size":
+                        self.AddProcess(new Process((obj, dt) => { obj.W = CellSize * float.Parse(tmp[1]); }));
+                        self.AddProcess(new Process((obj, dt) => { obj.H = CellSize * float.Parse(tmp[2]); }));
+                        break;
+
+                    //待機
+                    case "wait":
+                        self.AddProcess(new Process((obj, dt) => { obj.VX = 0.0f; }));
+                        self.AddProcess(new Process((obj, dt) => { obj.VY = 0.0f; }));
+                        self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[1])));
+                        break;
+
+                    //移動
+                    case "move":
+                        self.AddProcess(new Process((obj, dt) => { obj.VX = CellSize * float.Parse(tmp[1]); }));
+                        self.AddProcess(new Process((obj, dt) => { obj.VY = CellSize * float.Parse(tmp[2]); }));
+                        self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[3])));
+                        break;
+
+                    default:
+                        break;
+                }
+                #endregion
+
             }
         }
 
-        //Processに関する基本動作関数
-        public static void BasicAction(this IEditable self, string[] tmp)
-        {
-            switch (tmp[0])
-            {
-                //大きさ
-                case "size":
-                    self.AddProcess(new Process((obj, dt) => { obj.W = CellSize * float.Parse(tmp[1]); }));
-                    self.AddProcess(new Process((obj, dt) => { obj.H = CellSize * float.Parse(tmp[2]); }));
-                    break;
-
-                //待機
-                case "wait":
-                    self.AddProcess(new Process((obj, dt) => { obj.VX = 0.0f; }));
-                    self.AddProcess(new Process((obj, dt) => { obj.VY = 0.0f; }));
-                    self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[1])));
-                    break;
-
-                //移動
-                case "move":
-                    self.AddProcess(new Process((obj, dt) => { obj.VX = CellSize * float.Parse(tmp[1]); }));
-                    self.AddProcess(new Process((obj, dt) => { obj.VY = CellSize * float.Parse(tmp[2]); }));
-                    self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[3])));
-                    break;
-
-                default:
-                    break;
-            }
-
-        }
 
     }
 
