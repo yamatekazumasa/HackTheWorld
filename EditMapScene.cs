@@ -49,6 +49,8 @@ namespace HackTheWorld
                 Scene.Push(new GameScene(_mapEditor.GenerateStage()));
             }
 
+            if (Input.Control.Pressed && Input.S.Pushed) _mapEditor.GenerateStage().Save();
+
             if ((Input.X.Pushed || Input.Back.Pushed)) Scene.Pop();
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
