@@ -35,7 +35,7 @@ namespace HackTheWorld
                 new Process((obj, dt) => { obj.X += 100*dt; }, 1.0f),
                 new Process((obj, dt) => { obj.Size = new Vector(30, 30); }, 2.0f),
             });
-            _pobj.Compile();
+            _pobj.Compile(new Stage());
 
         }
 

@@ -66,7 +66,7 @@ namespace HackTheWorld
             };
             _menuItem = new List<MenuItem> {_backButton, _resetButton, _pauseButton};
 
-            foreach (var o in _editableObjects) if (!o.CanExecute()) o.Compile();
+            foreach (var o in _editableObjects) if (!o.CanExecute()) o.Compile(new Stage());
 
         }
 

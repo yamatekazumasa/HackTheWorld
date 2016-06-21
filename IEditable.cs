@@ -102,7 +102,7 @@ namespace HackTheWorld
             self.Codebox.Update();
         }
 
-        public static void Compile(this IEditable self)
+        public static void Compile(this IEditable self, Stage s)
         {
             string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
@@ -124,85 +124,87 @@ namespace HackTheWorld
                 //小集合を要素に分割して、要素数1-4程度の配列を作成
                 string[] tmp = elements.Split(',');
 
+
+                #region 特殊な関数の場合の処理
                 //基本関数でなければ特殊処理
                 if (tmp[0] != "size" && tmp[0] != "wait" && tmp[0] != "move")
                 {
-                    ConditionalAction(self,tmp);
-                }
+                    //条件達成時に行われるべき配列ctmpを作る
+                    List<string> listtmp = new List<string>();
+                    listtmp.AddRange(tmp);
+                    listtmp.RemoveAt(0);
+                    string[] ctmp = listtmp.ToArray(); 
 
-                BasicAction(self, tmp);
-
-            }
-        }
-
-        //Processに関する基本関数
-        public static void BasicAction(this IEditable self, string[] tmp)
-        {
-            switch (tmp[0])
-            {
-                //大きさ
-                case "size":
-                    self.AddProcess(new Process((obj, dt) => { obj.W = CellSize * float.Parse(tmp[1]); }));
-                    self.AddProcess(new Process((obj, dt) => { obj.H = CellSize * float.Parse(tmp[2]); }));
-                    break;
-
-                //待機
-                case "wait":
-                    self.AddProcess(new Process((obj, dt) => { obj.VX = 0.0f; }));
-                    self.AddProcess(new Process((obj, dt) => { obj.VY = 0.0f; }));
-                    self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[1])));
-                    break;
-
-                //移動
-                case "move":
-                    self.AddProcess(new Process((obj, dt) => { obj.VX = CellSize * float.Parse(tmp[1]); }));
-                    self.AddProcess(new Process((obj, dt) => { obj.VY = CellSize * float.Parse(tmp[2]); }));
-                    self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[3])));
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        //様々な条件があるときの動作
-        public static void ConditionalAction(this IEditable self, string[] tmp)
-        {
-            //条件達成時に行われるべき配列を作る
-
-
-            switch (tmp[0])
-            {
-                //オブジェクトに当たった時の判定
-                case "touch":
-
-                    self.AddProcess(new Process((obj, dt) =>
+                    switch (tmp[0])
                     {
+                        //オブジェクトに当たった時の判定
+                        case "touch":
 
-                    }));
-                    break;
-                //オブジェクトに乗った時の判定
-                case "ontop":
+                            self.AddProcess(new Process((obj, dt) =>
+                            {
+                                if (obj.CollidesWith(s.Player))
+                                {
+                                    
+                                }
+                            }));
+                            break;
+                        //オブジェクトに乗った時の判定
+                        case "ontop":
 
-                    //オブジェクト上部に判定エリアをつける
-                    var judge_area = new GameObject();
-                    judge_area.MidX = self.MidX;
-                    judge_area.MidY = self.Y;
-                    judge_area.W = self.W;
-                    judge_area.H = CellSize / 8.0f;
+                            //オブジェクト上部に判定エリアをつける
+                            var judge_area = new GameObject();
+                            judge_area.MidX = self.MidX;
+                            judge_area.MidY = self.Y;
+                            judge_area.W = self.W;
+                            judge_area.H = CellSize / 8.0f;
 
-                    //判定エリアにいるかどうかで処理するかを決める
-                    if (self.CollidesWith(judge_area))
-                    {
+                            //判定エリアにいるかどうかで処理するかを決める
+                            self.AddProcess(new Process((obj, dt) =>
+                            {
+                                if (judge_area.CollidesWith(s.Player))
+                                {
 
+                                }
+                            }));
+                            break;
+
+
+                        default:
+                            break;
                     }
-                    break;
+                }
+                #endregion
 
 
-                default:
-                    break;
+                #region 基本的な動作関数
+                switch (tmp[0])
+                {
+                    //大きさ
+                    case "size":
+                        self.AddProcess(new Process((obj, dt) => { obj.W = CellSize * float.Parse(tmp[1]); }));
+                        self.AddProcess(new Process((obj, dt) => { obj.H = CellSize * float.Parse(tmp[2]); }));
+                        break;
+
+                    //待機
+                    case "wait":
+                        self.AddProcess(new Process((obj, dt) => { obj.VX = 0.0f; }));
+                        self.AddProcess(new Process((obj, dt) => { obj.VY = 0.0f; }));
+                        self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[1])));
+                        break;
+
+                    //移動
+                    case "move":
+                        self.AddProcess(new Process((obj, dt) => { obj.VX = CellSize * float.Parse(tmp[1]); }));
+                        self.AddProcess(new Process((obj, dt) => { obj.VY = CellSize * float.Parse(tmp[2]); }));
+                        self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[3])));
+                        break;
+
+                    default:
+                        break;
+                }
+                #endregion
+
             }
-
         }
 
 
