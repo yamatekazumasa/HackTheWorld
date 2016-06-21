@@ -16,7 +16,297 @@ namespace HackTheWorld
     {
 
 
+        public static ArrayList yomitori(string s1)
+        {
+            Hashtable hash = new Hashtable();
 
+            ICollection valuecall = hash.Values;
+            //連続で入力してデバックしたいからいる奴ら
+            hash.Clear();
+
+            //行で分割
+            //char[ ] delimiterChars = { ' ' , ':' , '\t' , '\n' };
+            char[] delimiterChars = { '\n' };
+
+            //分割した文を入れるリストと結果を入れるリスト
+            ArrayList sArray = new ArrayList();
+            ArrayList result = new ArrayList();
+
+
+            string[] s2 = s1.Split(delimiterChars);
+            for(int i = 0;i < s2.Length;i++)
+            {
+                if(s2[i]!="")sArray.Add(s2[i]);
+            }
+            
+            string str = "";
+            if(!checkfunction(sArray))
+            {
+                result.Clear();
+                result.Add("へんな書きかた");
+                str = "";
+                for(int i = 0;i < result.Count;i++)
+                {
+                    str += (string)result[i] + "\n";
+                }
+                MessageBox.Show(str);
+                return result;
+            }
+            if(!isValidScript(sArray))
+            {
+
+                result.Clear();
+                result.Add("構文エラー");
+                str = "";
+                for(int i = 0;i < result.Count;i++)
+                {
+                    str += (string)result[i] + "\n";
+                }
+                MessageBox.Show(str);
+                return result;
+            }
+            //割り振る
+            warifuri(sArray,result,hash);
+
+            str = "";
+            for(int i = 0;i < result.Count;i++)
+            {
+                str += (string)result[i] + "\n";
+            }
+            MessageBox.Show(str);
+            return result;
+        }
+
+
+        public static bool isValidScript(ArrayList sArray)
+        {
+            int countfunction = 0;
+            int kakko = 0;
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                //関数の数を数える(今はforとif)
+                if(firstfor(sArray,i) || firstif(sArray,i) || firstwhile(sArray,i)) countfunction++;
+            }
+            if(countfunction == 0) return true;
+            //初めのほうから順番に見ていく
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                int j = 0;
+                //i行目がforで始まってるかどうか
+                if(firstfor(sArray,i))
+                {
+                    kakko++;
+                    for(j = i + 1;j < sArray.Count;j++)
+                    {
+                        //閉じる前にまた関数っぽいのがいたらカウント増やす
+                        if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
+                        //endがいたらへらす
+                        if(firstend(sArray,j)) kakko--;
+                        if(kakko == 0)
+                        {
+                            if(!boolfor(sArray,i))
+                            {
+                                MessageBox.Show("forとendはいるみたいだけど\n文の中身が違う");
+                                return false;
+                            }
+                            countfunction--;
+                            break;
+                        }
+                    }
+                }
+                //似たようなもん
+                if(firstif(sArray,i))
+                {
+                    kakko++;
+                    for(j = i + 1;j < sArray.Count;j++)
+                    {
+                        if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
+                        if(firstend(sArray,j)) kakko--;
+                        if(kakko == 0)
+                        {
+                            if(!boolif(sArray,i))
+                            {
+                                MessageBox.Show("ifとendはいるみたいだけど\n文の中身が違う");
+                                return false;
+                            }
+                            countfunction--;
+                            break;
+                        }
+                    }
+                }
+                if(firstwhile(sArray,i))
+                {
+                    kakko++;
+                    for(j = i + 1;j < sArray.Count;j++)
+                    {
+                        if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
+                        if(firstend(sArray,j)) kakko--;
+                        if(kakko == 0)
+                        {
+                            countfunction--;
+                            break;
+                        }
+                    }
+                }
+                //関数っぽいのが全部なくなったら
+                if(countfunction == 0)
+                {
+                    bool remainend = false;
+                    for(int k = j+1 ;k < sArray.Count;k++)
+                    {
+                        if(firstend(sArray,k)) remainend = true;
+                    }
+                    if(remainend) return false;
+                    return true;
+                }
+
+            }
+            //ループ回り切ったらだめ
+            MessageBox.Show("関数とendの対応がだめ");
+            return false;
+        }
+
+        public static bool checkfunction(ArrayList sArray)
+        {
+            string message = "";
+            string s = "";
+            int count = 0;
+            int size = 13;
+            //"size,1,1", "wait,1", "move,1,1,2"
+            Regex[] reg = new Regex[size];
+            reg[0] = new Regex(@"\s*size\s*,\s*\w+\s*,\s*\w+");
+            reg[1] = new Regex(@"\s*wait\s*,\s*\w+");
+            reg[2] = new Regex(@"\s*move\s*,\s*\w+\s*,\s*\w+");
+            reg[3] = new Regex(@"\s*\w+\s*=\s*\d+\s*");
+            reg[4] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*=");
+            reg[5] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\+\+");
+            reg[6] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\-\-");
+            reg[7] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\+\=");
+            reg[8] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\-\=");
+            reg[9] = new Regex(@"for");
+            reg[10] = new Regex(@"if");
+            reg[11] = new Regex(@"while");
+            reg[12] = new Regex(@"end");
+
+
+
+
+            Match[] mat = new Match[size];
+
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                count = 0;
+                s = sArray[i].ToString();
+                for(int j = 0;j < size;j++)
+                {
+                    mat[j] = reg[j].Match(s);
+                }
+
+                if(s.Contains("size") && mat[0].Length == 0) message = "size";
+                if(s.Contains("wait") && mat[1].Length == 0) message = "wait";
+                if(s.Contains("move") && mat[2].Length == 0) message = "move";
+
+                for(int j = 0;j < size;j++)
+                {
+                    if(mat[j].Length != 0) count++;
+                }
+                if(message.Length != 0)
+                {
+                    MessageBox.Show(message + "の書き方がまちがってます");
+                    return false;
+                }
+                if(count == 0)
+                {
+                    MessageBox.Show("知らない形の文が" + (i + 1) + "行目にあります");
+                    return false;
+                }
+            }
+            return true;
+        }
+        //最初が何で始まるかわかるといちいち書かなくていいからべんり
+        public static int bunki(ArrayList sArray,int i)
+        {
+            if(firstfor(sArray,i)) return 1;
+            if(firstif(sArray,i)) return 2;
+            if(firstwhile(sArray,i)) return 3;
+            return 0;
+        }
+
+
+        public static void warifuri(ArrayList sArray,ArrayList result,Hashtable hash)
+        {
+            //基本1行ずつ読む
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                Has(sArray,i,hash);
+                //FourOperations(sArray,0);
+                //i行目が関数で始まってるかどうか
+                switch(bunki(sArray,i))
+                {
+                    case 1:
+                        For(sArray,result,i,hash);
+                        int kakko = 1;
+                        int k = 0;
+                        for(k = i + 1;k < sArray.Count;k++)
+                        {
+                            if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                            if(firstend(sArray,k)) kakko--;
+                            if(kakko == 0)
+                            {
+                                break;
+                            }
+                        }
+                        i = k;
+                        break;
+                    case 2:
+                        If(sArray,result,i,hash);
+                        kakko = 1;
+                        k = 0;
+                        for(k = i + 1;k < sArray.Count;k++)
+                        {
+                            if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                            if(firstend(sArray,k)) kakko--;
+                            if(kakko == 0)
+                            {
+                                break;
+                            }
+                        }
+                        i = k;
+                        break;
+                    case 3:
+                        While(sArray,result,i,hash);
+                        kakko = 1;
+                        k = 0;
+                        for(k = i + 1;k < sArray.Count;k++)
+                        {
+                            if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
+                            if(firstend(sArray,k)) kakko--;
+                            if(kakko == 0)
+                            {
+                                break;
+                            }
+                        }
+                        i = k;
+                        break;
+                    default:
+                        dainyu(sArray,i,hash);
+                        result.Add(sArray[i]);
+                        break;
+                }
+            }
+            //見た目だけの話
+            ArrayList result2 = new ArrayList();
+            for(int i = 0;i < result.Count;i++)
+            {
+                string s = (string)result[i];
+                if(!s.Contains("=") && !s.Contains("+")) result2.Add(result[i]);
+            }
+            result.Clear();
+            for(int i = 0;i < result2.Count;i++)
+            {
+                result.Add(result2[i]);
+            }
+        }
         public static Tuple<int,int>[] forset(ArrayList sArray)
         {
             ArrayList forArray = new ArrayList();
@@ -247,228 +537,7 @@ namespace HackTheWorld
 
         }
 
-        public static ArrayList yomitori(string s1)
-        {
-            Hashtable hash = new Hashtable();
 
-            ICollection valuecall = hash.Values;
-            //連続で入力してデバックしたいからいる奴ら
-            hash.Clear();
-
-            //行で分割
-            //char[ ] delimiterChars = { ' ' , ':' , '\t' , '\n' };
-            char[] delimiterChars = { '\n' };
-
-            //分割した文を入れるリストと結果を入れるリスト
-            ArrayList sArray = new ArrayList();
-            ArrayList result = new ArrayList();
-
-
-            string[] s2 = s1.Split(delimiterChars);
-            for(int i = 0;i < s2.Length;i++)
-            {
-                sArray.Add(s2[i]);
-            }
-            string str = "";
-            //for、ifとendが組になってるかと組がどこの行か
-            if(!isValidScript(sArray))
-            {
-
-                result.Clear();
-                result.Add("構文エラー");
-                str = "";
-                for(int i = 0;i < result.Count;i++)
-                {
-                    str += (string)result[i] + "\n";
-                }
-                MessageBox.Show(str);
-                return result;
-            }
-            //割り振る
-            warifuri(sArray,result,hash);
-
-            str = "";
-            for(int i = 0;i < result.Count;i++)
-            {
-                str += (string)result[i] + "\n";
-            }
-            MessageBox.Show(str);
-            return result;
-        }
-
-
-        public static bool isValidScript(ArrayList sArray)
-        {
-            int countfunction = 0;
-            int kakko = 0;
-            for(int i = 0;i < sArray.Count;i++)
-            {
-                //関数の数を数える(今はforとif)
-                if(firstfor(sArray,i) || firstif(sArray,i) || firstwhile(sArray,i)) countfunction++;
-            }
-            //初めのほうから順番に見ていく
-            for(int i = 0;i < sArray.Count;i++)
-            {
-                int j = 0;
-                //i行目がforで始まってるかどうか
-                if(firstfor(sArray,i))
-                {
-                    kakko++;
-                    for(j = i + 1;j < sArray.Count;j++)
-                    {
-                        //閉じる前にまた関数っぽいのがいたらカウント増やす
-                        if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
-                        //endがいたらへらす
-                        if(firstend(sArray,j)) kakko--;
-                        if(kakko == 0)
-                        {
-                            if(!boolfor(sArray,i))
-                            {
-                                MessageBox.Show("forとendはいるみたいだけど\n文の中身が違う");
-                                return false;
-                            }
-                            countfunction--;
-                            break;
-                        }
-                    }
-                }
-                //似たようなもん
-                if(firstif(sArray,i))
-                {
-                    kakko++;
-                    for(j = i + 1;j < sArray.Count;j++)
-                    {
-                        if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
-                        if(firstend(sArray,j)) kakko--;
-                        if(kakko == 0)
-                        {
-                            if(!boolif(sArray,i))
-                            {
-                                MessageBox.Show("ifとendはいるみたいだけど\n文の中身が違う");
-                                return false;
-                            }
-                            countfunction--;
-                            break;
-                        }
-                    }
-                }
-                if(firstwhile(sArray,i))
-                {
-                    kakko++;
-                    for(j = i + 1;j < sArray.Count;j++)
-                    {
-                        if(firstfor(sArray,j) || firstif(sArray,j) || firstwhile(sArray,j)) kakko++;
-                        if(firstend(sArray,j)) kakko--;
-                        if(kakko == 0)
-                        {
-                            countfunction--;
-                            break;
-                        }
-                    }
-                }
-                //関数っぽいのが全部なくなったら
-                if(countfunction == 0)
-                {
-                    bool remainend = false;
-                    for(int k=j+1;j < sArray.Count;j++)
-                    {
-                        if(firstend(sArray,k)) remainend = true;
-                    }
-                    if(remainend) return false;
-                    return true;
-                }
-
-            }
-            //ループ回り切ったらだめ
-            MessageBox.Show("関数とendの対応がだめ");
-            return false;
-        }
-
-
-        //最初が何で始まるかわかるといちいち書かなくていいからべんり
-        public static int bunki(ArrayList sArray,int i)
-        {
-            if(firstfor(sArray,i)) return 1;
-            if(firstif(sArray,i)) return 2;
-            if(firstwhile(sArray,i)) return 3;
-            return 0;
-        }
-
-
-        public static void warifuri(ArrayList sArray,ArrayList result,Hashtable hash)
-        {
-            //基本1行ずつ読む
-            for(int i = 0;i < sArray.Count;i++)
-            {
-                Has(sArray,i,hash);
-                //FourOperations(sArray,0);
-                //i行目が関数で始まってるかどうか
-                switch(bunki(sArray,i))
-                {
-                    case 1:
-                        For(sArray,result,i,hash);
-                        int kakko = 1;
-                        int k = 0;
-                        for(k = i + 1;k < sArray.Count;k++)
-                        {
-                            if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
-                            if(firstend(sArray,k)) kakko--;
-                            if(kakko == 0)
-                            {
-                                break;
-                            }
-                        }
-                        i = k;
-                        break;
-                    case 2:
-                        If(sArray,result,i,hash);
-                        kakko = 1;
-                        k = 0;
-                        for(k = i + 1;k < sArray.Count;k++)
-                        {
-                            if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
-                            if(firstend(sArray,k)) kakko--;
-                            if(kakko == 0)
-                            {
-                                break;
-                            }
-                        }
-                        i = k;
-                        break;
-                    case 3:
-                        While(sArray,result,i,hash);
-                        kakko = 1;
-                        k = 0;
-                        for(k = i + 1;k < sArray.Count;k++)
-                        {
-                            if(firstfor(sArray,k) || firstif(sArray,k) || firstwhile(sArray,k)) kakko++;
-                            if(firstend(sArray,k)) kakko--;
-                            if(kakko == 0)
-                            {
-                                break;
-                            }
-                        }
-                        i = k;
-                        break;
-                    default:
-                        dainyu(sArray,i,hash);
-                        result.Add(sArray[i]);
-                        break;
-                }
-            }
-            //見た目だけの話
-            ArrayList result2 = new ArrayList();
-            for(int i = 0;i < result.Count;i++)
-            {
-                string s = (string)result[i];
-                if(!s.Contains("=") && !s.Contains("+")) result2.Add(result[i]);
-            }
-            result.Clear();
-            for(int i = 0;i < result2.Count;i++)
-            {
-                result.Add(result2[i]);
-            }
-        }
 
 
         public static void For(ArrayList sArray,ArrayList result,int home,Hashtable hash)
