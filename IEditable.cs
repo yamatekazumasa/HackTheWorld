@@ -106,20 +106,22 @@ namespace HackTheWorld
         {
             string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
-            // CodeParserで生成されたArrayListの中身は<move><X><Y><time>の形
-            //<"if¥s*¥(¥s*touch¥s*¥)"><move><X><Y>
+            // CodeParserで生成された配列の中身は<size,1,1> <wait,1><move,1,1,2>の形
 
             CodeParser.yomitori(str);
 
-            // self.SetProcesses(new Process[] {});
+            #region CodeParser.yomitori(str)をProcess型に変換する処理
 
 
             //以下のリストの中身("move, x, y")を小集合とする
-            var array = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
+            var midcode = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
+            //var midcode = new List<string>();
+            //var midcode = CodeParser.yomitori(str).Cast<string>().ToList();
+
 
 
             //各小集合に対して、以下の分割処理を行う。
-            foreach (var elements in array)
+            foreach (var elements in midcode)
             {
                 //小集合を要素に分割して、要素数1-4程度の配列を作成
                 string[] tmp = elements.Split(',');
@@ -127,50 +129,122 @@ namespace HackTheWorld
 
                 #region 特殊な関数の場合の処理
                 //基本関数でなければ特殊処理
-                if (tmp[0] != "size" && tmp[0] != "wait" && tmp[0] != "move")
+                if (tmp[0] != "size" && tmp[0] != "wait" && tmp[0] != "move") //基本動作を例外として弾く
                 {
                     //条件達成時に行われるべき配列ctmpを作る
                     List<string> listtmp = new List<string>();
                     listtmp.AddRange(tmp);
                     listtmp.RemoveAt(0);
-                    string[] ctmp = listtmp.ToArray(); 
+                    string[] ctmp = listtmp.ToArray();
 
+                    //もともとの配列tmp[0]の最初の文字で分岐
                     switch (tmp[0])
                     {
-                        //オブジェクトに当たった時の判定
+                        #region オブジェクトに当たった時の判定
                         case "touch":
 
-                            self.AddProcess(new Process((obj, dt) =>
+                            switch (ctmp[0])
                             {
-                                if (obj.CollidesWith(s.Player))
-                                {
-                                    
-                                }
-                            }));
+                                //プレイヤーが触れたら大きさを変更
+                                case "size":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.CollidesWith(s.Player))
+                                        {
+                                            obj.W = CellSize * float.Parse(ctmp[1]);
+                                            obj.H = CellSize * float.Parse(ctmp[2]);
+                                        }
+                                    }));
+                                    break;
+
+                                //プレイヤーが触れたら待機
+                                //ProcessのMoveの秒数指定の仕様上たぶん使えないです
+                                case "wait":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+                                    self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(ctmp[1])));
+                                    break;
+
+                                //プレイヤーが触れたら移動
+                                case "move":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = CellSize * float.Parse(ctmp[1]);
+                                        obj.VY = CellSize * float.Parse(ctmp[2]);
+                                    }));
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.CollidesWith(s.Player))
+                                            obj.Move(dt);
+                                    }, float.Parse(ctmp[3])));
+                                    break;
+
+                            }
+
                             break;
-                        //オブジェクトに乗った時の判定
+                        #endregion
+
+                        #region オブジェクトに乗った時の判定
                         case "ontop":
 
                             //オブジェクト上部に判定エリアをつける
                             var judge_area = new GameObject();
                             judge_area.MidX = self.MidX;
-                            judge_area.MidY = self.Y;
+                            judge_area.MidY = self.Y - CellSize / 8.0f;
                             judge_area.W = self.W;
                             judge_area.H = CellSize / 8.0f;
 
                             //判定エリアにいるかどうかで処理するかを決める
-                            self.AddProcess(new Process((obj, dt) =>
+                            switch (ctmp[0])
                             {
-                                if (judge_area.CollidesWith(s.Player))
-                                {
+                                //プレイヤーが触れたら大きさを変更
+                                case "size":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.CollidesWith(s.Player))
+                                        {
+                                            obj.W = CellSize * float.Parse(ctmp[1]);
+                                            obj.H = CellSize * float.Parse(ctmp[2]);
+                                        }
+                                    }));
+                                    break;
 
-                                }
-                            }));
+                                //プレイヤーが触れたら待機
+                                //ProcessのMoveの秒数指定の仕様上たぶん使えないです
+                                case "wait":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+                                    self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(ctmp[1])));
+                                    break;
+
+                                //プレイヤーが触れたら移動
+                                case "move":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = CellSize * float.Parse(ctmp[1]);
+                                        obj.VY = CellSize * float.Parse(ctmp[2]);
+                                    }));
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.CollidesWith(s.Player))
+                                            obj.Move(dt);
+                                    }, float.Parse(ctmp[3])));
+                                    break;
+
+                            }
+
                             break;
-
+                        #endregion
 
                         default:
                             break;
+
                     }
                 }
                 #endregion
@@ -181,21 +255,30 @@ namespace HackTheWorld
                 {
                     //大きさ
                     case "size":
-                        self.AddProcess(new Process((obj, dt) => { obj.W = CellSize * float.Parse(tmp[1]); }));
-                        self.AddProcess(new Process((obj, dt) => { obj.H = CellSize * float.Parse(tmp[2]); }));
+                        self.AddProcess(new Process((obj, dt) =>
+                        {
+                            obj.W = CellSize * float.Parse(tmp[1]);
+                            obj.H = CellSize * float.Parse(tmp[2]);
+                        }));
                         break;
 
                     //待機
                     case "wait":
-                        self.AddProcess(new Process((obj, dt) => { obj.VX = 0.0f; }));
-                        self.AddProcess(new Process((obj, dt) => { obj.VY = 0.0f; }));
+                        self.AddProcess(new Process((obj, dt) =>
+                        {
+                            obj.VX = 0.0f;
+                            obj.VY = 0.0f;
+                        }));
                         self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[1])));
                         break;
 
                     //移動
                     case "move":
-                        self.AddProcess(new Process((obj, dt) => { obj.VX = CellSize * float.Parse(tmp[1]); }));
-                        self.AddProcess(new Process((obj, dt) => { obj.VY = CellSize * float.Parse(tmp[2]); }));
+                        self.AddProcess(new Process((obj, dt) =>
+                        {
+                            obj.VX = CellSize * float.Parse(tmp[1]);
+                            obj.VY = CellSize * float.Parse(tmp[2]);
+                        }));
                         self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[3])));
                         break;
 
@@ -205,6 +288,7 @@ namespace HackTheWorld
                 #endregion
 
             }
+            #endregion
         }
 
 
