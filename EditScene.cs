@@ -61,11 +61,8 @@ namespace HackTheWorld
             if (_startButton.Clicked) Scene.Push(new GameScene(_stage));
             if (_runButton.Clicked)
             {
-                if (_isRunning == false)
-                {
-                    //文字列をkakikae.csにもってく
-                    yomitori(_stage.EditableObjects[0].Codebox.GetString());
-                }
+                //文字列をkakikae.csにもってく
+                yomitori(_stage.EditableObjects[0].Codebox.GetString());
             }
             if (Input.X.Pushed || Input.Back.Pushed)
             {
