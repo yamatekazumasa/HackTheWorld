@@ -176,7 +176,7 @@ namespace HackTheWorld
             Regex[] reg = new Regex[size];
             reg[0] = new Regex(@"\s*size\s*,\s*\w+\s*,\s*\w+");
             reg[1] = new Regex(@"\s*wait\s*,\s*\w+");
-            reg[2] = new Regex(@"\s*move\s*,\s*\w+\s*,\s*\w+");
+            reg[2] = new Regex(@"\s*move\s*,\s*\w+\s*,\s*\w+,\s*\w+");
             reg[3] = new Regex(@"\s*\w+\s*=\s*\d+\s*");
             reg[4] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*=");
             reg[5] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\+\+");
