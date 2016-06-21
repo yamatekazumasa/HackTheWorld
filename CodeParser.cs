@@ -171,7 +171,7 @@ namespace HackTheWorld
             string message = "";
             string s = "";
             int count = 0;
-            int size = 13;
+            int size = 14;
             //"size,1,1", "wait,1", "move,1,1,2"
             Regex[] reg = new Regex[size];
             reg[0] = new Regex(@"\s*size\s*,\s*\w+\s*,\s*\w+");
@@ -187,6 +187,7 @@ namespace HackTheWorld
             reg[10] = new Regex(@"if");
             reg[11] = new Regex(@"while");
             reg[12] = new Regex(@"end");
+            reg[13] = new Regex(@"else");
 
 
 
