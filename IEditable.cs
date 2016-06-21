@@ -106,15 +106,18 @@ namespace HackTheWorld
         {
             string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
-            // CodeParserで生成された配列の中身は{ "size,1,1", "wait,1", "move,1,1,2" }の形
+            // CodeParserで生成された配列の中身は<size,1,1> <wait,1><move,1,1,2>の形
 
             CodeParser.yomitori(str);
 
-            #region 配列をProcess型に変換する処理
+            #region CodeParser.yomitori(str)をProcess型に変換する処理
 
 
             //以下のリストの中身("move, x, y")を小集合とする
             var midcode = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
+            //var midcode = new List<string>();
+            //var midcode = CodeParser.yomitori(str).Cast<string>().ToList();
+
 
 
             //各小集合に対して、以下の分割処理を行う。
