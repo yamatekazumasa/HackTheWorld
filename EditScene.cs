@@ -18,8 +18,6 @@ namespace HackTheWorld
         private MenuItem _runButton;
         private List<MenuItem> _menuItem;
         private Stage _stage;
-        private bool _isRunning;
-        private ArrayList _str;
 
         public EditScene()
         {
@@ -66,9 +64,7 @@ namespace HackTheWorld
                 if (_isRunning == false)
                 {
                     //文字列をkakikae.csにもってく
-                    _isRunning = true;
-                    string str = _stage.EditableObjects[0].Codebox.GetString();
-                    yomitori(str);
+                    yomitori(_stage.EditableObjects[0].Codebox.GetString());
                 }
             }
             if (Input.X.Pushed || Input.Back.Pushed)
