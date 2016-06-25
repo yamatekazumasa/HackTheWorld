@@ -50,6 +50,7 @@ namespace HackTheWorld
         bool Intersects(GameObject obj);
         bool CollidesWith(GameObject obj);
         bool InWindow();
+  //      bool Nearby(GameObject obj);
     }
 
     static partial class Extensions
@@ -186,6 +187,8 @@ namespace HackTheWorld
                                     }, float.Parse(ctmp[3])));
                                     break;
 
+                                default:
+                                    break;
                             }
 
                             break;
@@ -241,11 +244,86 @@ namespace HackTheWorld
                                     }, float.Parse(ctmp[3])));
                                     break;
 
+                                default:
+                                    break;
                             }
 
                             break;
                         #endregion
 
+                        //プロジェクトバージョンが古すぎて近づいた判定が使えない
+                        #region オブジェクトに近づいた時の判定
+
+                        /*
+
+                    case "nearby":
+                        switch (ctmp[0])
+                        {
+                            //プレイヤーが近づいたら大きさを変更
+                            case "size":
+                                self.AddProcess(new Process((obj, dt) =>
+                                {
+                                    if (obj.Nearby(s.Player))
+                                    {
+                                        obj.W = CellSize * float.Parse(ctmp[1]);
+                                        obj.H = CellSize * float.Parse(ctmp[2]);
+                                    }
+                                }));
+                                break;
+
+                            //プレイヤーが近づいたら待機
+                            //ProcessのMoveの秒数指定の仕様上たぶん使えないです
+                            case "wait":
+                                self.AddProcess(new Process((obj, dt) =>
+                                {
+                                    obj.VX = 0.0f;
+                                    obj.VY = 0.0f;
+                                }));
+                                self.AddProcess(new Process((obj, dt) => {
+                                    if (obj.Nearby(s.Player))
+                                    {
+                                        obj.Move(dt);
+                                    }
+                                }, float.Parse(ctmp[1])));
+                                break;
+
+                            //プレイヤーが近づいたら移動
+                            case "move":
+                                self.AddProcess(new Process((obj, dt) =>
+                                {
+                                    obj.VX = CellSize * float.Parse(ctmp[1]);
+                                    obj.VY = CellSize * float.Parse(ctmp[2]);
+                                }));
+                                self.AddProcess(new Process((obj, dt) =>
+                                {
+                                    if (obj.Nearby(s.Player))
+                                        obj.Move(dt);
+                                }, float.Parse(ctmp[3])));
+                                break;
+
+                            case "shoot":
+                                self.AddProcess(new Process((obj, dt) =>
+                                {
+                                    if (obj.Nearby(s.Player))
+                                    {
+
+                                        //バージョンが古すぎて動かない
+                                        var b = new Bullet(self.X, self.MidY, -50, 0, 10, 10);
+                                        s.Bullets.Add(b);
+                                        s.Objects.Add(b);
+
+                                    }
+                                }));
+
+                                break;
+
+                            default:
+                                break;
+                        }
+
+                        break;
+        */
+                        #endregion
                         default:
                             break;
 
