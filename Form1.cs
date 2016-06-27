@@ -40,11 +40,10 @@ namespace HackTheWorld
         private void MainProcess()
         {
             _bmp = new Bitmap(ScreenWidth, ScreenHeight);
+            GraphicsContext = Graphics.FromImage(_bmp);
 
             _pressedKeys = new LinkedList<Keys>();
             _pressedButtons = new LinkedList<MouseButtons>();
-
-            Invoke((Action)(() => { GraphicsContext = Graphics.FromImage(_bmp); }));
             
             Scene.Current = new TitleScene();
             Stopwatch stopwatch = new Stopwatch();
