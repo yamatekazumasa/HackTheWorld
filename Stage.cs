@@ -123,7 +123,7 @@ namespace HackTheWorld
                             if (obj["code"] != null)
                             {
                                 var b = new EditableBlock((float)obj["x"], (float)obj["y"]);
-                                b.Codebox.Current.Text = new StringBuilder((string)obj["code"]);
+                                b.Code = (string)obj["code"];
                                 stage.Blocks.Add(b);
                                 stage.EditableObjects.Add(b);
                                 stage.Objects.Add(b);

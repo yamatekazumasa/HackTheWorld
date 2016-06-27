@@ -15,14 +15,17 @@ namespace HackTheWorld
         private MenuItem _runButton;
         private List<MenuItem> _menuItem;
         private Stage _stage;
+        private readonly CodeBox _codebox;
 
         public EditScene(Stage stage)
         {
             _stage = stage;
+            _codebox = new CodeBox(stage.EditableObjects[0]);
         }
 
         public override void Cleanup()
         {
+            _stage = null;
         }
 
         public override void Startup()
@@ -54,16 +57,7 @@ namespace HackTheWorld
             if (_runButton.Clicked)
             {
                 // 文字列を CodeParser.cs にもってく
-                CodeParser.yomitori(_stage.EditableObjects[0].Codebox.GetString());
-            }
-            if (Input.X.Pushed || Input.Back.Pushed)
-            {
-                bool isFocused = false;
-                foreach (var obj in _stage.EditableObjects)
-                {
-                    isFocused = isFocused || obj.IsFocused();
-                }
-                if (!isFocused) Scene.Pop();
+                CodeParser.yomitori(_stage.EditableObjects[0].Code.ToString());
             }
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
@@ -73,11 +67,16 @@ namespace HackTheWorld
                 if (Input.S.Pushed) _stage.Save();
             }
 
-            foreach (var b in _stage.EditableObjects) b.Update(dt);
+            foreach (var obj in _stage.EditableObjects)
+            {
+                if (obj.Clicked) _codebox.Focus(obj);
+            }
+
+            _codebox.Update();
 
             GraphicsContext.Clear(Color.White);
-
             _stage.Objects.ForEach(obj => obj.Draw());
+            _codebox.Draw();
 
             _backButton.Draw();
             _startButton.Draw();

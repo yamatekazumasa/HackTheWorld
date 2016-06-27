@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
@@ -18,9 +19,10 @@ namespace HackTheWorld
         /// </summary>
         int ProcessPtr { get; set; }
         /// <summary>
-        /// 自身のコードを編集するテキストエディタ。
+        /// 自身のコード。
         /// </summary>
-        CodeBox Codebox { get; set; }
+        [JsonProperty("code", Order = 10)]
+        string Code { get; set; }
         /// <summary>
         /// 自身の動作を格納する。
         /// </summary>
@@ -63,16 +65,6 @@ namespace HackTheWorld
 
     static partial class Extensions
     {
-        public static void Focus(this IEditable self)
-        {
-            self.Codebox.Focus();
-        }
-
-        public static bool IsFocused(this IEditable self)
-        {
-            return self.Codebox.IsFocused;
-        }
-
         public static void SetProcesses(this IEditable self, Process[] processes)
         {
             self.Processes = processes.ToList();
@@ -103,11 +95,6 @@ namespace HackTheWorld
 
         public static void Update(this IEditable self, float dt)
         {
-            if (Scene.Current is EditScene)
-            {
-                if (self.Clicked) self.Codebox.Focus();
-                self.Codebox.Update();
-            }
             if (!self.CanExecute || self.Processes == null || self.Processes.Count == 0) return;
 
             var process = self.Processes[self.ProcessPtr];
@@ -130,7 +117,7 @@ namespace HackTheWorld
 
         public static void Compile(this IEditable self, Stage stage)
         {
-            string str = self.Codebox.GetString();
+            string str = self.Code.ToString();
             // ここにstring型をProcess型に変換する処理を書く。
             // CodeParserで生成されたArrayListの中身は<size,1,1><wait,1><move,1,1,2>の形
 

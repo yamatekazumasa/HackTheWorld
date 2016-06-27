@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 using Newtonsoft.Json;
+using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
@@ -14,9 +17,9 @@ namespace HackTheWorld
         /// </summary>
         public int ProcessPtr { get; set; }
         /// <summary>
-        /// 自身のコードを編集するテキストエディタ。
+        /// 自身のコード。
         /// </summary>
-        public CodeBox Codebox { get; set; }
+        public string Code { get; set; }
         /// <summary>
         /// 自身の動作を格納する。
         /// </summary>
@@ -25,9 +28,6 @@ namespace HackTheWorld
         /// true のとき Update() 内で Process が実行されるようになる。
         /// </summary>
         public bool CanExecute { get; set; }
-        
-        [JsonProperty("code", Order = 10)]
-        public string Code => Codebox.Current.Text.ToString();
 
         public EditableEnemy(float x, float y) : base(x, y) { }
 
@@ -39,7 +39,6 @@ namespace HackTheWorld
         {
             base.Initialize();
             CanExecute = false;
-            Codebox = new CodeBox(this) { Position = Position + new Vector(50, -50) };
             Processes = new List<Process>();
         }
 
@@ -50,8 +49,7 @@ namespace HackTheWorld
 
         public override void Draw()
         {
-            base.Draw();
-            Codebox.Draw();
+            GraphicsContext.FillRectangle(Brushes.Turquoise, MinX, MinY, Width, Height);
         }
     }
 }
