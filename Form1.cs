@@ -55,7 +55,7 @@ namespace HackTheWorld
             while (!IsDisposed) // 毎フレーム呼ばれる処理
             {
                 long currentTime = stopwatch.ElapsedMilliseconds;
-                if (currentTime > 100000) stopwatch.Restart();
+                if (currentTime > 100000000000000000) stopwatch.Restart();
                 float dt = (currentTime - prevTime) / 1000.0F;
 
                 Input.Update(_pressedKeys);

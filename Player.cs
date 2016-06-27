@@ -22,7 +22,6 @@ namespace HackTheWorld
             this.SetAnimation(new[] {img1, img2, img3}, new[] {0.5f, 1.0f, 1.5f});
             Anim.Start();
             Initialize();
-//            Position = new Vector(0, 0);
         }
 
         public override void Update(float dt)
