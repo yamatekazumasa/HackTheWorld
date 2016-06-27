@@ -170,7 +170,15 @@ namespace HackTheWorld
             {
                 GraphicsContext.DrawRectangle(Pens.WhiteSmoke, X + _cursorX * 30, Y + _cursorY * 30, 30, 30);
             }
-            GraphicsContext.DrawString("消しゴムは右クリック", new Font("Courier New", 12), Brushes.Black, X, MaxY + 20);
+            Font font = new Font("Courier New", 12);
+            GraphicsContext.DrawString("[0]黒: Player", font, Brushes.Black, 200, 100);
+            GraphicsContext.DrawString("[1]茶: Block", font, Brushes.Black, 200, 120);
+            GraphicsContext.DrawString("[2]桃: Enemy", font, Brushes.Black, 200, 140);
+            GraphicsContext.DrawString("[3]緑: Item", font, Brushes.Black, 200, 160);
+            GraphicsContext.DrawString("[4]黄: EditableBlock", font, Brushes.Black, 200, 180);
+            GraphicsContext.DrawString("[5]赤: EditableEnemy", font, Brushes.Black, 200, 200);
+            GraphicsContext.DrawString("[6]水: Nothing", font, Brushes.Black, 200, 220);
+            GraphicsContext.DrawString("消しゴムは右クリック", font, Brushes.Black, X, MaxY + 20);
         }
 
         /// <summary>
