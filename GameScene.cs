@@ -17,7 +17,7 @@ namespace HackTheWorld
         private MenuItem _resetButton;
         private MenuItem _pauseButton;
         // ゲーム内変数宣言
-        private readonly Stage _stage;
+        private Stage _stage;
         private List<GameObject> _objects;
         private Player _player;
         private List<Block> _blocks;
@@ -34,8 +34,15 @@ namespace HackTheWorld
 
         public override void Cleanup()
         {
-//            _stage = null;
-//            _player = null;
+            _stage = null;
+            _objects = null;
+            _player = null;
+            _blocks = null;
+            _editableObjects = null;
+            _enemies = null;
+            _bullets = null;
+            _items = null;
+            _gates = null;
         }
 
         public override void Startup()
@@ -58,8 +65,8 @@ namespace HackTheWorld
 
             // CodeParser ができていないとeditableObjectsが機能しない。
             // shallow copy だとコンティニュー時に途中からスタートになる。
-//            var s = _stage;
-            var s = _stage.Replica;
+            var s = _stage;
+//            var s = _stage.Replica;
             _objects = s.Objects;
             _player = s.Player;
             _blocks = s.Blocks;

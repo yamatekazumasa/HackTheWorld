@@ -66,9 +66,6 @@ namespace HackTheWorld
 
         public override void Draw()
         {
-            if (!(Scene.Current is GameScene || Scene.Current is EditMapScene)) return;
-            //GraphicsContext.FillRectangle(Brushes.Aqua, X, Y, Width, Height);
-            //GraphicsContext.DrawRectangle(Pens.LightBlue, X, Y, Width, Height);
             if (IsAlive) Anim.Draw(VX > 0);
             else         GraphicsContext.FillRectangle(Brushes.Gray, X, Y, Width, Height);
         }

@@ -128,7 +128,7 @@ namespace HackTheWorld
             self.CanExecute = true;
         }
 
-        public static void Compile(this IEditable self, Stage s)
+        public static void Compile(this IEditable self, Stage stage)
         {
             string str = self.Codebox.GetString();
             // ここにstring型をProcess型に変換する処理を書く。
@@ -179,7 +179,7 @@ namespace HackTheWorld
                                 case "size":
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(s.Player))
+                                        if (obj.CollidesWith(stage.Player))
                                         {
                                             obj.W = CellSize * float.Parse(ctmp[1]);
                                             obj.H = CellSize * float.Parse(ctmp[2]);
@@ -207,7 +207,7 @@ namespace HackTheWorld
                                     }));
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(s.Player))
+                                        if (obj.CollidesWith(stage.Player))
                                             obj.Move(dt);
                                     }, float.Parse(ctmp[3])));
                                     break;
@@ -236,7 +236,7 @@ namespace HackTheWorld
                                 case "size":
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(s.Player))
+                                        if (obj.CollidesWith(stage.Player))
                                         {
                                             obj.W = CellSize * float.Parse(ctmp[1]);
                                             obj.H = CellSize * float.Parse(ctmp[2]);
@@ -264,7 +264,7 @@ namespace HackTheWorld
                                     }));
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(s.Player))
+                                        if (obj.CollidesWith(stage.Player))
                                             obj.Move(dt);
                                     }, float.Parse(ctmp[3])));
                                     break;
@@ -288,7 +288,7 @@ namespace HackTheWorld
                             case "size":
                                 self.AddProcess(new Process((obj, dt) =>
                                 {
-                                    if (obj.Nearby(s.Player))
+                                    if (obj.Nearby(stage.Player))
                                     {
                                         obj.W = CellSize * float.Parse(ctmp[1]);
                                         obj.H = CellSize * float.Parse(ctmp[2]);
@@ -305,7 +305,7 @@ namespace HackTheWorld
                                     obj.VY = 0.0f;
                                 }));
                                 self.AddProcess(new Process((obj, dt) => {
-                                    if (obj.Nearby(s.Player))
+                                    if (obj.Nearby(stage.Player))
                                     {
                                         obj.Move(dt);
                                     }
@@ -321,7 +321,7 @@ namespace HackTheWorld
                                 }));
                                 self.AddProcess(new Process((obj, dt) =>
                                 {
-                                    if (obj.Nearby(s.Player))
+                                    if (obj.Nearby(stage.Player))
                                         obj.Move(dt);
                                 }, float.Parse(ctmp[3])));
                                 break;
@@ -329,13 +329,13 @@ namespace HackTheWorld
                             case "shoot":
                                 self.AddProcess(new Process((obj, dt) =>
                                 {
-                                    if (obj.Nearby(s.Player))
+                                    if (obj.Nearby(stage.Player))
                                     {
 
                                         //バージョンが古すぎて動かない
                                         var b = new Bullet(self.X, self.MidY, -50, 0, 10, 10);
-                                        s.Bullets.Add(b);
-                                        s.Objects.Add(b);
+                                        stage.Bullets.Add(b);
+                                        stage.Objects.Add(b);
 
                                     }
                                 }));

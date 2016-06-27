@@ -98,15 +98,6 @@ namespace HackTheWorld
         /// <summary>
         /// 保存されたステージを読み込む。
         /// </summary>
-        public static Stage Load()
-        {
-            if (!File.Exists(@".\stage\test.json")) return null;
-            StreamReader sr = new StreamReader(@".\stage\test.json", Encoding.GetEncoding("utf-8"));
-            string json = sr.ReadToEnd();
-            sr.Close();
-            return Parse(json);
-        }
-
         public static Stage Load(string path)
         {
             Debug.Assert(File.Exists(@".\stage\" + path), "The requested path not exists.");

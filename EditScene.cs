@@ -69,29 +69,16 @@ namespace HackTheWorld
 
             if (Input.Control.Pressed)
             {
-                if (Input.R.Pushed)
-                {
-                    _stage = Stage.Load();
-                }
-                if (Input.S.Pushed)
-                {
-                    _stage.Save();
-                }
+                if (Input.R.Pushed) _stage = Stage.Load("stage_1_1.json");
+                if (Input.S.Pushed) _stage.Save();
             }
 
             foreach (var b in _stage.EditableObjects) b.Update(dt);
 
-            if (Input.Control.Pressed)
-            {
-                if (Input.R.Pushed) _stage = Stage.Load();
-                if (Input.S.Pushed) _stage.Save();
-            }
-
             GraphicsContext.Clear(Color.White);
-            foreach (var obj in _stage.Objects)
-            {
-                obj.Draw();
-            }
+
+            _stage.Objects.ForEach(obj => obj.Draw());
+
             _backButton.Draw();
             _startButton.Draw();
             _runButton.Draw( );
