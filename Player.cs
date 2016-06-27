@@ -27,7 +27,6 @@ namespace HackTheWorld
         public override void Initialize()
         {
             base.Initialize();
-            ObjectType = ObjectType.Player;
             Image img1 = Image.FromFile(@"image\masato1.jpg");
             Image img2 = Image.FromFile(@"image\masato2.jpg");
             Image img3 = Image.FromFile(@"image\masato3.jpg");

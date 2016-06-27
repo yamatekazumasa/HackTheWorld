@@ -104,47 +104,64 @@ namespace HackTheWorld
             Stage stage = new Stage((int)tmp["rows"], (int)tmp["cols"]);
             foreach (var obj in tmp["objects"])
             {
-                switch ((string)obj["type"])
+                var type = Type.GetType((string) obj["type"]);
+                if (type == typeof(Player))
                 {
-                    case "Block":
-                        if (obj["code"] != null)
-                        {
-                            var b = new EditableBlock((float) obj["x"], (float) obj["y"]) {
-                                Code = (string) obj["code"],
-                                Name = (string) obj["name"] ?? "name was null"
-                            };
-                            stage.Blocks.Add(b);
-                            stage.EditableObjects.Add(b);
-                            stage.Objects.Add(b);
-                        }
-                        else
-                        {
-                            Block b = new Block((float)obj["x"], (float)obj["y"]);
-                            stage.Blocks.Add(b);
-                            stage.Objects.Add(b);
-                        }
-                        break;
-                    case "Enemy":
-                        Enemy e = new Enemy((float)obj["x"], (float)obj["y"], (float)obj["vx"], (float)obj["vy"], (float)obj["width"], (float)obj["height"]);
-                        stage.Enemies.Add(e);
-                        stage.Objects.Add(e);
-                        break;
-                    case "Item":
-                        Item i = new Item((float)obj["x"], (float)obj["y"], 0, 0, (float)obj["width"], (float)obj["height"], (ItemEffects)Enum.Parse(typeof(ItemEffects), (string)obj["effect"]));
-                        stage.Items.Add(i);
-                        stage.Objects.Add(i);
-                        break;
-                    case "Player":
-                        var p = new Player((float)obj["x"], (float)obj["y"]);
-                        stage.Player = p;
-                        stage.Objects.Add(p);
-                        break;
-                    case "Gate":
-                        var g = new Gate((float)obj["x"], (float)obj["y"]) { NextStage = (string)obj["code"] };
-                        stage.Gates.Add(g);
-                        stage.Objects.Add(g);
-                        break;
-
+                    var p = new Player((float)obj["x"], (float)obj["y"]);
+                    stage.Player = p;
+                    stage.Objects.Add(p);
+                    continue;
+                }
+                if (type == typeof(Block))
+                {
+                    Block b = new Block((float)obj["x"], (float)obj["y"]);
+                    stage.Blocks.Add(b);
+                    stage.Objects.Add(b);
+                    continue;
+                }
+                if (type == typeof(Enemy))
+                {
+                    Enemy e = new Enemy((float)obj["x"], (float)obj["y"], (float)obj["vx"], (float)obj["vy"], (float)obj["width"], (float)obj["height"]);
+                    stage.Enemies.Add(e);
+                    stage.Objects.Add(e);
+                    continue;
+                }
+                if (type == typeof(Item))
+                {
+                    Item i = new Item((float)obj["x"], (float)obj["y"], 0, 0, (float)obj["width"], (float)obj["height"], (ItemEffects)Enum.Parse(typeof(ItemEffects), (string)obj["effect"]));
+                    stage.Items.Add(i);
+                    stage.Objects.Add(i);
+                    continue;
+                }
+                if (type == typeof(EditableBlock))
+                {
+                    var b = new EditableBlock((float)obj["x"], (float)obj["y"]) {
+                        Code = (string)obj["code"],
+                        Name = (string)obj["name"] ?? "name was null"
+                    };
+                    stage.Blocks.Add(b);
+                    stage.EditableObjects.Add(b);
+                    stage.Objects.Add(b);
+                    continue;
+                }
+                if (type == typeof(EditableEnemy))
+                {
+                    var e = new EditableEnemy((float)obj["x"], (float)obj["y"])
+                    {
+                        Code = (string)obj["code"],
+                        Name = (string)obj["name"] ?? "name was null"
+                    };
+                    stage.Enemies.Add(e);
+                    stage.EditableObjects.Add(e);
+                    stage.Objects.Add(e);
+                    continue;
+                }
+                if (type == typeof(Gate))
+                {
+                    var g = new Gate((float)obj["x"], (float)obj["y"]) { NextStage = (string)obj["code"] };
+                    stage.Gates.Add(g);
+                    stage.Objects.Add(g);
+                    continue;
                 }
             }
             Debug.Assert(stage.Player != null, "stage の Player が null です。");

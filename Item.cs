@@ -34,7 +34,6 @@ namespace HackTheWorld
             base.Initialize();
             W = CellSize / 2;
             H = CellSize / 2;
-            ObjectType = ObjectType.Item;
         }
 
         /// <summary>

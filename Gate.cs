@@ -11,12 +11,6 @@ namespace HackTheWorld
 
         public Gate(float x, float y) : base(x, y) {}
 
-        public override void Initialize()
-        {
-            base.Initialize();
-            ObjectType = Constants.ObjectType.Gate;
-        }
-
         public override void Draw()
         {
             Constants.GraphicsContext.DrawRectangle(Pens.Black, this);

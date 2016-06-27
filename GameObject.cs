@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using static HackTheWorld.Constants;
@@ -22,12 +23,12 @@ namespace HackTheWorld
         /// 生死フラグ。基本はdelete以外で弄らないように。
         /// </summary>
         private bool _isAlive;
+
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
         [JsonProperty("type", Order = 0)]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ObjectType ObjectType { get; set; }
+        public Type Type => GetType();
 
         #region コンストラクタ
 
@@ -396,7 +397,6 @@ namespace HackTheWorld
         public virtual bool CollidesWith(GameObject obj)
         {
             if (!obj._isAlive) return false;
-            if (ObjectType == obj.ObjectType) return false;
             return Intersects(obj);
         }
 

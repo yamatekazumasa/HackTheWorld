@@ -36,15 +36,6 @@ namespace HackTheWorld
         public static readonly int Gravity = CellSize * 25;
 
         /// <summary>
-        /// オブジェクトのタイプ。
-        /// </summary>
-        public enum ObjectType
-        {
-            Player=0, Block=1, Enemy=2, Item=3,
-            Gate=100
-        }
-
-        /// <summary>
         /// アイテムのタイプ。
         /// </summary>
         public enum ItemEffects

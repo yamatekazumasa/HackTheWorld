@@ -78,36 +78,36 @@ namespace HackTheWorld
             {
                 for (int j = 0; j < height; j++)
                 {
-                    var obj = _map[j, i];
-                    if (obj == typeof(Player))
+                    var type = _map[j, i];
+                    if (type == typeof(Player))
                     {
                         Player p = new Player(CellSize * i, CellSize * j);
                         s.Player = p;
                         s.Objects.Add(p);
                         continue;
                     }
-                    if (obj == typeof(Block))
+                    if (type == typeof(Block))
                     {
                         Block b = new Block(CellSize * i, CellSize * j);
                         s.Blocks.Add(b);
                         s.Objects.Add(b);
                         continue;
                     }
-                    if (obj == typeof(Enemy))
+                    if (type == typeof(Enemy))
                     {
                         Enemy e = new Enemy(CellSize * i, CellSize * j);
                         s.Enemies.Add(e);
                         s.Objects.Add(e);
                         continue;
                     }
-                    if (obj == typeof(Item))
+                    if (type == typeof(Item))
                     {
                         Item item = new Item(CellSize * i + CellSize/4, CellSize * j + CellSize/2, ItemEffects.Bigger);
                         s.Items.Add(item);
                         s.Objects.Add(item);
                         continue;
                     }
-                    if (obj == typeof(EditableBlock))
+                    if (type == typeof(EditableBlock))
                     {
                         EditableBlock b = new EditableBlock(CellSize * i, CellSize * j);
                         s.Blocks.Add(b);
@@ -115,7 +115,7 @@ namespace HackTheWorld
                         s.Objects.Add(b);
                         continue;
                     }
-                    if (obj == typeof(EditableEnemy))
+                    if (type == typeof(EditableEnemy))
                     {
                         EditableEnemy e = new EditableEnemy(CellSize * i, CellSize * j);
                         s.Enemies.Add(e);
@@ -186,7 +186,7 @@ namespace HackTheWorld
         /// </summary>
         private class Palette : GameObject
         {
-            public readonly Type Type;
+            public new readonly Type Type;
 
             /// <summary>
             /// 型と色の対応付けを保存している。

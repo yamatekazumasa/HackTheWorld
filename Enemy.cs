@@ -13,13 +13,7 @@ namespace HackTheWorld
         public Enemy(float x, float y, float vx, float vy) : base(x, y, vx, vy) { }
 
         public Enemy(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h) { }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            ObjectType = ObjectType.Enemy;
-        }
-
+        
         public override void Draw()
         {
             if (!IsAlive) return;

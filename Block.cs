@@ -15,12 +15,6 @@ namespace HackTheWorld
 
         public Block(float x, float y, float vx, float vy, float w, float h) : base(x, y, vx, vy, w, h) { }
 
-        public override void Initialize()
-        {
-            base.Initialize();
-            ObjectType = ObjectType.Block;
-        }
-
         public override void Draw()
         {
             GraphicsContext.FillRectangle(Brushes.Brown, X, Y, Width, Height);

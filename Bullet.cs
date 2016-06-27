@@ -17,7 +17,6 @@ namespace HackTheWorld
         public override void Initialize()
         {
             base.Initialize();
-            ObjectType = Constants.ObjectType.Enemy;
             Size = new Vector(10, 10);
         }
 
