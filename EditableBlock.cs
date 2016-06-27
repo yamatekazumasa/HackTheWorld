@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
-using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld

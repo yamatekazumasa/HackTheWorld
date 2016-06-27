@@ -135,9 +135,10 @@ namespace HackTheWorld
                 }
                 if (type == typeof(EditableBlock))
                 {
-                    var b = new EditableBlock((float)obj["x"], (float)obj["y"]) {
+                    var b = new EditableBlock((float)obj["x"], (float)obj["y"])
+                    {
                         Code = (string)obj["code"],
-                        Name = (string)obj["name"] ?? "name was null"
+                        Name = (string)obj["name"] ?? "No name"
                     };
                     stage.Blocks.Add(b);
                     stage.EditableObjects.Add(b);
@@ -149,7 +150,7 @@ namespace HackTheWorld
                     var e = new EditableEnemy((float)obj["x"], (float)obj["y"])
                     {
                         Code = (string)obj["code"],
-                        Name = (string)obj["name"] ?? "name was null"
+                        Name = (string)obj["name"] ?? "No name"
                     };
                     stage.Enemies.Add(e);
                     stage.EditableObjects.Add(e);

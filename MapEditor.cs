@@ -109,7 +109,11 @@ namespace HackTheWorld
                     }
                     if (type == typeof(EditableBlock))
                     {
-                        EditableBlock b = new EditableBlock(CellSize * i, CellSize * j);
+                        EditableBlock b = new EditableBlock(CellSize * i, CellSize * j)
+                        {
+                            Code = "",
+                            Name = "Block"
+                        };
                         s.Blocks.Add(b);
                         s.EditableObjects.Add(b);
                         s.Objects.Add(b);
@@ -117,7 +121,11 @@ namespace HackTheWorld
                     }
                     if (type == typeof(EditableEnemy))
                     {
-                        EditableEnemy e = new EditableEnemy(CellSize * i, CellSize * j);
+                        EditableEnemy e = new EditableEnemy(CellSize * i, CellSize * j)
+                        {
+                            Code = "",
+                            Name = "Enemy"
+                        };
                         s.Enemies.Add(e);
                         s.EditableObjects.Add(e);
                         s.Objects.Add(e);

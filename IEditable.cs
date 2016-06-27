@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
@@ -21,12 +21,14 @@ namespace HackTheWorld
         /// <summary>
         /// 編集時に表示される名前。
         /// </summary>
-        [JsonProperty("name", Order = 10)]
+        [JsonProperty("name", Order = 10, DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue("No name")]
         string Name { get; set; }
         /// <summary>
         /// 自身のコード。
         /// </summary>
-        [JsonProperty("code", Order = 11)]
+        [JsonProperty("code", Order = 11, DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue("")]
         string Code { get; set; }
         /// <summary>
         /// 自身の動作を格納する。

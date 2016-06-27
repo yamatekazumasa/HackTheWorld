@@ -2,8 +2,6 @@
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
