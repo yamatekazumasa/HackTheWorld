@@ -25,7 +25,6 @@ namespace HackTheWorld
 
         public override void Cleanup()
         {
-            _stage = null;
         }
 
         public override void Startup()
