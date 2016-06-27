@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
-using static HackTheWorld.CodeParser;
 
 namespace HackTheWorld
 {
@@ -61,8 +60,8 @@ namespace HackTheWorld
             if (_startButton.Clicked) Scene.Push(new GameScene(_stage));
             if (_runButton.Clicked)
             {
-                //文字列をkakikae.csにもってく
-                yomitori(_stage.EditableObjects[0].Codebox.GetString());
+                // 文字列を CodeParser.cs にもってく
+                CodeParser.yomitori(_stage.EditableObjects[0].Codebox.GetString());
             }
             if (Input.X.Pushed || Input.Back.Pushed)
             {

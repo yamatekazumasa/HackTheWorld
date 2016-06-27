@@ -9,7 +9,7 @@ namespace HackTheWorld
     /// <summary>
     /// プレイヤー
     /// </summary>
-    public class Player : GameObject, IAnimatable
+    public sealed class Player : GameObject, IAnimatable
     {
         public int Speed = CellSize * 3;
         public int Jumpspeed = -CellSize * 11; // h=v^2/2g
@@ -24,6 +24,8 @@ namespace HackTheWorld
             Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
             this.SetAnimation(new[] {img1, img2, img3}, new[] {0.5f, 1.0f, 1.5f});
             Anim.Start();
+            Initialize();
+//            Position = new Vector(0, 0);
         }
 
         public override void Update(float dt)
@@ -38,7 +40,7 @@ namespace HackTheWorld
             if(!OnGround) VY += Gravity * dt;
             Move(dt);
 
-            if (!InWindow()) Die();
+//            if (!InWindow()) Die();
 
             // アニメーションを dt 進める
             Anim.Advance(dt);
@@ -50,7 +52,7 @@ namespace HackTheWorld
         /// </summary>
         /// <param name="obj">渡されたオブジェクト。</param>
         /// <returns>乗っていたらtrue、乗っていなかったらfalseを返す。</returns>
-        public virtual bool StandOn(GameObject obj)
+        public bool StandOn(GameObject obj)
         {
             return MinX < obj.MaxX && MaxX > obj.MinX && (int)MaxY == (int)obj.MinY;
         }
@@ -60,7 +62,7 @@ namespace HackTheWorld
         /// </summary>
         /// <param name="obj">渡されたオブジェクト。</param>
         /// <returns>頭が当たっていたらtrue、当たっていなかったらfalseを返す。</returns>
-        public virtual bool HitHeadOn(GameObject obj)
+        public bool HitHeadOn(GameObject obj)
         {
             return MinX < obj.MaxX && MaxX > obj.MinX && (int)MinY == (int)obj.MaxY;
         }
