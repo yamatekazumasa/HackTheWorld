@@ -57,7 +57,7 @@ namespace HackTheWorld
             if (_runButton.Clicked)
             {
                 // 文字列を CodeParser.cs にもってく
-                CodeParser.yomitori(_stage.EditableObjects[0].Code.ToString());
+                CodeParser.yomitori(_stage.EditableObjects[0].Code);
             }
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
@@ -71,7 +71,6 @@ namespace HackTheWorld
             {
                 if (obj.Clicked) _codebox.Focus(obj);
             }
-
             _codebox.Update();
 
             GraphicsContext.Clear(Color.White);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -56,6 +57,15 @@ namespace HackTheWorld
             MaxLine = maxLine;
             Text = new StringBuilder();
             for (int i = 0; i < maxLine - 1; i++) Text.Append('\n');
+        }
+
+        public void Save()
+        {
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            if (!Directory.Exists(@".\code")) Directory.CreateDirectory(@".\code");
+            StreamWriter sw = new StreamWriter(@".\code\" + DateTime.Now.ToString("MMddHHmmss") + ".json", false, Encoding.GetEncoding("utf-8"));
+            sw.Write(json);
+            sw.Close();
         }
 
 

@@ -65,8 +65,8 @@ namespace HackTheWorld
 
             // CodeParser ができていないとeditableObjectsが機能しない。
             // shallow copy だとコンティニュー時に途中からスタートになる。
-            var s = _stage;
-//            var s = _stage.Replica;
+//            var s = _stage;
+            var s = _stage.Replica;
             _objects = s.Objects;
             _player = s.Player;
             _blocks = s.Blocks;

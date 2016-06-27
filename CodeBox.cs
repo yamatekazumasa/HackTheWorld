@@ -183,19 +183,9 @@ namespace HackTheWorld
                     _selectedBegin = 0;
                     _selectedEnd = current.Text.Length;
                 }
-                if (Input.R.Pushed)
-                {
-//                    StreamReader sr = new StreamReader(@".\code.json", Encoding.GetEncoding("utf-8"));
-//                    _history[_current] = JsonConvert.DeserializeObject<CodeState>(sr.ReadToEnd());
-//                    sr.Close();
-                }
-                if (Input.S.Pushed)
-                {
-                    string json = JsonConvert.SerializeObject(current, Formatting.Indented);
-                    StreamWriter sw = new StreamWriter(@".\code.json", false, Encoding.GetEncoding("utf-8"));
-                    sw.Write(json);
-                    sw.Close();
-                }
+
+//                if (Input.S.Pushed) _history[_current].Save();
+
                 if (Input.C.Pushed)
                 {
                     if (_selectedEnd != -1)
