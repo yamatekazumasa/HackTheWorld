@@ -19,9 +19,14 @@ namespace HackTheWorld
         /// </summary>
         int ProcessPtr { get; set; }
         /// <summary>
+        /// 編集時に表示される名前。
+        /// </summary>
+        [JsonProperty("name", Order = 10)]
+        string Name { get; set; }
+        /// <summary>
         /// 自身のコード。
         /// </summary>
-        [JsonProperty("code", Order = 10)]
+        [JsonProperty("code", Order = 11)]
         string Code { get; set; }
         /// <summary>
         /// 自身の動作を格納する。

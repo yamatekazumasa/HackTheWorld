@@ -8,25 +8,14 @@ namespace HackTheWorld
 {
     /// <summary>
     /// 編集可能な敵。
-    /// IEditable.SetDemoProcesses()によって動作を付与している。
     /// </summary>
     class EditableEnemy : Enemy, IEditable
     {
-        /// <summary>
-        /// 何番目の Process が実行されているか。
-        /// </summary>
+        // IEditable のプロパティ
         public int ProcessPtr { get; set; }
-        /// <summary>
-        /// 自身のコード。
-        /// </summary>
+        public string Name { get; set; }
         public string Code { get; set; }
-        /// <summary>
-        /// 自身の動作を格納する。
-        /// </summary>
         public List<Process> Processes { get; set; }
-        /// <summary>
-        /// true のとき Update() 内で Process が実行されるようになる。
-        /// </summary>
         public bool CanExecute { get; set; }
 
         public EditableEnemy(float x, float y) : base(x, y) { }

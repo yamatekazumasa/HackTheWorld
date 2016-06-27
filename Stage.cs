@@ -122,15 +122,16 @@ namespace HackTheWorld
                         {
                             if (obj["code"] != null)
                             {
-                                var b = new EditableBlock((float)obj["x"], (float)obj["y"]);
-                                b.Code = (string)obj["code"];
+                                var b = new EditableBlock((float) obj["x"], (float) obj["y"]);
+                                b.Code = (string) obj["code"];
+                                b.Name = (string) obj["name"] ?? "name was null";
                                 stage.Blocks.Add(b);
                                 stage.EditableObjects.Add(b);
                                 stage.Objects.Add(b);
                             }
                             else
                             {
-                                Block b = new Block((float)obj["x"], (float)obj["y"]);
+                                Block b = new Block((float) obj["x"], (float) obj["y"]);
                                 stage.Blocks.Add(b);
                                 stage.Objects.Add(b);
                             }

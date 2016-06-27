@@ -29,10 +29,14 @@ namespace HackTheWorld
         public void Focus(IEditable obj)
         {
             _focusingObject = obj;
-//            _history = new CodeState[_historyLength];
-//            _current = 0;
-//            _origin = 0;
-//            _history[_current].Text = new StringBuilder(obj.Code);
+            _history = new CodeState[_historyLength];
+            _current = 0;
+            _origin = 0;
+            _history[_current] = new CodeState(0, obj.Code.Split('\n').Length) {
+                Text = new StringBuilder(obj.Code),
+                UpdatedAt = DateTime.Now
+            };
+
         }
 
         public bool TextSelected => _selectedEnd != -1;
@@ -53,7 +57,7 @@ namespace HackTheWorld
 
             X = CellSize*CellNumX;
             Width = 12 * _cols;
-            Height = ScreenHeight;//_lineHeight * _history[_current].MaxLine;
+            Height = 600;//_lineHeight * _history[_current].MaxLine;
 
             _frame = 0;
         }
@@ -290,13 +294,13 @@ namespace HackTheWorld
         /// </summary>
         public void Record(CodeState s)
         {
-            var name = _history[_current].Name;
             _current = (_current + 1) % _historyLength;
             _origin = _current;
-            _history[_current] = new CodeState(s.Cursor, s.MaxLine, name) {
+            _history[_current] = new CodeState(s.Cursor, s.MaxLine) {
                 Text = new StringBuilder(s.Text.ToString()),
                 UpdatedAt = DateTime.Now
             };
+            _focusingObject.Code = s.Text.ToString();
         }
 
         /// <summary>
@@ -326,9 +330,9 @@ namespace HackTheWorld
             GraphicsContext.DrawRectangle(Pens.ForestGreen, this);
 
             // オブジェクトの名前の描画
-            GraphicsContext.FillRectangle(Brushes.LightGreen, X, Y - 20, W, 20);
-            GraphicsContext.DrawRectangle(Pens.ForestGreen, X, Y - 20, W, 20);
-            GraphicsContext.DrawString(_history[_current].Name.ToString(), _font, Brushes.Black, X, Y - 20);
+            GraphicsContext.FillRectangle(Brushes.LightGreen, X, Y, W, 20);
+            GraphicsContext.DrawRectangle(Pens.ForestGreen, X, Y, W, 20);
+            GraphicsContext.DrawString(_focusingObject.Name, _font, Brushes.Black, X, Y);
 
             string[] lines = _history[_current].Lines;
             var pos = _history[_current].CursorPosition;
@@ -350,9 +354,9 @@ namespace HackTheWorld
                 }
 
                 int beginX = (int)MinX + selectedBegin.Item2 * 10 + 2;
-                int beginY = (int)MinY + selectedBegin.Item1 * _lineHeight;
+                int beginY = (int)MinY + selectedBegin.Item1 * _lineHeight + 20;
                 int endX = selectedEnd.Item2 * 10 + 2;
-                int endY = (int)MinY + selectedEnd.Item1 * _lineHeight;
+                int endY = (int)MinY + selectedEnd.Item1 * _lineHeight + 20;
 
                 if (selectedBegin.Item1 == selectedEnd.Item1)
                 {
@@ -369,12 +373,12 @@ namespace HackTheWorld
             // 文字の描画
             for (int i = 0; i < lines.Length; i++)
             {
-                GraphicsContext.DrawString(lines[i], _font, Brushes.Black, X, Y + i * _lineHeight);
+                GraphicsContext.DrawString(lines[i], _font, Brushes.Black, X, Y + i * _lineHeight + 20);
             }
             // カーソルの描画
             if (_frame % 60 > 20)
             {
-                GraphicsContext.DrawLine(Pens.Black, X + 10 * pos.Item2 + 2, Y + _lineHeight * pos.Item1 + 2, X + 10 * pos.Item2 + 2, Y + _lineHeight * (pos.Item1 + 1) + 2);
+                GraphicsContext.DrawLine(Pens.Black, X + 10 * pos.Item2 + 2, Y + _lineHeight * pos.Item1 + 22, X + 10 * pos.Item2 + 2, Y + _lineHeight * (pos.Item1 + 1) + 22);
             }
             // デバッグ用の文字列の描画
             GraphicsContext.DrawString("line: " + pos.Item1 + ", cursor: " + pos.Item2 + ", maxline: " + _history[_current].MaxLine, _font, Brushes.Black, X, MaxY + 10);
