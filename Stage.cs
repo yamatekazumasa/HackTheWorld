@@ -40,7 +40,6 @@ namespace HackTheWorld
             Rows = 9;
             Cols = 16;
             Objects = new List<GameObject>();
-            Player = new Player();
             Blocks = new List<Block>();
             EditableObjects = new List<IEditable>();
             Enemies = new List<Enemy>();
@@ -57,7 +56,6 @@ namespace HackTheWorld
             Rows = r;
             Cols = c;
             Objects = new List<GameObject>();
-            Player = new Player();
             Blocks = new List<Block>();
             EditableObjects = new List<IEditable>();
             Enemies = new List<Enemy>();
@@ -178,6 +176,7 @@ namespace HackTheWorld
 
                 }
             }
+            Debug.Assert(stage.Player != null, "stage の Player が null です。");
             return stage;
         }
 
