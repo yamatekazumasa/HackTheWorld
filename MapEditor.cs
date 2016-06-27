@@ -186,6 +186,7 @@ namespace HackTheWorld
             GraphicsContext.DrawString("[4]黄: EditableBlock", font, Brushes.Black, 200, 180);
             GraphicsContext.DrawString("[5]赤: EditableEnemy", font, Brushes.Black, 200, 200);
             GraphicsContext.DrawString("[6]水: Nothing", font, Brushes.Black, 200, 220);
+            GraphicsContext.DrawString("この画面で Ctrl + S を押すと、\nstage フォルダに保存される。", font, Brushes.Black, 200, 300);
             GraphicsContext.DrawString("消しゴムは右クリック", font, Brushes.Black, X, MaxY + 20);
         }
 
