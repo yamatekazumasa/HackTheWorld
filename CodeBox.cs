@@ -20,24 +20,12 @@ namespace HackTheWorld
         private int _cols;
         private IEditable _focusingObject;
         private readonly Font _font;
+        private readonly Pen _pen;
         private int _frame;
         private CodeState[] _history;
         private int _origin;
         private int _current;
         private readonly int _historyLength;
-
-        public void Focus(IEditable obj)
-        {
-            _focusingObject = obj;
-            _history = new CodeState[_historyLength];
-            _current = 0;
-            _origin = 0;
-            _history[_current] = new CodeState(0, obj.Code.Split('\n').Length) {
-                Text = new StringBuilder(obj.Code),
-                UpdatedAt = DateTime.Now
-            };
-
-        }
 
         public bool TextSelected => _selectedEnd != -1;
         public CodeState Current => _history[_current];
@@ -52,6 +40,7 @@ namespace HackTheWorld
             _historyLength = 50;
             _history = new CodeState[_historyLength];
             _font = new Font("Courier New", 12);
+            _pen = new Pen(Color.Black, 30);
 
             _history[_current] = new CodeState(0, 5);
 
@@ -184,8 +173,6 @@ namespace HackTheWorld
                     _selectedEnd = current.Text.Length;
                 }
 
-//                if (Input.S.Pushed) _history[_current].Save();
-
                 if (Input.C.Pushed)
                 {
                     if (_selectedEnd != -1)
@@ -247,12 +234,11 @@ namespace HackTheWorld
 
             _focusingObject.Code = _history[_current].Text.ToString();
 
-            _frame++;
-        }
+            // ターゲティングのアニメーション
+            if (_frame%200 >= 100) _pen.Width++;
+            else _pen.Width--;
 
-        public void SetString(string str)
-        {
-            _history[_current].Text = new StringBuilder(str);
+            _frame++;
         }
 
         /// <summary>
@@ -261,11 +247,6 @@ namespace HackTheWorld
         public string GetString()
         {
             return _history[_current].Text.ToString();
-        }
-
-        public void Clear()
-        {
-            _history[_current].Text = new StringBuilder();
         }
 
         /// <summary>
@@ -311,6 +292,24 @@ namespace HackTheWorld
         }
 
         /// <summary>
+        /// 引数に与えられたオブジェクトにフォーカスする。
+        /// </summary>
+        /// <param name="obj"></param>
+        public void Focus(IEditable obj)
+        {
+            _focusingObject = obj;
+            _history = new CodeState[_historyLength];
+            _current = 0;
+            _origin = 0;
+            _history[_current] = new CodeState(0, obj.Code.Split('\n').Length)
+            {
+                Text = new StringBuilder(obj.Code),
+                UpdatedAt = DateTime.Now
+            };
+
+        }
+
+        /// <summary>
         /// 現在のシーンが EditScene で、
         /// 自身または紐つけられたオブジェクトがフォーカスされているとき、描画する。
         /// </summary>
@@ -324,6 +323,10 @@ namespace HackTheWorld
             GraphicsContext.FillRectangle(Brushes.LightGreen, X, Y, W, 20);
             GraphicsContext.DrawRectangle(Pens.ForestGreen, X, Y, W, 20);
             GraphicsContext.DrawString(_focusingObject.Name, _font, Brushes.Black, X, Y);
+
+            // ターゲティングの描画
+            GraphicsContext.DrawEllipse(_pen, _focusingObject.X, _focusingObject.Y, _focusingObject.Width, _focusingObject.Height);
+            GraphicsContext.DrawLine(Pens.Black, _focusingObject.Position + new Vector(30, 30), Position + new Vector(0, 10));
 
             string[] lines = _history[_current].Lines;
             var pos = _history[_current].CursorPosition;
