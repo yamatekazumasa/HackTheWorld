@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
@@ -18,14 +16,9 @@ namespace HackTheWorld
         private List<MenuItem> _menuItem;
         private Stage _stage;
 
-        public EditScene()
+        public EditScene(Stage stage)
         {
-            _stage = Stage.CreateDemoStage();
-        }
-
-        public EditScene(string path)
-        {
-            _stage = Stage.Load(path);
+            _stage = stage;
         }
 
         public override void Cleanup()

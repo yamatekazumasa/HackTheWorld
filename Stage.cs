@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static HackTheWorld.Constants;
@@ -180,84 +178,6 @@ namespace HackTheWorld
 
                 }
             }
-            return stage;
-        }
-
-        /// <summary>
-        /// デモステージを作成する。
-        /// </summary>
-        public static Stage CreateDemoStage()
-        {
-            Stage stage = new Stage(CellNumX, CellNumY);
-            // マップの生成
-            for (int iy = 0; iy < CellNumY; iy++)
-            {
-                for (int ix = 0; ix < CellNumX; ix++)
-                {
-                    if (Map[iy, ix] == 1)
-                    {
-                        var block = new Block(CellSize * ix, CellSize * iy);
-                        stage.Objects.Add(block);
-                        stage.Blocks.Add(block);
-                    }
-                    if (Map[iy, ix] == 11)
-                    {
-                        var pblock = new EditableBlock(CellSize * ix, CellSize * iy);
-                        pblock.SetProcesses(new[] {
-                            new Process((obj, dt) => { } , 1.0f),
-
-                            new Process((obj, dt) => { obj.VY = -CellSize; }),
-                            new Process((obj, dt) => { obj.Move(dt); }, 3.0f),
-                            new Process((obj, dt) => { obj.VY = 0; }),
-                            new Process((obj, dt) => { } , 1.0f),
-
-                            new Process((obj, dt) => { obj.VY = +CellSize; }),
-                            new Process((obj, dt) => { obj.Move(dt); }, 3.0f),
-                            new Process((obj, dt) => { obj.VY = 0; }),
-
-                            new Process((obj, dt) => { obj.VX = +CellSize; }),
-                            new Process((obj, dt) => { obj.Move(dt); }, 3.0f),
-                            new Process((obj, dt) => { obj.VX = 0; }),
-
-                            new Process((obj, dt) => { obj.VX = -CellSize; }),
-                            new Process((obj, dt) => { obj.Move(dt); }, 3.0f),
-                            new Process((obj, dt) => { obj.VX = 0; }),
-
-                        });
-                        stage.Objects.Add(pblock);
-                        stage.Blocks.Add(pblock);
-                        stage.EditableObjects.Add(pblock);
-                    }
-                    if (Map[iy, ix] == 2)
-                    {
-                        var enemy = new Enemy(CellSize * ix, CellSize * iy);
-                        stage.Objects.Add(enemy);
-                        stage.Enemies.Add(enemy);
-                    }
-                    if (Map[iy, ix] == 21)
-                    {
-                        var enemy = new EditableEnemy(CellSize * ix, CellSize * iy);
-                        stage.Objects.Add(enemy);
-                        stage.Enemies.Add(enemy);
-                        stage.EditableObjects.Add(enemy);
-                    }
-                    if (Map[iy, ix] == 3)
-                    {
-                        var item = new Item(CellSize * ix + CellSize/4, CellSize * iy + CellSize/2, ItemEffects.Bigger);
-                        stage.Objects.Add(item);
-                        stage.Items.Add(item);
-                    }
-                }
-            }
-            var player = new Player();
-            stage.Player = player;
-            stage.Objects.Add(player);
-
-            var gate = new Gate(CellSize*15, CellSize*5);
-            gate.NextStage = "stage_1_1.json";
-            stage.Gates.Add(gate);
-            stage.Objects.Add(gate);
-
             return stage;
         }
 

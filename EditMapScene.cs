@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Text;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static HackTheWorld.Constants;
-
-namespace HackTheWorld
+﻿namespace HackTheWorld
 {
     /// <summary>
     /// IEditable なオブジェクトに対する操作を保存する最小単位。

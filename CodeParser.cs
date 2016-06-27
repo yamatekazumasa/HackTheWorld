@@ -9,7 +9,6 @@ namespace HackTheWorld
     public static class CodeParser
     {
 
-
         public static ArrayList yomitori(string s1)
         {
             Hashtable hash = new Hashtable();

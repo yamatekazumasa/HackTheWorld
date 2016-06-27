@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
@@ -29,11 +26,6 @@ namespace HackTheWorld
         private List<Bullet> _bullets;
         private List<Item> _items;
         private List<Gate> _gates;
-
-        public GameScene()
-        {
-            _stage = Stage.CreateDemoStage();
-        }
 
         public GameScene(Stage stage)
         {
@@ -96,34 +88,6 @@ namespace HackTheWorld
             }
             if (_resetButton.Clicked) Startup();
             if (_pauseButton.Clicked) Scene.Push(new PauseScene());
-            // セーブ・ロード
-            if (Input.Control.Pressed)
-            {
-                if (Input.R.Pushed)
-                {
-                    var stage = Stage.Load();
-                    _objects = stage.Objects;
-                    _player = stage.Player;
-                    _blocks = stage.Blocks;
-                    _editableObjects = stage.EditableObjects;
-                    _enemies = stage.Enemies;
-                    _items = stage.Items;
-                    _gates = stage.Gates;
-                }
-                if (Input.S.Pushed)
-                {
-                    var stage = new Stage {
-                        Objects = _objects,
-                        Player = _player,
-                        Blocks = _blocks,
-                        EditableObjects = _editableObjects,
-                        Enemies = _enemies,
-                        Items = _items,
-                        Gates = _gates
-                    };
-                    stage.Save(DateTime.Now.ToString("MMddHHmmss") + ".json");
-                }
-            }
 
             if (Input.Control.Pressed && Input.Shift.Pressed && Input.S.Pushed)
             {
@@ -174,7 +138,7 @@ namespace HackTheWorld
             {
                 if (_player.Intersects(g))
                 {
-                    Scene.Push(new EditScene(g.NextStage));
+                    Scene.Push(new EditScene(Stage.Load(g.NextStage)));
                 }
             }
 

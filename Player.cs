@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Drawing;//Image
+﻿using System.Drawing;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
