@@ -12,31 +12,42 @@ namespace HackTheWorld
     /// IEditable なオブジェクトに付随して作られる。
     /// オブジェクトのスクリプトを編集するテキストエディタ。
     /// </summary>
-    public class CodeBox : GameObject
+    public sealed class CodeBox : GameObject
     {
         private int _selectedBegin;
         private int _selectedEnd;
-        private readonly int _lineHeight;
+        private int _lineHeight;
         private int _cols;
         private IEditable _focusingObject;
-        private readonly Font _font;
-        private readonly Pen _pen;
+        private Font _font;
+        private Pen _pen;
         private int _frame;
         private CodeState[] _history;
         private int _origin;
         private int _current;
-        private readonly int _historyLength;
+        private int _historyLength;
 
         public bool TextSelected => _selectedEnd != -1;
         public CodeState Current => _history[_current];
 
+        public CodeBox()
+        {
+            Initialize();
+        }
+
         public CodeBox(IEditable obj)
         {
+            _focusingObject = obj;
+            Initialize();
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
             _cols = 40;
             _lineHeight = 12;
             _selectedBegin = -1;
             _selectedEnd = -1;
-            _focusingObject = obj;
             _historyLength = 50;
             _history = new CodeState[_historyLength];
             _font = new Font("Courier New", 12);
@@ -44,7 +55,7 @@ namespace HackTheWorld
 
             _history[_current] = new CodeState(0, 5);
 
-            X = CellSize*CellNumX;
+            X = CellSize * CellNumX;
             Width = 12 * _cols;
             Height = 600;
 
@@ -53,6 +64,8 @@ namespace HackTheWorld
 
         public void Update()
         {
+            if (_focusingObject == null) return;
+
             var current = _history[_current];
             var lines = current.Lines;
             var pos = current.CursorPosition;
@@ -318,6 +331,9 @@ namespace HackTheWorld
             // 編集部分の描画
             GraphicsContext.FillRectangle(Brushes.Azure, this);
             GraphicsContext.DrawRectangle(Pens.ForestGreen, this);
+
+            // フォーカスしているオブジェクトがなかったら return する。
+            if (_focusingObject == null) return;
 
             // オブジェクトの名前の描画
             GraphicsContext.FillRectangle(Brushes.LightGreen, X, Y, W, 20);

@@ -33,17 +33,15 @@ namespace HackTheWorld
             W = CellNumX*30;
             H = CellNumY*30;
 
+            StreamReader sr = new StreamReader(@".\palette.json", Encoding.GetEncoding("utf-8"));
+            string json = sr.ReadToEnd();
+            sr.Close();
+            var tmp = JObject.Parse(json);
+            foreach (var p in tmp["palettes"])
             {
-                StreamReader sr = new StreamReader(@".\palette.json", Encoding.GetEncoding("utf-8"));
-                string json = sr.ReadToEnd();
-                sr.Close();
-                var tmp = JObject.Parse(json);
-                foreach (var p in tmp["palettes"])
+                if (Type.GetType((string)p["type"]) != null && !Palette.ColorTable.ContainsKey(Type.GetType((string)p["type"])))
                 {
-                    if (Type.GetType((string)p["type"]) != null && !Palette.ColorTable.ContainsKey(Type.GetType((string) p["type"])))
-                    {
-                        Palette.ColorTable.Add(Type.GetType((string)p["type"]), new SolidBrush(Color.FromName((string)p["color"])));
-                    }
+                    Palette.ColorTable.Add(Type.GetType((string)p["type"]), new SolidBrush(Color.FromName((string)p["color"])));
                 }
             }
 
@@ -66,7 +64,6 @@ namespace HackTheWorld
                 }
             }
 
-
         }
 
         /// <summary>
@@ -74,12 +71,21 @@ namespace HackTheWorld
         /// </summary>
         public Stage GenerateStage()
         {
-            Stage s = new Stage();
-            for (int i = 0; i < CellNumX; i++)
+            int width = _map.GetLength(1);
+            int height = _map.GetLength(0);
+            Stage s = new Stage(width, height);
+            for (int i = 0; i < width; i++)
             {
-                for (int j = 0; j < CellNumY; j++)
+                for (int j = 0; j < height; j++)
                 {
                     var obj = _map[j, i];
+                    if (obj == typeof(Player))
+                    {
+                        Player p = new Player(CellSize * i, CellSize * j);
+                        s.Player = p;
+                        s.Objects.Add(p);
+                        continue;
+                    }
                     if (obj == typeof(Block))
                     {
                         Block b = new Block(CellSize * i, CellSize * j);
@@ -120,11 +126,11 @@ namespace HackTheWorld
 
             if (!Contains(Input.Mouse.Position)) return;
 
-            if (Clicked)
+            if (Input.Mouse.Left.Pressed)
             {
                 _map[_cursorY, _cursorX] = _palettes[_selected].Type;
             }
-            if (RightClicked)
+            if (Input.Mouse.Right.Pressed)
             {
                 _map[_cursorY, _cursorX] = typeof(Null);
             }

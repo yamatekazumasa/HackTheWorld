@@ -1,6 +1,10 @@
 {
   "palettes": [
     {
+      "type": "HackTheWorld.Player, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "color": "Black"
+    },
+    {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "color": "Brown"
     },

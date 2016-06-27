@@ -14,14 +14,26 @@ namespace HackTheWorld
 
         public Player()
         {
+            Initialize();
+        }
+
+        public Player(float x, float y)
+        {
+            X = x;
+            Y = y;
+            Initialize();
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
             ObjectType = ObjectType.Player;
             Image img1 = Image.FromFile(@"image\masato1.jpg");
             Image img2 = Image.FromFile(@"image\masato2.jpg");
             Image img3 = Image.FromFile(@"image\masato3.jpg");
             Size = new Vector(CellSize * 7 / 10, CellSize * 9 / 10);
-            this.SetAnimation(new[] {img1, img2, img3}, new[] {0.5f, 1.0f, 1.5f});
+            this.SetAnimation(new[] { img1, img2, img3 }, new[] { 0.5f, 1.0f, 1.5f });
             Anim.Start();
-            Initialize();
         }
 
         public override void Update(float dt)
@@ -36,7 +48,7 @@ namespace HackTheWorld
             if(!OnGround) VY += Gravity * dt;
             Move(dt);
 
-//            if (!InWindow()) Die();
+            if (!InWindow()) Die();
 
             // アニメーションを dt 進める
             Anim.Advance(dt);

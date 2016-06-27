@@ -20,7 +20,8 @@ namespace HackTheWorld
         public EditScene(Stage stage)
         {
             _stage = stage;
-            _codebox = new CodeBox(stage.EditableObjects[0]);
+            if (stage.EditableObjects.Count == 0) _codebox = new CodeBox();
+            else _codebox = new CodeBox(stage.EditableObjects[0]);
         }
 
         public override void Cleanup()
