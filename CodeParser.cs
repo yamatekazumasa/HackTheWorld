@@ -311,7 +311,7 @@ namespace HackTheWorld
         }
         public static Tuple<int,int>[] forset(string s)
         {
-            ArrayList sArray=new ArrayList();
+            ArrayList sArray = new ArrayList();
             string[] s2 = s.Split('\n');
             for(int i = 0;i < s2.Length;i++)
             {
@@ -464,7 +464,7 @@ namespace HackTheWorld
         {
             string m1, m2, m3;
             ICollection keycall = hash.Keys;
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>\w+)\s*=\s*(?<uhen>[(?<value>\w+)|\+|\-|\*|\/]+)\s*"))
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>\w+)\s*=\s*(?<uhen>[(?<value>\w+)|\+|\-|\*|\/|\.]+)\s*"))
             {
                 string s = (string)sArray[i];
                 Regex reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<uhen>.*)");
@@ -483,7 +483,7 @@ namespace HackTheWorld
                 }
                 if(m1.Contains(@"\w+")) return;
 
-                reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<uhen>[\d+|\+|\-|\*|\/]+)\s*");
+                reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<uhen>[\d+|\+|\-|\*|\/|\.]+)\s*");
                 mat = reg.Match(s);
                 m2 = mat.Groups["uhen"].Value;
                 m2 = FourOperations(m2);
@@ -540,23 +540,75 @@ namespace HackTheWorld
                 foreach(string k in keycall)
                 {
                     string input = (string)sArray[x];
-                    //余計な文字がついている
-                    Regex r1 = new Regex(@"\w+" + k + @"\s*");
-                    Regex r2 = new Regex(@"\s*" + k + @"\w+");
-                    Regex r3 = new Regex(@"\w+" + k + @"\w+");
-                    Match m1 = r1.Match(input);
-                    Match m2 = r2.Match(input);
-                    Match m3 = r3.Match(input);
-
-                    if(m1.Length == 0 && m2.Length == 0 && m3.Length == 0)
+                    int foundIndex = input.IndexOf(k);
+                    
+                    while(0 <= foundIndex)
                     {
-                        string s = hash[k].ToString();
-                        //string pattern = @"\s*" + k + @"\s*";
-                        string pattern = k;
-                        string result = Regex.Replace(input,pattern,s);
-                        sArray[x] = result;
-                    }
+                        bool booldainyu = true;
+                        string s;
 
+                        //余計な文字がついている
+                        if(foundIndex == 0)
+                        {
+                            s = input.Substring(foundIndex,k.Length + 1);
+                            if(Regex.IsMatch(s,@"[a-zA-Z]$")) booldainyu = false;
+                        }
+                        else if(foundIndex!=input.Length-1)
+                        {
+                            s = input.Substring(foundIndex - 1,k.Length + 2);
+                            if(Regex.IsMatch(s,@"^[a-zA-Z]")|| Regex.IsMatch(s,@"[a-zA-Z]$")) booldainyu = false;
+                        }
+                        else
+                        {
+                            s = input.Substring(foundIndex-1,k.Length+1);
+                            if(Regex.IsMatch(s,@"^[a-zA-Z]")) booldainyu = false;
+                        }
+                        if(booldainyu)
+                        {
+                            char[] c = input.ToCharArray();
+                            char[] ckey = hash[k].ToString().ToCharArray();
+                            List<char> clist = new List<char>();
+                            if(foundIndex != 0)
+                            {
+                                for(int i = 0;i < foundIndex;i++)
+                                {
+                                    clist.Add(c[i]);
+                                }
+                            }
+                            for(int i = 0;i < ckey.Length;i++)
+                            {
+                                clist.Add(ckey[i]);
+                            }
+                            if(foundIndex+k.Length<c.Length)
+                            {
+                                for(int i = foundIndex + k.Length;i < c.Length;i++)
+                                {
+                                    clist.Add(c[i]);
+                                }
+                            }
+                            string converteds="";
+                            for(int i = 0;i < clist.Count;i++)
+                            {
+                                converteds += clist[i];
+                            }
+                            sArray[x] = converteds;
+                        }
+                        input = (string)sArray[x];
+                        //次の検索開始位置
+                        int nextIndex = foundIndex + k.Length;
+                        if(nextIndex < input.Length)
+                        {
+                            //次の位置を探す
+                            foundIndex = input.IndexOf(k,nextIndex);
+                        }
+                        else
+                        {
+                            //最後まで検索したときは終わる
+                            break;
+                        }
+                        
+                    }
+                    
                 }
             }
 
@@ -1087,7 +1139,7 @@ namespace HackTheWorld
 
         public static string FourOperations(string s)
         {
-            if(System.Text.RegularExpressions.Regex.IsMatch(s,@"\d+|[\+|\-|\*|\/]+") && !s.StartsWith(@"[\+|\-|\*|\/]") && !s.EndsWith(@"[\+|\-|\*|\/]")&&!s.Contains(@"[\+\+|\-\-|\*\*|\/\/]"))
+            if(System.Text.RegularExpressions.Regex.IsMatch(s,@"\d+|[\+|\-|\*|\/]+") && !s.StartsWith(@"[\+|\-|\*|\/]") && !s.EndsWith(@"[\+|\-|\*|\/]") && !s.Contains(@"[\+\+|\-\-|\*\*|\/\/]"))
             {
                 //ここで計算
                 System.Data.DataTable dt = new System.Data.DataTable();
