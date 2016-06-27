@@ -107,52 +107,43 @@ namespace HackTheWorld
                 switch ((string)obj["type"])
                 {
                     case "Block":
+                        if (obj["code"] != null)
                         {
-                            if (obj["code"] != null)
-                            {
-                                var b = new EditableBlock((float) obj["x"], (float) obj["y"]);
-                                b.Code = (string) obj["code"];
-                                b.Name = (string) obj["name"] ?? "name was null";
-                                stage.Blocks.Add(b);
-                                stage.EditableObjects.Add(b);
-                                stage.Objects.Add(b);
-                            }
-                            else
-                            {
-                                Block b = new Block((float) obj["x"], (float) obj["y"]);
-                                stage.Blocks.Add(b);
-                                stage.Objects.Add(b);
-                            }
-                            break;
+                            var b = new EditableBlock((float) obj["x"], (float) obj["y"]) {
+                                Code = (string) obj["code"],
+                                Name = (string) obj["name"] ?? "name was null"
+                            };
+                            stage.Blocks.Add(b);
+                            stage.EditableObjects.Add(b);
+                            stage.Objects.Add(b);
                         }
+                        else
+                        {
+                            Block b = new Block((float)obj["x"], (float)obj["y"]);
+                            stage.Blocks.Add(b);
+                            stage.Objects.Add(b);
+                        }
+                        break;
                     case "Enemy":
-                        {
-                            Enemy e = new Enemy((float)obj["x"], (float)obj["y"], (float)obj["vx"], (float)obj["vy"], (float)obj["width"], (float)obj["height"]);
-                            stage.Enemies.Add(e);
-                            stage.Objects.Add(e);
-                            break;
-                        }
+                        Enemy e = new Enemy((float)obj["x"], (float)obj["y"], (float)obj["vx"], (float)obj["vy"], (float)obj["width"], (float)obj["height"]);
+                        stage.Enemies.Add(e);
+                        stage.Objects.Add(e);
+                        break;
                     case "Item":
-                        {
-                            Item i = new Item((float)obj["x"], (float)obj["y"], 0, 0, (float)obj["width"], (float)obj["height"], (ItemEffects)Enum.Parse(typeof(ItemEffects), (string)obj["effect"]));
-                            stage.Items.Add(i);
-                            stage.Objects.Add(i);
-                            break;
-                        }
+                        Item i = new Item((float)obj["x"], (float)obj["y"], 0, 0, (float)obj["width"], (float)obj["height"], (ItemEffects)Enum.Parse(typeof(ItemEffects), (string)obj["effect"]));
+                        stage.Items.Add(i);
+                        stage.Objects.Add(i);
+                        break;
                     case "Player":
-                        {
-                            var p = new Player();
-                            stage.Player = p;
-                            stage.Objects.Add(p);
-                            break;
-                        }
+                        var p = new Player((float)obj["x"], (float)obj["y"]);
+                        stage.Player = p;
+                        stage.Objects.Add(p);
+                        break;
                     case "Gate":
-                        {
-                            var g = new Gate((float) obj["x"], (float) obj["y"]) {NextStage = (string) obj["code"]};
-                            stage.Gates.Add(g);
-                            stage.Objects.Add(g);
-                            break;
-                        }
+                        var g = new Gate((float)obj["x"], (float)obj["y"]) { NextStage = (string)obj["code"] };
+                        stage.Gates.Add(g);
+                        stage.Objects.Add(g);
+                        break;
 
                 }
             }

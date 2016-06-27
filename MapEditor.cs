@@ -107,6 +107,22 @@ namespace HackTheWorld
                         s.Objects.Add(item);
                         continue;
                     }
+                    if (obj == typeof(EditableBlock))
+                    {
+                        EditableBlock b = new EditableBlock(CellSize * i, CellSize * j);
+                        s.Blocks.Add(b);
+                        s.EditableObjects.Add(b);
+                        s.Objects.Add(b);
+                        continue;
+                    }
+                    if (obj == typeof(EditableEnemy))
+                    {
+                        EditableEnemy e = new EditableEnemy(CellSize * i, CellSize * j);
+                        s.Enemies.Add(e);
+                        s.EditableObjects.Add(e);
+                        s.Objects.Add(e);
+                        continue;
+                    }
                 }
             }
             return s;
