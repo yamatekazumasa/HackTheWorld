@@ -36,9 +36,9 @@ namespace HackTheWorld
             string[] s2 = s1.Split(delimiterChars);
             for(int i = 0;i < s2.Length;i++)
             {
-                if(s2[i]!="")sArray.Add(s2[i]);
+                if(s2[i] != "") sArray.Add(s2[i]);
             }
-            
+
             string str = "";
             if(!checkfunction(sArray))
             {
@@ -81,13 +81,18 @@ namespace HackTheWorld
         public static bool isValidScript(ArrayList sArray)
         {
             int countfunction = 0;
+            int countend = 0;
             int kakko = 0;
             for(int i = 0;i < sArray.Count;i++)
             {
                 //関数の数を数える(今はforとif)
                 if(firstfor(sArray,i) || firstif(sArray,i) || firstwhile(sArray,i)) countfunction++;
+                if(firstend(sArray,i)) countend++;
             }
-            if(countfunction == 0) return true;
+            if(countfunction != countend)
+            {
+                Console.WriteLine("関数とendの数が違う");
+            }
             //初めのほうから順番に見ていく
             for(int i = 0;i < sArray.Count;i++)
             {
@@ -113,6 +118,7 @@ namespace HackTheWorld
                             break;
                         }
                     }
+
                 }
                 //似たようなもん
                 if(firstif(sArray,i))
@@ -148,17 +154,13 @@ namespace HackTheWorld
                         }
                     }
                 }
-                //関数っぽいのが全部なくなったら
-                if(countfunction == 0)
+                if(kakko != 0)
                 {
-                    bool remainend = false;
-                    for(int k = j+1 ;k < sArray.Count;k++)
-                    {
-                        if(firstend(sArray,k)) remainend = true;
-                    }
-                    if(remainend) return false;
-                    return true;
+                    Console.WriteLine("end多い");
+                    return false;
                 }
+                //関数っぽいのが全部なくなったら
+                if(countfunction == 0) return true;
 
             }
             //ループ回り切ったらだめ
@@ -174,10 +176,10 @@ namespace HackTheWorld
             int size = 14;
             //"size,1,1", "wait,1", "move,1,1,2"
             Regex[] reg = new Regex[size];
-            reg[0] = new Regex(@"\s*size\s*,\s*\w+\s*,\s*\w+");
+            reg[0] = new Regex(@"\s*size\s*,\s*[\w+|\+|\-|\*|\/]+\s*,\s*[\w+|\+|\-|\*|\/]+");
             reg[1] = new Regex(@"\s*wait\s*,\s*\w+");
-            reg[2] = new Regex(@"\s*move\s*,\s*\w+\s*,\s*\w+,\s*\w+");
-            reg[3] = new Regex(@"\s*\w+\s*=\s*\d+\s*");
+            reg[2] = new Regex(@"\s*move\s*,\s*[\w+|\+|\-|\*|\/]+\s*,\s*[\w+|\+|\-|\*|\/]+,\s*[\w+|\+|\-|\*|\/]+");
+            reg[3] = new Regex(@"\s*\w+\s*=\s*[\w+|\+|\-|\*|\/]+\s*");
             reg[4] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*=");
             reg[5] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\+\+");
             reg[6] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\-\-");
@@ -240,7 +242,6 @@ namespace HackTheWorld
             for(int i = 0;i < sArray.Count;i++)
             {
                 Has(sArray,i,hash);
-                //FourOperations(sArray,0);
                 //i行目が関数で始まってるかどうか
                 switch(bunki(sArray,i))
                 {
@@ -442,33 +443,36 @@ namespace HackTheWorld
         }
         public static void Has(ArrayList sArray,int i,Hashtable hash)
         {
-            string m1, m2;
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*\w+\s*=\s*\d+\s*"))
+            string m1, m2, m3;
+            ICollection keycall = hash.Keys;
+            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>\w+)\s*=\s*(?<uhen>[(?<value>\w+)|\+|\-|\*|\/]+)\s*"))
             {
+                string s = (string)sArray[i];
+                Regex reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<uhen>.*)");
+                Match mat = reg.Match(s);
+                m1 = mat.Groups["uhen"].Value;
 
-                Regex reg1 = new Regex(@"\w+");
-                Regex reg2 = new Regex(@"\d+");
-                Match mat1 = reg1.Match((string)sArray[i]);
-                Match mat2 = reg2.Match((string)sArray[i]);
-
-                m1 = mat1.Value;
-                m2 = mat2.Value;
-
-                hash[m1] = m2;
-            }
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*=\s*(?<value>[a-zA-z]+)\s*"))
-
-            {
-
-                Regex reg = new Regex(@"\s*(?<name>[a-zA-z]+)\s*=\s*(?<value>[a-zA-z]+)\s*");
-                Match mat = reg.Match((string)sArray[i]);
-                m1 = mat.Groups["name"].Value;
-                m2 = mat.Groups["value"].Value;
-
-                if(hash.ContainsKey(m2))
+                foreach(string k in keycall)
                 {
-                    hash[m1] = hash[m2];
+                    if(m1.Contains(k))
+                    {
+                        string pattern = k;
+                        string replacement = hash[k].ToString();
+                        Regex r = new Regex(pattern);
+                        s = r.Replace(s,replacement);
+                    }
                 }
+                if(m1.Contains(@"\w+")) return;
+
+                reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<uhen>[\d+|\+|\-|\*|\/]+)\s*");
+                mat = reg.Match(s);
+                m2 = mat.Groups["uhen"].Value;
+                m2 = FourOperations(m2);
+
+                m3 = mat.Groups["name"].Value;
+                hash[m3] = m2;
+                return;
+
             }
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\+"))
             {
@@ -476,6 +480,7 @@ namespace HackTheWorld
                 Match m = r.Match((string)sArray[i]);
                 m1 = m.Groups["name"].Value;
                 hash[m1] = Convert.ToInt32(hash[m1]) + 1;
+                return;
             }
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\-"))
             {
@@ -483,6 +488,7 @@ namespace HackTheWorld
                 Match m = r.Match((string)sArray[i]);
                 m1 = m.Groups["name"].Value;
                 hash[m1] = Convert.ToInt32(hash[m1]) - 1;
+                return;
             }
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)"))
             {
@@ -491,6 +497,7 @@ namespace HackTheWorld
                 m1 = m.Groups["name"].Value;
                 m2 = m.Groups["value"].Value;
                 hash[m1] = Convert.ToInt32(hash[m1]) + int.Parse(m2);
+                return;
             }
             if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\=\s*(?<value>\d+)"))
             {
@@ -499,6 +506,7 @@ namespace HackTheWorld
                 m1 = m.Groups["name"].Value;
                 m2 = m.Groups["value"].Value;
                 hash[m1] = Convert.ToInt32(hash[m1]) - int.Parse(m2);
+                return;
             }
 
         }
@@ -662,11 +670,14 @@ namespace HackTheWorld
                                         i++;
                                         break;
                                 }
-                                if(result[result.Count - 1].ToString() == "break")
+                                if(result.Count != 0)
                                 {
-                                    yesbreak = true;
-                                    result.RemoveAt(result.Count - 1);
-                                    break;
+                                    if(result[result.Count - 1].ToString() == "break")
+                                    {
+                                        yesbreak = true;
+                                        result.RemoveAt(result.Count - 1);
+                                        break;
+                                    }
                                 }
                             }
                             if(yesbreak) break;
@@ -768,11 +779,14 @@ namespace HackTheWorld
                                     j++;
                                     break;
                             }
-                            if(result[result.Count - 1].ToString() == "break")
+                            if(result.Count != 0)
                             {
-                                yesbreak = true;
-                                result.RemoveAt(result.Count - 1);
-                                break;
+                                if(result[result.Count - 1].ToString() == "break")
+                                {
+                                    yesbreak = true;
+                                    result.RemoveAt(result.Count - 1);
+                                    break;
+                                }
                             }
                         }
                         if(yesbreak) break;
@@ -1033,11 +1047,14 @@ namespace HackTheWorld
                                 i++;
                                 break;
                         }
-                        if(result[result.Count - 1].ToString() == "break")
+                        if(result.Count != 0)
                         {
-                            yesbreak = true;
-                            result.RemoveAt(result.Count - 1);
-                            break;
+                            if(result[result.Count - 1].ToString() == "break")
+                            {
+                                yesbreak = true;
+                                result.RemoveAt(result.Count - 1);
+                                break;
+                            }
                         }
                     }
 
@@ -1048,87 +1065,21 @@ namespace HackTheWorld
 
 
 
-        //結果がintになる体で作る
-        public static void FourOperations(ArrayList sArray,int i)
+
+        public static string FourOperations(string s)
         {
-            //とりあえず数字の計算をさせたい
-            string s = (string)sArray[i];
-            if(s.Contains(@"a-zA-Z"))
+            if(System.Text.RegularExpressions.Regex.IsMatch(s,@"\d+|[\+|\-|\*|\/]+") && !s.StartsWith(@"[\+|\-|\*|\/]") && !s.EndsWith(@"[\+|\-|\*|\/]")&&!s.Contains(@"[\+\+|\-\-|\*\*|\/\/]"))
             {
-                return;
-            }
+                //ここで計算
+                System.Data.DataTable dt = new System.Data.DataTable();
 
-            //四則演算の式になっていないとうまく使えないので書いている途中は何もしない
-            if(s.EndsWith("+") || s.EndsWith("-") || s.EndsWith("*") || s.EndsWith("/") || s.EndsWith("."))
-            {
-                return;
-            }
+                //Type t = dt.Compute(s,"").GetType();
 
-            //ここで計算
-            System.Data.DataTable dt = new System.Data.DataTable();
-            //Dictionary<string , string> dict = new Dictionary<string , string>( );
-            //dict.Add("x" , "3");
-            //string strOriginal = "3*x+1";
-            //string str0 = "3*";
-            //string str1 = "+1";
-            //string str = str0 + dict["x"] + str1;
-            double t = Convert.ToDouble(dt.Compute(s,""));
-            sArray[i] = t.ToString();
+                return dt.Compute(s,"").ToString();
+            }
+            return "四則演算が変";
         }
-        ////FourOperations(string,ref intの変数,ref doubleの変数)で使う(参照渡し)
-        //public static void FourOperations(string s , ref int result1 , ref double result2)
-        //{
-        //    //とりあえず数字の計算をさせたい
 
-        //    if(s.Contains(@"a-zA-Z"))
-        //    {
-        //        return;
-        //    }
-
-        //    //四則演算の式になっていないとうまく使えないので書いている途中は何もしない
-        //    if(s.EndsWith("+") || s.EndsWith("-") || s.EndsWith("*") || s.EndsWith("/") || s.EndsWith("."))
-        //    {
-        //        return;
-        //    }
-
-        //    //ここで計算
-        //    System.Data.DataTable dt = new System.Data.DataTable( );
-
-        //    //出力するとき型があってないといけないらしいので型をとって条件分岐
-        //    Type t = dt.Compute(s , "").GetType( );
-
-        //    //分岐
-        //    if(t.ToString( ) == "System.DBNull")
-        //    {
-
-        //    }
-        //    else {
-        //        if(t.ToString( ) == "System.Int32")
-        //        {
-        //            result1 = (int)dt.Compute(s , "");
-
-        //        }
-        //        else
-        //        {
-        //            result2 = (double)dt.Compute(s , "");
-        //        }
-        //    }
-        //}
-
-
-        //プロセスを作ろう
-        //public static void makeprocess(ProcessfulObject pfo,string s1)
-        //{
-        //    char[ ] delimiterChars = { ' ' , ',' , '.' , ':' , '\t' , '\n' };
-
-        //    ArrayList sArray = new ArrayList( );
-        //    string[ ] s2 = s1.Split(delimiterChars);
-        //    for(int i = 0; i < s2.Length; i++)
-        //    {
-        //        sArray.Add(s2[i]);
-        //    }
-
-        //}
 
 
 
