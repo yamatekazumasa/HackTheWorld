@@ -128,13 +128,14 @@ namespace HackTheWorld
 
             //CodeParser.yomitori(str);
 
+
             #region CodeParser.yomitori(str)をProcess型に変換する処理
 
 
             //以下のリストの中身("move, x, y")を小集合とする
 
             //動作テスト用配列
-            //var midcode = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
+//            var midcode = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
 
             //本実行用配列
             var midcode = new List<string>();
@@ -388,6 +389,7 @@ namespace HackTheWorld
 
             }
             #endregion
+
         }
 
     }

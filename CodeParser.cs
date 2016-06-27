@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Data;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace HackTheWorld
 {
@@ -42,7 +41,7 @@ namespace HackTheWorld
                 {
                     str += (string)result[i] + "\n";
                 }
-                MessageBox.Show(str);
+                Console.WriteLine(str);
                 return result;
             }
             if(!isValidScript(sArray))
@@ -55,7 +54,7 @@ namespace HackTheWorld
                 {
                     str += (string)result[i] + "\n";
                 }
-                MessageBox.Show(str);
+                Console.WriteLine(str);
                 return result;
             }
             //割り振る
@@ -66,7 +65,7 @@ namespace HackTheWorld
             {
                 str += (string)result[i] + "\n";
             }
-            MessageBox.Show(str);
+            Console.WriteLine(str);
             return result;
         }
 
@@ -99,7 +98,7 @@ namespace HackTheWorld
                         {
                             if(!boolfor(sArray,i))
                             {
-                                MessageBox.Show("forとendはいるみたいだけど\n文の中身が違う");
+                                Console.WriteLine("forとendはいるみたいだけど\n文の中身が違う");
                                 return false;
                             }
                             countfunction--;
@@ -119,7 +118,7 @@ namespace HackTheWorld
                         {
                             if(!boolif(sArray,i))
                             {
-                                MessageBox.Show("ifとendはいるみたいだけど\n文の中身が違う");
+                                Console.WriteLine("ifとendはいるみたいだけど\n文の中身が違う");
                                 return false;
                             }
                             countfunction--;
@@ -155,7 +154,7 @@ namespace HackTheWorld
 
             }
             //ループ回り切ったらだめ
-            MessageBox.Show("関数とendの対応がだめ");
+            Console.WriteLine("関数とendの対応がだめ");
             return false;
         }
 
@@ -206,12 +205,12 @@ namespace HackTheWorld
                 }
                 if(message.Length != 0)
                 {
-                    MessageBox.Show(message + "の書き方がまちがってます");
+                    Console.WriteLine(message + "の書き方がまちがってます");
                     return false;
                 }
                 if(count == 0)
                 {
-                    MessageBox.Show("知らない形の文が" + (i + 1) + "行目にあります");
+                    Console.WriteLine("知らない形の文が" + (i + 1) + "行目にあります");
                     return false;
                 }
             }
@@ -676,7 +675,7 @@ namespace HackTheWorld
                     if(hash.ContainsKey(m3.Groups["repeat"].Value)) n = Convert.ToInt32(hash[m3.Groups["repeat"].Value]);
                     else if(!int.TryParse(m3.Groups["repeat"].Value,out n))
                     {
-                        MessageBox.Show("(For type3)数字代入してますか？");
+                        Console.WriteLine("(For type3)数字代入してますか？");
                         return;
                     }
                     yesbreak = false;
