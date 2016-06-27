@@ -57,7 +57,7 @@ namespace HackTheWorld
 
             X = CellSize*CellNumX;
             Width = 12 * _cols;
-            Height = 600;//_lineHeight * _history[_current].MaxLine;
+            Height = 600;
 
             _frame = 0;
         }
@@ -245,6 +245,8 @@ namespace HackTheWorld
 
             if (Input.KeyBoard.IsDefined) Insert(Input.KeyBoard.TypedChar);
 
+            _focusingObject.Code = _history[_current].Text.ToString();
+
             _frame++;
         }
 
@@ -290,7 +292,6 @@ namespace HackTheWorld
                 Text = new StringBuilder(s.Text.ToString()),
                 UpdatedAt = DateTime.Now
             };
-            _focusingObject.Code = s.Text.ToString();
         }
 
         /// <summary>

@@ -78,19 +78,7 @@ namespace HackTheWorld
         {
             string json = JsonConvert.SerializeObject(this, Formatting.Indented);
             if (!Directory.Exists(@".\stage")) Directory.CreateDirectory(@".\stage");
-            StreamWriter sw = new StreamWriter(@".\stage\test.json", false, Encoding.GetEncoding("utf-8"));
-            sw.Write(json);
-            sw.Close();
-        }
-
-        /// <summary>
-        /// パスを指定してステージを保存する。
-        /// </summary>
-        public void Save(string path)
-        {
-            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-            if (!Directory.Exists(@".\stage")) Directory.CreateDirectory(@".\stage");
-            StreamWriter sw = new StreamWriter(@".\stage\" + path, false, Encoding.GetEncoding("utf-8"));
+            StreamWriter sw = new StreamWriter(@".\stage\" + DateTime.Now.ToString("MMddHHmmss") + ".json", false, Encoding.GetEncoding("utf-8"));
             sw.Write(json);
             sw.Close();
         }
