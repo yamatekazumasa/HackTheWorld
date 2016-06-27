@@ -309,8 +309,15 @@ namespace HackTheWorld
                 result.Add(result2[i]);
             }
         }
-        public static Tuple<int,int>[] forset(ArrayList sArray)
+        public static Tuple<int,int>[] forset(string s)
         {
+            ArrayList sArray=new ArrayList();
+            string[] s2 = s.Split('\n');
+            for(int i = 0;i < s2.Length;i++)
+            {
+                if(s2[i] != "") sArray.Add(s2[i]);
+            }
+
             ArrayList forArray = new ArrayList();
 
             int kakko = 0;
@@ -343,8 +350,14 @@ namespace HackTheWorld
             }
             return t;
         }
-        public static Tuple<int,int>[] ifset(ArrayList sArray)
+        public static Tuple<int,int>[] ifset(string s)
         {
+            ArrayList sArray = new ArrayList();
+            string[] s2 = s.Split('\n');
+            for(int i = 0;i < s2.Length;i++)
+            {
+                if(s2[i] != "") sArray.Add(s2[i]);
+            }
             ArrayList ifArray = new ArrayList();
 
             int kakko = 0;
@@ -378,8 +391,14 @@ namespace HackTheWorld
             }
             return t;
         }
-        public static Tuple<int,int>[] whileset(ArrayList sArray)
+        public static Tuple<int,int>[] whileset(string s)
         {
+            ArrayList sArray = new ArrayList();
+            string[] s2 = s.Split('\n');
+            for(int i = 0;i < s2.Length;i++)
+            {
+                if(s2[i] != "") sArray.Add(s2[i]);
+            }
             ArrayList whileArray = new ArrayList();
 
             int kakko = 0;
@@ -413,13 +432,13 @@ namespace HackTheWorld
             }
             return t;
         }
-        public static Tuple<int,int>[] allset(ArrayList sArray)
+        public static Tuple<int,int>[] allset(string s)
         {
             ArrayList allArray = new ArrayList();
 
-            Tuple<int,int>[] t1 = forset(sArray);
-            Tuple<int,int>[] t2 = ifset(sArray);
-            Tuple<int,int>[] t3 = whileset(sArray);
+            Tuple<int,int>[] t1 = forset(s);
+            Tuple<int,int>[] t2 = ifset(s);
+            Tuple<int,int>[] t3 = whileset(s);
 
             for(int i = 0;i < t1.Length;i++)
             {
