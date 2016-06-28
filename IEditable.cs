@@ -138,7 +138,7 @@ namespace HackTheWorld
             //以下のリストの中身("move, x, y")を小集合とする
 
             //動作テスト用配列
-//            var midcode = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
+            //var midcode = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
 
             //本実行用配列
             var midcode = new List<string>();
@@ -206,6 +206,14 @@ namespace HackTheWorld
                                         if (obj.CollidesWith(stage.Player))
                                             obj.Move(dt);
                                     }, float.Parse(ctmp[3])));
+
+                                    //最後に速度をゼロに戻しておく
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+
                                     break;
 
                                 default:
@@ -232,7 +240,7 @@ namespace HackTheWorld
                                 case "size":
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(stage.Player))
+                                        if (obj.StandOn(stage.Player))
                                         {
                                             obj.W = CellSize * float.Parse(ctmp[1]);
                                             obj.H = CellSize * float.Parse(ctmp[2]);
@@ -248,7 +256,12 @@ namespace HackTheWorld
                                         obj.VX = 0.0f;
                                         obj.VY = 0.0f;
                                     }));
-                                    self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(ctmp[1])));
+                                    
+                                    self.AddProcess(new Process((obj, dt) => {
+                                        if (obj.StandOn(stage.Player)){
+                                            obj.Move(dt);
+                                        }
+                                    }, float.Parse(ctmp[1])));
                                     break;
 
                                 //プレイヤーが触れたら移動
@@ -260,9 +273,17 @@ namespace HackTheWorld
                                     }));
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(stage.Player))
+                                        if (obj.StandOn(stage.Player))
                                             obj.Move(dt);
                                     }, float.Parse(ctmp[3])));
+
+                                    //最後に速度をゼロに戻しておく
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+
                                     break;
 
                                 default:
@@ -275,7 +296,7 @@ namespace HackTheWorld
                         //プロジェクトバージョンが古すぎて近づいた判定が使えない
                         #region オブジェクトに近づいた時の判定
 
-                        /*
+                        
 
                     case "nearby":
                         switch (ctmp[0])
@@ -343,7 +364,7 @@ namespace HackTheWorld
                         }
 
                         break;
-        */
+        
                         #endregion
                         default:
                             break;
