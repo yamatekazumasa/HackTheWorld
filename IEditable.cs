@@ -65,7 +65,8 @@ namespace HackTheWorld
         bool Contains(GameObject obj);
         bool Intersects(GameObject obj);
         bool CollidesWith(GameObject obj);
-        bool RiddenBy(GameObject obj);
+        bool StandOn(GameObject obj);
+        bool HitHeadOn(GameObject obj);
         bool Nearby(GameObject obj);
         bool InWindow();
     }

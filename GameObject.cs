@@ -408,12 +408,26 @@ namespace HackTheWorld
         }
 
         /// <summary>
-        /// 乗っかられたときに true を返す。
+        /// 乗り判定。
+        /// 渡されたオブジェクトの矩形領域の上辺に接触しているか判定する。
         /// </summary>
-        public bool RiddenBy(GameObject obj)
+        /// <param name="obj">渡されたオブジェクト。</param>
+        /// <returns>乗っていたらtrue、乗っていなかったらfalseを返す。</returns>
+        public bool StandOn(GameObject obj)
         {
-            return MinX < obj.MaxX && MaxX < obj.MinX && (int)MinY == (int)obj.MaxY;
+            return MinX < obj.MaxX && MaxX > obj.MinX && (int)MaxY == (int)obj.MinY;
         }
+
+        /// <summary>
+        /// 渡されたオブジェクトの矩形領域の下辺に接触しているか判定する。
+        /// </summary>
+        /// <param name="obj">渡されたオブジェクト。</param>
+        /// <returns>頭が当たっていたらtrue、当たっていなかったらfalseを返す。</returns>
+        public bool HitHeadOn(GameObject obj)
+        {
+            return MinX < obj.MaxX && MaxX > obj.MinX && (int)MinY == (int)obj.MaxY;
+        }
+
 
         /// <summary>
         /// オブジェクトがウィンドウの中に納まっているか判定する。
