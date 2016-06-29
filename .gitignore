@@ -12,6 +12,7 @@ doc/
 packages/
 *.stackdump
 stage/
+!stage/stage_1_1.json
 code.json
 code_.json
 code/
