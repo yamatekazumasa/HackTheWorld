@@ -109,9 +109,9 @@ namespace HackTheWorld
             // ここにstring型をProcess型に変換する処理を書く。
             // CodeParserで生成されたArrayListの中身は<size,1,1><wait,1><move,1,1,2>の形
 
-            //CodeParser.yomitori(str);
+            //CodeParser.ConvertCodebox(str);
 
-            #region CodeParser.yomitori(str)をProcess型に変換する処理
+            #region CodeParser.ConvertCodebox(str)をProcess型に変換する処理
 
 
             //以下のリストの中身("move, x, y")を小集合とする
@@ -121,7 +121,7 @@ namespace HackTheWorld
 
             //本実行用配列
             var midcode = new List<string>();
-            midcode = CodeParser.yomitori(str).Cast<string>().ToList();
+            midcode = CodeParser.ConvertCodebox(str).Cast<string>().ToList();
 
 
 
