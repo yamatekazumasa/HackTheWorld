@@ -278,10 +278,10 @@ namespace HackTheWorld
         //四則演算を行う
         public static string FourOperations(string s)
         {
-            if(System.Text.RegularExpressions.Regex.IsMatch(s,@"\d+|[\+|\-|\*|\/]+") && !s.StartsWith(@"[\+|\-|\*|\/]") && !s.EndsWith(@"[\+|\-|\*|\/]") && !s.Contains(@"[\+\+|\-\-|\*\*|\/\/]"))
+            if(Regex.IsMatch(s,@"\d+|[\+|\-|\*|\/]+") && !s.StartsWith(@"[\+|\-|\*|\/]") && !s.EndsWith(@"[\+|\-|\*|\/]") && !s.Contains(@"[\+\+|\-\-|\*\*|\/\/]"))
             {
                 //ここで計算
-                System.Data.DataTable dt = new System.Data.DataTable();
+                DataTable dt = new DataTable();
 
                 //Type t = dt.Compute(s,"").GetType();
 
@@ -503,7 +503,7 @@ namespace HackTheWorld
             string str1, str2, str3;
             ICollection keycall = hash.Keys;
 
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[(?<value>\w+)|\+|\-|\*|\/|\.]+)\s*"))
+            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[(?<value>\w+)|\+|\-|\*|\/|\.]+)\s*"))
             {
                 string s = (string)sArray[i];
                 Regex reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<right_hand>.*)");
@@ -537,7 +537,7 @@ namespace HackTheWorld
 
             }
             //ここから＋＋とか＋＝とかの部分
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\+"))
+            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\+"))
             {
                 Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\+\+");
                 Match m = r.Match((string)sArray[i]);
@@ -569,7 +569,6 @@ namespace HackTheWorld
                 str1 = m.Groups["name"].Value;
                 str2 = m.Groups["value"].Value;
                 hash[str1] = Convert.ToInt32(hash[str1]) - int.Parse(str2);
-                return;
             }
 
         }
@@ -674,11 +673,11 @@ namespace HackTheWorld
             //typeを3つ作ることにする
 
             //for(i=0;i<5;i++)がtype1
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\(\s*\w+\s*\=\s*\w+\s*;\s*\w+\s*" + @"<|>|(<=)|(>=)|(==)" + @"\s*\w+\s*;\s*\w+[\+\+|\-\-|\+=\w+|\-=\w+]\)")) typeOfFor = 1;
+            if(Regex.IsMatch((string)sArray[home],@"for\s*\(\s*\w+\s*\=\s*\w+\s*;\s*\w+\s*" + @"<|>|(<=)|(>=)|(==)" + @"\s*\w+\s*;\s*\w+[\+\+|\-\-|\+=\w+|\-=\w+]\)")) typeOfFor = 1;
             //for i=0 to 3がtype2
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\w+\s*=\s*\w+\s*to\s*\w+")) typeOfFor = 2;
+            if(Regex.IsMatch((string)sArray[home],@"for\s*\w+\s*=\s*\w+\s*to\s*\w+")) typeOfFor = 2;
             //for 2とかをtype3とする
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"for\s*\w+")) typeOfFor = 3;
+            if(Regex.IsMatch((string)sArray[home],@"for\s*\w+")) typeOfFor = 3;
 
             switch(typeOfFor)
             {
@@ -766,7 +765,7 @@ namespace HackTheWorld
                     int repeatCount = 0;
                     //hashの値を用いるか、数字として読むかして繰り返し回数を決める
                     if(hash.ContainsKey(m3.Groups["repeat"].Value)) repeatCount = Convert.ToInt32(hash[m3.Groups["repeat"].Value]);
-                    else if(!int.TryParse((string)m3.Groups["repeat"].Value,out repeatCount))
+                    else if(!int.TryParse(m3.Groups["repeat"].Value,out repeatCount))
                     {
                         Console.WriteLine("(For type3)数字を代入していますか？");
                         return;
@@ -915,7 +914,6 @@ namespace HackTheWorld
                     }
                 }
             }
-            return;
         }
 
         public static void While(ArrayList sArray,ArrayList result,int home,Hashtable hash)
@@ -1015,9 +1013,9 @@ namespace HackTheWorld
 
             for(int i = 0;i < reg.Length;i++)
             {
-                if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"if\s*\(" + reg[i] + @"\)\s*"))
+                if(Regex.IsMatch((string)sArray[home],@"if\s*\(" + reg[i] + @"\)\s*"))
                 {
-                    if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"if\s*\(" + reg[i] + @"\)\s*."))
+                    if(Regex.IsMatch((string)sArray[home],@"if\s*\(" + reg[i] + @"\)\s*."))
                     {
                         return false;
                     }
@@ -1088,35 +1086,35 @@ namespace HackTheWorld
                 int left_hand = int.Parse(m1.Groups["left_hand"].Value);
                 int right_hand = int.Parse(m1.Groups["right_hand"].Value);
                 if(left_hand < right_hand) return true;
-                else return false;
+                return false;
             }
             if(m2.Length > 0)
             {
                 int left_hand = int.Parse(m2.Groups["left_hand"].Value);
                 int right_hand = int.Parse(m2.Groups["right_hand"].Value);
                 if(left_hand > right_hand) return true;
-                else return false;
+                return false;
             }
             if(m3.Length > 0)
             {
                 int left_hand = int.Parse(m3.Groups["left_hand"].Value);
                 int right_hand = int.Parse(m3.Groups["right_hand"].Value);
                 if(left_hand <= right_hand) return true;
-                else return false;
+                return false;
             }
             if(m4.Length > 0)
             {
                 int left_hand = int.Parse(m4.Groups["left_hand"].Value);
                 int right_hand = int.Parse(m4.Groups["right_hand"].Value);
                 if(left_hand >= right_hand) return true;
-                else return false;
+                return false;
             }
             if(m5.Length > 0)
             {
                 int left_hand = int.Parse(m5.Groups["left_hand"].Value);
                 int right_hand = int.Parse(m5.Groups["right_hand"].Value);
                 if(left_hand == right_hand) return true;
-                else return false;
+                return false;
             }
             return false;
         }
