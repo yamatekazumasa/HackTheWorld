@@ -138,7 +138,7 @@ namespace HackTheWorld
             //以下のリストの中身("move, x, y")を小集合とする
 
             //動作テスト用配列
-//            var midcode = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
+            //var midcode = new List<string> { "size,1,1", "wait,1", "move,1,1,2" };
 
             //本実行用配列
             var midcode = new List<string>();
@@ -206,6 +206,14 @@ namespace HackTheWorld
                                         if (obj.CollidesWith(stage.Player))
                                             obj.Move(dt);
                                     }, float.Parse(ctmp[3])));
+
+                                    //最後に速度をゼロに戻しておく
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+
                                     break;
 
                                 default:
@@ -232,7 +240,7 @@ namespace HackTheWorld
                                 case "size":
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(stage.Player))
+                                        if (obj.StandOn(stage.Player))
                                         {
                                             obj.W = CellSize * float.Parse(ctmp[1]);
                                             obj.H = CellSize * float.Parse(ctmp[2]);
@@ -248,7 +256,14 @@ namespace HackTheWorld
                                         obj.VX = 0.0f;
                                         obj.VY = 0.0f;
                                     }));
-                                    self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(ctmp[1])));
+
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.StandOn(stage.Player))
+                                        {
+                                            obj.Move(dt);
+                                        }
+                                    }, float.Parse(ctmp[1])));
                                     break;
 
                                 //プレイヤーが触れたら移動
@@ -260,9 +275,17 @@ namespace HackTheWorld
                                     }));
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(stage.Player))
+                                        if (obj.StandOn(stage.Player))
                                             obj.Move(dt);
                                     }, float.Parse(ctmp[3])));
+
+                                    //最後に自身の速度をゼロに戻しておく
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+
                                     break;
 
                                 default:
@@ -275,75 +298,84 @@ namespace HackTheWorld
                         //プロジェクトバージョンが古すぎて近づいた判定が使えない
                         #region オブジェクトに近づいた時の判定
 
-                        /*
 
-                    case "nearby":
-                        switch (ctmp[0])
-                        {
-                            //プレイヤーが近づいたら大きさを変更
-                            case "size":
-                                self.AddProcess(new Process((obj, dt) =>
-                                {
-                                    if (obj.Nearby(stage.Player))
+
+                        case "nearby":
+                            switch (ctmp[0])
+                            {
+                                //プレイヤーが近づいたら大きさを変更
+                                case "size":
+                                    self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        obj.W = CellSize * float.Parse(ctmp[1]);
-                                        obj.H = CellSize * float.Parse(ctmp[2]);
-                                    }
-                                }));
-                                break;
+                                        if (obj.Nearby(stage.Player))
+                                        {
+                                            obj.W = CellSize * float.Parse(ctmp[1]);
+                                            obj.H = CellSize * float.Parse(ctmp[2]);
+                                        }
+                                    }));
+                                    break;
 
-                            //プレイヤーが近づいたら待機
-                            //ProcessのMoveの秒数指定の仕様上たぶん使えないです
-                            case "wait":
-                                self.AddProcess(new Process((obj, dt) =>
-                                {
-                                    obj.VX = 0.0f;
-                                    obj.VY = 0.0f;
-                                }));
-                                self.AddProcess(new Process((obj, dt) => {
-                                    if (obj.Nearby(stage.Player))
+                                //プレイヤーが近づいたら待機
+                                //ProcessのMoveの秒数指定の仕様上たぶん使えないです
+                                case "wait":
+                                    self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        obj.Move(dt);
-                                    }
-                                }, float.Parse(ctmp[1])));
-                                break;
-
-                            //プレイヤーが近づいたら移動
-                            case "move":
-                                self.AddProcess(new Process((obj, dt) =>
-                                {
-                                    obj.VX = CellSize * float.Parse(ctmp[1]);
-                                    obj.VY = CellSize * float.Parse(ctmp[2]);
-                                }));
-                                self.AddProcess(new Process((obj, dt) =>
-                                {
-                                    if (obj.Nearby(stage.Player))
-                                        obj.Move(dt);
-                                }, float.Parse(ctmp[3])));
-                                break;
-
-                            case "shoot":
-                                self.AddProcess(new Process((obj, dt) =>
-                                {
-                                    if (obj.Nearby(stage.Player))
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+                                    self.AddProcess(new Process((obj, dt) =>
                                     {
+                                        if (obj.Nearby(stage.Player))
+                                        {
+                                            obj.Move(dt);
+                                        }
+                                    }, float.Parse(ctmp[1])));
+                                    break;
 
-                                        //バージョンが古すぎて動かない
+                                //プレイヤーが近づいたら移動
+                                case "move":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = CellSize * float.Parse(ctmp[1]);
+                                        obj.VY = CellSize * float.Parse(ctmp[2]);
+                                    }));
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.Nearby(stage.Player))
+                                            obj.Move(dt);
+                                    }, float.Parse(ctmp[3])));
+
+                                    //最後に自身の速度をゼロにしておく
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+
+                                    break;
+
+                                case "shoot":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.Nearby(stage.Player))
+                                        {
+
+                                        //Bulletクラス追加
                                         var b = new Bullet(self.X, self.MidY, -50, 0, 10, 10);
-                                        stage.Bullets.Add(b);
-                                        stage.Objects.Add(b);
+                                            stage.Bullets.Add(b);
+                                            stage.Objects.Add(b);
 
-                                    }
-                                }));
+                                        }
+                                    }));
 
-                                break;
+                                    break;
 
-                            default:
-                                break;
-                        }
+                                default:
+                                    break;
+                            }
 
-                        break;
-        */
+                            break;
+
                         #endregion
                         default:
                             break;
@@ -383,6 +415,12 @@ namespace HackTheWorld
                             obj.VY = CellSize * float.Parse(tmp[2]);
                         }));
                         self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[3])));
+                        self.AddProcess(new Process((obj, dt) =>
+                        {
+                            obj.VX = 0.0f;
+                            obj.VY = 0.0f;
+                        }));
+
                         break;
 
                     default:
