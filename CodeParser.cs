@@ -194,7 +194,7 @@ namespace HackTheWorld
             string msg = "";
             string s = "";
             int count = 0;
-            int size = 15;
+            int size = 16;
             //意味ない言葉が混ざっていないか見たい
             //"size,1,1", "wait,1", "move,1,1,2"
             Regex[] reg = new Regex[size];
@@ -213,6 +213,7 @@ namespace HackTheWorld
             reg[12] = new Regex(@"end");
             reg[13] = new Regex(@"else");
             reg[14] = new Regex(@"break");
+            reg[15] = new Regex(@"ontop");
 
             Match[] mat = new Match[size];
 
