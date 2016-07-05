@@ -68,16 +68,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animation.cs" />
     <Compile Include="Block.cs" />
+    <Compile Include="Bullet.cs" />
     <Compile Include="ContinueScene.cs" />
+    <Compile Include="EditableEnemy.cs" />
+    <Compile Include="EditMapScene.cs" />
     <Compile Include="EditScene.cs" />
     <Compile Include="Enemy.cs" />
+    <Compile Include="Gate.cs" />
     <Compile Include="IEditable.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="MapEditor.cs" />
     <Compile Include="PauseScene.cs" />
     <Compile Include="CodeBox.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,11 +95,9 @@
     <Compile Include="GameScene.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="MenuItem.cs" />
-    <Compile Include="PBlock.cs" />
+    <Compile Include="EditableBlock.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Process.cs" />
-    <Compile Include="EditableObject.cs" />
-    <Compile Include="ProcessTestScene.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene.cs" />

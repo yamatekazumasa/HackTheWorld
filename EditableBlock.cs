@@ -1,29 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-    public class PBlock : Block, IEditable
+    /// <summary>
+    /// 編集可能なブロック。
+    /// </summary>
+    public class EditableBlock : Block, IEditable
     {
+        // IEditable のプロパティ
         public int ProcessPtr { get; set; }
-        public CodeBox Codebox { get; private set; }
+        public string Name { get; set; }
+        public string Code { get; set; }
         public List<Process> Processes { get; set; }
-        public IEnumerator Routine { get; set; }
+        public bool CanExecute { get; set; }
 
-        [JsonProperty("code", Order = 10)]
-        public string Code => Codebox.Current.Text.ToString();
         public bool IsWorking = false;
 
-        public PBlock(float x, float y) : base(x, y) { }
+        public EditableBlock(float x, float y) : base(x, y) { }
 
         public override void Initialize()
         {
             base.Initialize();
-            _isEditable = true;
-            Codebox = new CodeBox(this) { Position = Position + new Vector(100, 50) };
+            CanExecute = false;
+            Processes = new List<Process>();
         }
 
         public override void Update(float dt)
@@ -35,7 +36,6 @@ namespace HackTheWorld
         {
             GraphicsContext.FillRectangle(Brushes.Gold, X, Y, Width, Height);
             GraphicsContext.DrawRectangle(Pens.Black, X, Y, Width, Height);
-            Codebox.Draw();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace HackTheWorld
     public static class Input
     {
         /// <summary>
-        /// キーボード入力を取得する。
+        /// キー入力を取得する。
         /// </summary>
         public class Key
         {
@@ -117,22 +117,12 @@ namespace HackTheWorld
             }
 
             /// <summary>
-            /// 押されたボタンの状態を更新する。
+            /// マウスボタンの状態を更新する。
             /// </summary>
-            /// <param name="e"></param>
-            public static void ButtonAppend(MouseEventArgs e)
+            public static void Update(LinkedList<MouseButtons> pressedButtons)
             {
-                if (e.Button == MouseButtons.Left) Left.Append(true);
-                if (e.Button == MouseButtons.Right) Right.Append(true);
-            }
-            /// <summary>
-            /// 離されたボタンの状態を更新する。
-            /// </summary>
-            /// <param name="e"></param>
-            public static void ButtonDisappend(MouseEventArgs e)
-            {
-                if (e.Button == MouseButtons.Left) Left.Append(false);
-                if (e.Button == MouseButtons.Right) Right.Append(false);
+                Mouse.Left.Append(pressedButtons.Contains(MouseButtons.Left));
+                Mouse.Right.Append(pressedButtons.Contains(MouseButtons.Right));
             }
 
             /// <summary>

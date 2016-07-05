@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Drawing;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// ゲーム内のオブジェクト大体全部の基底オブジェクト
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class GameObject
     {
@@ -20,16 +22,12 @@ namespace HackTheWorld
         /// 生死フラグ。基本はdelete以外で弄らないように。
         /// </summary>
         private bool _isAlive;
-        /// <summary>
-        /// エディット可能か。
-        /// </summary>
-        protected bool _isEditable;
+
         /// <summary>
         /// オブジェクトのタイプ。enemy、player、bullet、itemなど。
         /// </summary>
         [JsonProperty("type", Order = 0)]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ObjectType ObjectType { get; set; }
+        public Type Type => GetType();
 
         #region コンストラクタ
 
@@ -46,10 +44,12 @@ namespace HackTheWorld
         /// </summary>
         /// <param name="x">初期x座標。</param>
         /// <param name="y">初期y座標。</param>
-        public GameObject(float x, float y) : this()
+        public GameObject(float x, float y)
         {
             X = x;
             Y = y;
+            Size = new Vector(CellSize, CellSize);
+            Initialize();
         }
 
         /// <summary>
@@ -59,10 +59,14 @@ namespace HackTheWorld
         /// <param name="y">初期y座標。</param>
         /// <param name="vx">初期速度のx方向成分。</param>
         /// <param name="vy">初期速度のy方向成分。</param>
-        public GameObject(float x, float y, float vx, float vy) : this(x, y)
+        public GameObject(float x, float y, float vx, float vy)
         {
+            X = x;
+            Y = y;
             VX = vx;
             VY = vy;
+            Size = new Vector(CellSize, CellSize);
+            Initialize();
         }
 
         /// <summary>
@@ -74,17 +78,32 @@ namespace HackTheWorld
         /// <param name="vy">初期速度のy方向成分。</param>
         /// <param name="w">幅。</param>
         /// <param name="h">高さ。</param>
-        public GameObject(float x, float y, float vx, float vy, float w, float h) : this(x, y, vx, vy)
+        public GameObject(float x, float y, float vx, float vy, float w, float h)
         {
+            X = x;
+            Y = y;
+            VX = vx;
+            VY = vy;
             Width = w;
             Height = h;
+            Initialize();
         }
 
         #endregion
 
 
-        #region アクセサ
+        /// <summary>
+        /// 初期化用。
+        /// </summary>
+        public virtual void Initialize()
+        {
+            _isAlive = true;
+        }
 
+        #region アクセサ
+        /// <summary>
+        /// Object の位置座標。
+        /// </summary>
         public Vector Position
         {
             get { return new Vector(_x, _y) / Scale; }
@@ -95,6 +114,9 @@ namespace HackTheWorld
             }
         }
 
+        /// <summary>
+        /// Object の速度。
+        /// </summary>
         public Vector Velocity
         {
             get { return new Vector(_vx, _vy) / Scale; }
@@ -105,6 +127,9 @@ namespace HackTheWorld
             }
         }
 
+        /// <summary>
+        /// Object のサイズ。
+        /// </summary>
         public Vector Size
         {
             get { return new Vector(_w, _h) / Scale; }
@@ -115,42 +140,63 @@ namespace HackTheWorld
             }
         }
 
+        /// <summary>
+        /// 左端の X 座標。
+        /// </summary>
         public float MinX
         {
             get { return (float)_x / Scale; }
             set { _x = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 上端の Y 座標。
+        /// </summary>
         public float MinY
         {
             get { return (float)_y / Scale; }
             set { _y = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 右端の X 座標。
+        /// </summary>
         public float MaxX
         {
             get { return (float)(_x + _w) / Scale; }
             set { _x = (int)(value * Scale) - _w; }
         }
 
+        /// <summary>
+        /// 下端の Y 座標。
+        /// </summary>
         public float MaxY
         {
             get { return (float)(_y + _h) / Scale; }
             set { _y = (int)(value * Scale) - _h; }
         }
 
+        /// <summary>
+        /// 中心の X 座標。
+        /// </summary>
         public float MidX
         {
             get { return (float)(_x + _w / 2) / Scale; }
             set { _x = (int)(value * Scale) - _w / 2; }
         }
 
+        /// <summary>
+        /// 中心の Y 座標。
+        /// </summary>
         public float MidY
         {
             get { return (float)(_y + _h / 2) / Scale; }
             set { _y = (int)(value * Scale) - _h / 2; }
         }
 
+        /// <summary>
+        /// 左端の X 座標。
+        /// </summary>
         [JsonProperty("x", Order = 1)]
         public float X
         {
@@ -158,13 +204,19 @@ namespace HackTheWorld
             set { MinX = value; }
         }
 
+        /// <summary>
+        /// 上端の Y 座標。
+        /// </summary>
         [JsonProperty("y", Order = 2)]
         public float Y
         {
             get { return MinY; }
             set { MinY = value; }
         }
-
+        
+        /// <summary>
+        /// 速度の X 成分。
+        /// </summary>
         [JsonProperty("vx", Order = 3)]
         public float VX
         {
@@ -172,6 +224,9 @@ namespace HackTheWorld
             set { _vx = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 速度の Y 成分。
+        /// </summary>
         [JsonProperty("vy", Order = 4)]
         public float VY
         {
@@ -179,13 +234,19 @@ namespace HackTheWorld
             set { _vy = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 横幅。
+        /// </summary>
         [JsonProperty("width", Order = 5)]
         public float Width
         {
             get { return (float)_w / Scale; }
             set { _w = (int)(value * Scale); }
         }
-
+        
+        /// <summary>
+        /// 縦幅。
+        /// </summary>
         [JsonProperty("height", Order = 6)]
         public float Height
         {
@@ -193,19 +254,33 @@ namespace HackTheWorld
             set { _h = (int)(value * Scale); }
         }
 
+        /// <summary>
+        /// 横幅。
+        /// </summary>
         public float W
         {
             get { return Width; }
             set { Width = value; }
         }
 
+        /// <summary>
+        /// 縦幅。
+        /// </summary>
         public float H
         {
             get { return Height; }
             set { Height = value; }
         }
 
+        /// <summary>
+        /// クリックされたときに true を返す。
+        /// </summary>
         public bool Clicked => Contains(Input.Mouse.Position) && Input.Mouse.Left.Pushed;
+
+        /// <summary>
+        /// 右クリックされたときに true を返す。
+        /// </summary>
+        public bool RightClicked => Contains(Input.Mouse.Position) && Input.Mouse.Right.Pushed;
 
 
         /// <summary>
@@ -232,12 +307,6 @@ namespace HackTheWorld
         public bool IsAlive => _isAlive;
 
         /// <summary>
-        /// 編集可能なら true を返す。
-        /// </summary>
-        [JsonProperty("edit", Order = 11)]
-        public bool IsEditable => _isEditable;
-
-        /// <summary>
         /// オブジェクトを消す。
         /// </summary>
         public void Die()
@@ -246,16 +315,6 @@ namespace HackTheWorld
         }
 
         #endregion
-
-
-        /// <summary>
-        /// 初期化用。
-        /// </summary>
-        public virtual void Initialize()
-        {
-            _isAlive = true;
-            Size = new Vector(CellSize, CellSize);
-        }
 
         #region GameObject専用
 
@@ -337,9 +396,38 @@ namespace HackTheWorld
         public virtual bool CollidesWith(GameObject obj)
         {
             if (!obj._isAlive) return false;
-            if (ObjectType == obj.ObjectType) return false;
             return Intersects(obj);
         }
+
+        /// <summary>
+        /// 対象のオブジェクトがある距離より近づいたときに true を返す。
+        /// </summary>
+        public virtual bool Nearby(GameObject obj)
+        {
+            return (Position - obj.Position).Length < 200;
+        }
+
+        /// <summary>
+        /// 乗り判定。
+        /// 渡されたオブジェクトの矩形領域の上辺に接触しているか判定する。
+        /// </summary>
+        /// <param name="obj">渡されたオブジェクト。</param>
+        /// <returns>乗っていたらtrue、乗っていなかったらfalseを返す。</returns>
+        public bool StandOn(GameObject obj)
+        {
+            return MinX < obj.MaxX && MaxX > obj.MinX && (int)MaxY == (int)obj.MinY;
+        }
+
+        /// <summary>
+        /// 渡されたオブジェクトの矩形領域の下辺に接触しているか判定する。
+        /// </summary>
+        /// <param name="obj">渡されたオブジェクト。</param>
+        /// <returns>頭が当たっていたらtrue、当たっていなかったらfalseを返す。</returns>
+        public bool HitHeadOn(GameObject obj)
+        {
+            return MinX < obj.MaxX && MaxX > obj.MinX && (int)MinY == (int)obj.MaxY;
+        }
+
 
         /// <summary>
         /// オブジェクトがウィンドウの中に納まっているか判定する。
@@ -415,9 +503,12 @@ namespace HackTheWorld
 
         #endregion
 
+        /// <summary>
+        /// 毎フレームの時間を受け取って、その時間分動く。
+        /// </summary>
         public virtual void Update(float dt)
         {
-
+            Move(dt);
         }
 
         /// <summary>

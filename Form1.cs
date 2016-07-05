@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
@@ -15,11 +10,15 @@ using static HackTheWorld.Constants;
 
 namespace HackTheWorld
 {
-
+    /// <summary>
+    /// ゲームウィンドウ。
+    /// キー入力やマウス入力、画面への出力などユーザーとのインタラクション全般を担う。
+    /// </summary>
     public partial class Form1 : Form
     {
         private Bitmap _bmp;
         private LinkedList<Keys> _pressedKeys;
+        private LinkedList<MouseButtons> _pressedButtons;
 
         public Form1()
         {
@@ -41,10 +40,10 @@ namespace HackTheWorld
         private void MainProcess()
         {
             _bmp = new Bitmap(ScreenWidth, ScreenHeight);
+            GraphicsContext = Graphics.FromImage(_bmp);
 
             _pressedKeys = new LinkedList<Keys>();
-
-            Invoke((Action)(() => { GraphicsContext = Graphics.FromImage(_bmp); }));
+            _pressedButtons = new LinkedList<MouseButtons>();
             
             Scene.Current = new TitleScene();
             Stopwatch stopwatch = new Stopwatch();
@@ -55,10 +54,11 @@ namespace HackTheWorld
             while (!IsDisposed) // 毎フレーム呼ばれる処理
             {
                 long currentTime = stopwatch.ElapsedMilliseconds;
-                if (currentTime > 100000) stopwatch.Restart();
+                if (currentTime > 100000000000000000) stopwatch.Restart();
                 float dt = (currentTime - prevTime) / 1000.0F;
 
                 Input.Update(_pressedKeys);
+                Input.Mouse.Update(_pressedButtons);
                 Input.Mouse.Update(MousePosition, Location);
                 // プレイヤーとステージをアップデート
                 Scene.Current.Update(dt);
@@ -111,6 +111,11 @@ namespace HackTheWorld
             _pressedKeys.Remove(e.KeyCode);
         }
 
+        /// <summary>
+        /// 文字入力取得用。
+        /// 押された文字（キーではない）を格納する。
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
             // バックスペース(\n)、SOF(\u0001)、改行(\r,\n)、タブ(\t)は除外。
@@ -118,18 +123,27 @@ namespace HackTheWorld
             Input.KeyBoard.Append(e.KeyChar);
         }
 
-        //押されているマウスのボタン
+        /// <summary>
+        /// マウスのボタン入力取得用。
+        /// 押されたボタンの状態を更新する。
+        /// </summary>
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            Input.Mouse.ButtonAppend(e);
+            if (!_pressedButtons.Contains(e.Button)) _pressedButtons.AddLast(e.Button);
         }
 
+        /// <summary>
+        /// マウスのボタン入力取得用。
+        /// 離されたボタンの状態を更新する。
+        /// </summary>
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            Input.Mouse.ButtonDisappend(e);
+            _pressedButtons.Remove(e.Button);
         }
 
-
+        /// <summary>
+        /// フォームの描画時に _bmp を描画する。
+        /// </summary>
         protected override void OnPaint(PaintEventArgs e)
         {
             if (_bmp == null) return;

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HackTheWorld
+﻿namespace HackTheWorld
 {
     static partial class Constants
     {
@@ -18,7 +12,7 @@ namespace HackTheWorld
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 ,0},
             {1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0 ,0},
             {0, 0, 0,11, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2 ,0},
-            {0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0},
+            {0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0 ,0},
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1}
         };
 

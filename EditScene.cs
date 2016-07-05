@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using static HackTheWorld.Constants;
 
-
-
 namespace HackTheWorld
 {
+    /// <summary>
+    /// ステージを表示しながらゲーム中のオブジェクトのコードを編集するシーン
+    /// </summary>
     class EditScene : Scene
     {
         private MenuItem _backButton;
@@ -15,6 +15,14 @@ namespace HackTheWorld
         private MenuItem _runButton;
         private List<MenuItem> _menuItem;
         private Stage _stage;
+        private readonly CodeBox _codebox;
+
+        public EditScene(Stage stage)
+        {
+            _stage = stage;
+            if (stage.EditableObjects.Count == 0) _codebox = new CodeBox();
+            else _codebox = new CodeBox(stage.EditableObjects[0]);
+        }
 
         public override void Cleanup()
         {
@@ -36,8 +44,6 @@ namespace HackTheWorld
                 Position = new Vector(125 , 500)
             };
             _menuItem = new List<MenuItem> {_backButton, _startButton,_runButton};
-
-            _stage = Stage.CreateDemoStage();
         }
 
         public override void Update(float dt)
@@ -48,43 +54,29 @@ namespace HackTheWorld
             }
             if (_backButton.Clicked) Scene.Pop();
             if (_startButton.Clicked) Scene.Push(new GameScene(_stage));
-            if(_runButton.Clicked) 
-            if (Input.X.Pushed || Input.Back.Pushed)
+            if (_runButton.Clicked)
             {
-                bool isFocused = false;
-                foreach (var obj in _stage.EditableObjects)
-                {
-                    isFocused = isFocused || obj.IsFocused();
-                }
-                if (!isFocused) Scene.Pop();
+                // 文字列を CodeParser.cs にもってく
+                CodeParser.ConvertCodebox(_stage.EditableObjects[0].Code);
             }
             if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
             if (Input.Control.Pressed)
             {
-                if (Input.R.Pushed)
-                {
-                    _stage = Stage.Load();
-                }
-                if (Input.S.Pushed)
-                {
-                    Stage.Save(_stage);
-                }
+                if (Input.R.Pushed) _stage = Stage.Load("stage_1_1.json");
+                if (Input.S.Pushed) _stage.Save();
             }
 
-            foreach (var b in _stage.EditableObjects) b.Update(dt);
-
-            if (Input.Control.Pressed)
+            foreach (var obj in _stage.EditableObjects)
             {
-                if (Input.R.Pushed) _stage = Stage.Load();
-                if (Input.S.Pushed) Stage.Save(_stage);
+                if (obj.Clicked) _codebox.Focus(obj);
             }
+            _codebox.Update();
 
             GraphicsContext.Clear(Color.White);
-            foreach (var obj in _stage.Objects)
-            {
-                obj.Draw();
-            }
+            _stage.Objects.ForEach(obj => obj.Draw());
+            _codebox.Draw();
+
             _backButton.Draw();
             _startButton.Draw();
             _runButton.Draw( );

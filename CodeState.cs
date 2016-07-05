@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// CodeBox に紐つけられたコードの状態を保存する。
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class CodeState
     {
@@ -15,9 +15,6 @@ namespace HackTheWorld
         public int Cursor { get; set; }
         [JsonProperty("maxline", Order = 1)]
         public int MaxLine { get; set; }
-        [JsonProperty("name", Order = 2)]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Constants.ObjectType Name { get; set; }
         [JsonProperty("text", Order = 3)]
         public StringBuilder Text { get; set; }
         [JsonProperty("updatedAt", Order = 4)]
@@ -25,7 +22,9 @@ namespace HackTheWorld
 
         public string[] Lines => Text.ToString().Split('\n');
 
-        // カーソルが何行目の何文字目にあるかを取得する。
+        /// <summary>
+        ///  カーソルが何行目の何文字目にあるかを取得する。
+        /// </summary>
         public Tuple<int, int> CursorPosition
         {
             get
@@ -37,7 +36,9 @@ namespace HackTheWorld
             }
         }
 
-        // 渡されたカーソルが何行目の何文字目にあるかを取得する。
+        /// <summary>
+        /// 渡されたカーソルが何行目の何文字目にあるかを取得する。
+        /// </summary>
         public Tuple<int, int> Position(int cursor)
         {
             string[] lines = Text.ToString().Split('\n');
@@ -46,15 +47,30 @@ namespace HackTheWorld
             return Tuple.Create(line, cursor - sum);
         }
 
+        /// <summary>
+        /// カーソルの位置と最大の行数を受け取って、CodeState を生成する。
+        /// </summary>
         public CodeState(int cursor, int maxLine)
         {
             Cursor = cursor;
             MaxLine = maxLine;
-            Name = Constants.ObjectType.Block;
             Text = new StringBuilder();
             for (int i = 0; i < maxLine - 1; i++) Text.Append('\n');
         }
 
+        public void Save()
+        {
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            if (!Directory.Exists(@".\code")) Directory.CreateDirectory(@".\code");
+            StreamWriter sw = new StreamWriter(@".\code\" + DateTime.Now.ToString("MMddHHmmss") + ".json", false, Encoding.GetEncoding("utf-8"));
+            sw.Write(json);
+            sw.Close();
+        }
+
+
+        /// <summary>
+        /// 文章を受け取って、自身に貼り付ける。
+        /// </summary>
         public void ReadFrom(string text)
         {
             Cursor = 0;

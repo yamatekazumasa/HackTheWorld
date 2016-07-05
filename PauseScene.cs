@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static HackTheWorld.Constants;
+﻿using System.Collections.Generic;
 using System.Drawing;
 
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// ポーズ画面
+    /// </summary>
     class PauseScene : Scene
     {
         private int _cursor;

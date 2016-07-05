@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using static HackTheWorld.Constants;
-using HackTheWorld;
 
 namespace HackTheWorld
 {
@@ -18,10 +14,30 @@ namespace HackTheWorld
     [JsonObject(MemberSerialization.OptIn)]
     public interface IEditable
     {
+        /// <summary>
+        /// 何番目の Process が実行されているか。
+        /// </summary>
         int ProcessPtr { get; set; }
-        IEnumerator Routine { get; set; }
-        CodeBox Codebox { get; }
+        /// <summary>
+        /// 編集時に表示される名前。
+        /// </summary>
+        [JsonProperty("name", Order = 10, DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue("No name")]
+        string Name { get; set; }
+        /// <summary>
+        /// 自身のコード。
+        /// </summary>
+        [JsonProperty("code", Order = 11, DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue("")]
+        string Code { get; set; }
+        /// <summary>
+        /// 自身の動作を格納する。
+        /// </summary>
         List<Process> Processes { get; set; }
+        /// <summary>
+        /// true のとき Update() で Process が実行されるようになる。
+        /// </summary>
+        bool CanExecute { get; set; }
         // GameObject 由来のプロパティ
         float X { get; set; }
         float Y { get; set; }
@@ -49,26 +65,14 @@ namespace HackTheWorld
         bool Contains(GameObject obj);
         bool Intersects(GameObject obj);
         bool CollidesWith(GameObject obj);
+        bool StandOn(GameObject obj);
+        bool HitHeadOn(GameObject obj);
+        bool Nearby(GameObject obj);
         bool InWindow();
     }
 
     static partial class Extensions
     {
-        public static void Focus(this IEditable self)
-        {
-            self.Codebox.Focus();
-        }
-
-        public static bool IsFocused(this IEditable self)
-        {
-            return self.Codebox.IsFocused;
-        }
-
-        public static bool CanExecute(this IEditable self)
-        {
-            return self.Routine != null;
-        }
-
         public static void SetProcesses(this IEditable self, Process[] processes)
         {
             self.Processes = processes.ToList();
@@ -81,12 +85,26 @@ namespace HackTheWorld
 
         public static void AddProcess(this IEditable self, Process process)
         {
+            if (self.Processes == null) self.Processes = new List<Process>();
             self.Processes.Add(process);
+        }
+
+        public static void AddProcess(this IEditable self, ExecuteWith executeWith, float seconds)
+        {
+            if (self.Processes == null) self.Processes = new List<Process>();
+            self.Processes.Add(new Process(executeWith, seconds));
+        }
+
+        public static void AddProcess(this IEditable self, ExecuteWith executeWith)
+        {
+            if (self.Processes == null) self.Processes = new List<Process>();
+            self.Processes.Add(new Process(executeWith));
         }
 
         public static void Update(this IEditable self, float dt)
         {
-            if (self.Processes == null) return;
+            if (!self.CanExecute || self.Processes == null || self.Processes.Count == 0) return;
+
             var process = self.Processes[self.ProcessPtr];
             if (process.ElapsedTime * 1000 <= process.MilliSeconds)
             {
@@ -97,14 +115,17 @@ namespace HackTheWorld
             {
                 self.ProcessPtr++;
             }
-
-            if (self.Clicked) self.Codebox.Focus();
-            self.Codebox.Update();
         }
 
-        public static void Compile(this IEditable self, Stage s)
+        public static void Execute(this IEditable self)
         {
-            string str = self.Codebox.GetString();
+            self.ProcessPtr = 0;
+            self.CanExecute = true;
+        }
+
+        public static void Compile(this IEditable self, Stage stage)
+        {
+            string str = self.Code;
             // ここにstring型をProcess型に変換する処理を書く。
             // CodeParserで生成されたArrayListの中身は<size,1,1><wait,1><move,1,1,2>の形
 
@@ -153,7 +174,7 @@ namespace HackTheWorld
                                 case "size":
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(s.Player))
+                                        if (obj.CollidesWith(stage.Player))
                                         {
                                             obj.W = CellSize * float.Parse(ctmp[1]);
                                             obj.H = CellSize * float.Parse(ctmp[2]);
@@ -181,11 +202,21 @@ namespace HackTheWorld
                                     }));
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(s.Player))
+                                        if (obj.CollidesWith(stage.Player))
                                             obj.Move(dt);
                                     }, float.Parse(ctmp[3])));
+
+                                    //最後に速度をゼロに戻しておく
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+
                                     break;
 
+                                default:
+                                    break;
                             }
 
                             break;
@@ -208,7 +239,7 @@ namespace HackTheWorld
                                 case "size":
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(s.Player))
+                                        if (obj.StandOn(stage.Player))
                                         {
                                             obj.W = CellSize * float.Parse(ctmp[1]);
                                             obj.H = CellSize * float.Parse(ctmp[2]);
@@ -224,7 +255,14 @@ namespace HackTheWorld
                                         obj.VX = 0.0f;
                                         obj.VY = 0.0f;
                                     }));
-                                    self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(ctmp[1])));
+
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.StandOn(stage.Player))
+                                        {
+                                            obj.Move(dt);
+                                        }
+                                    }, float.Parse(ctmp[1])));
                                     break;
 
                                 //プレイヤーが触れたら移動
@@ -236,16 +274,108 @@ namespace HackTheWorld
                                     }));
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
-                                        if (obj.CollidesWith(s.Player))
+                                        if (obj.StandOn(stage.Player))
                                             obj.Move(dt);
                                     }, float.Parse(ctmp[3])));
+
+                                    //最後に自身の速度をゼロに戻しておく
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+
                                     break;
 
+                                default:
+                                    break;
                             }
 
                             break;
                         #endregion
 
+                        //プロジェクトバージョンが古すぎて近づいた判定が使えない
+                        #region オブジェクトに近づいた時の判定
+
+
+
+                        case "nearby":
+                            switch (ctmp[0])
+                            {
+                                //プレイヤーが近づいたら大きさを変更
+                                case "size":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.Nearby(stage.Player))
+                                        {
+                                            obj.W = CellSize * float.Parse(ctmp[1]);
+                                            obj.H = CellSize * float.Parse(ctmp[2]);
+                                        }
+                                    }));
+                                    break;
+
+                                //プレイヤーが近づいたら待機
+                                //ProcessのMoveの秒数指定の仕様上たぶん使えないです
+                                case "wait":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.Nearby(stage.Player))
+                                        {
+                                            obj.Move(dt);
+                                        }
+                                    }, float.Parse(ctmp[1])));
+                                    break;
+
+                                //プレイヤーが近づいたら移動
+                                case "move":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = CellSize * float.Parse(ctmp[1]);
+                                        obj.VY = CellSize * float.Parse(ctmp[2]);
+                                    }));
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.Nearby(stage.Player))
+                                            obj.Move(dt);
+                                    }, float.Parse(ctmp[3])));
+
+                                    //最後に自身の速度をゼロにしておく
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        obj.VX = 0.0f;
+                                        obj.VY = 0.0f;
+                                    }));
+
+                                    break;
+
+                                case "shoot":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.Nearby(stage.Player))
+                                        {
+
+                                        //Bulletクラス追加
+                                        var b = new Bullet(self.X, self.MidY, -50, 0, 10, 10);
+                                            stage.Bullets.Add(b);
+                                            stage.Objects.Add(b);
+
+                                        }
+                                    }));
+
+                                    break;
+
+                                default:
+                                    break;
+                            }
+
+                            break;
+
+                        #endregion
                         default:
                             break;
 
@@ -284,6 +414,12 @@ namespace HackTheWorld
                             obj.VY = CellSize * float.Parse(tmp[2]);
                         }));
                         self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[3])));
+                        self.AddProcess(new Process((obj, dt) =>
+                        {
+                            obj.VX = 0.0f;
+                            obj.VY = 0.0f;
+                        }));
+
                         break;
 
                     default:
@@ -293,8 +429,8 @@ namespace HackTheWorld
 
             }
             #endregion
-        }
 
+        }
 
     }
 

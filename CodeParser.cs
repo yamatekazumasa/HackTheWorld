@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static HackTheWorld.Constants;
+using System.Data;
 using System.Text.RegularExpressions;
-
 
 namespace HackTheWorld
 {
@@ -552,7 +546,7 @@ namespace HackTheWorld
                 hash[str1] = Convert.ToInt32(hash[str1]) + 1;
                 return;
             }
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\-"))
+            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\-"))
             {
                 Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\-\-");
                 Match m = r.Match((string)sArray[i]);
@@ -560,7 +554,7 @@ namespace HackTheWorld
                 hash[str1] = Convert.ToInt32(hash[str1]) - 1;
                 return;
             }
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)"))
+            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)"))
             {
                 Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)");
                 Match m = r.Match((string)sArray[i]);
@@ -569,7 +563,7 @@ namespace HackTheWorld
                 hash[str1] = Convert.ToInt32(hash[str1]) + int.Parse(str2);
                 return;
             }
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\=\s*(?<value>\d+)"))
+            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\=\s*(?<value>\d+)"))
             {
                 Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)");
                 Match m = r.Match((string)sArray[i]);
@@ -891,7 +885,7 @@ namespace HackTheWorld
                         i = tmp + 1;
                         break;
                     }
-                    else tmp++;
+                    tmp++;
                     if(home + tmp >= sArray.Count) return;
                 }
                 //elseの行からまた読み直す
@@ -1005,12 +999,11 @@ namespace HackTheWorld
         public static bool isFor(ArrayList sArray,int home)
         {
             //一致してるかは知りたいけどうしろに余計なのがついてたらはじきたい
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\(\s*\w+\s*\=\s*\w+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\w+\s*;\s*\w+[\+\+|\-\-|\+=\w+|\-=\w+]\)\s*$")) return true;
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\w+\s*=\s*\w+\s*to\s*\w+\s*$")) return true;
-            if(System.Text.RegularExpressions.Regex.IsMatch((string)sArray[home],@"^for\s*\w+\s*$")) return true;
+            if(Regex.IsMatch((string)sArray[home],@"^for\s*\(\s*\w+\s*\=\s*\w+\s*;\s*\w+\s*" + @"<|>|<=|>=" + @"\s*\w+\s*;\s*\w+[\+\+|\-\-|\+=\w+|\-=\w+]\)\s*$")) return true;
+            if(Regex.IsMatch((string)sArray[home],@"^for\s*\w+\s*=\s*\w+\s*to\s*\w+\s*$")) return true;
+            if(Regex.IsMatch((string)sArray[home],@"^for\s*\w+\s*$")) return true;
             return false;
         }
-
 
         public static bool isIf(ArrayList sArray,int home)
         {

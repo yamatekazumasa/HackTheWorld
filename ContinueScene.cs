@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using static HackTheWorld.Constants;
 using System.Drawing;
+using System.Windows.Forms;
 
 
 namespace HackTheWorld
 {
+    /// <summary>
+    /// コンティニュー画面
+    /// </summary>
     class ContinueScene : Scene
     {
         private int _cursor;
 
         //画像を読み込む
-        Bitmap bmp = new Bitmap(@"image\gameover.bmp");
+        readonly Bitmap _bmp = new Bitmap(@"image\gameover.bmp");
 
         private MenuItem _continueButton;
         private MenuItem _closeButton;
@@ -43,10 +43,11 @@ namespace HackTheWorld
 
         public override void Update(float dt)
         {
+            if (Input.Control.Pressed && Input.W.Pushed) Application.Exit();
 
             //背景を透明にする
-            bmp.MakeTransparent();
-            GraphicsContext.DrawImage(bmp,  0, 0);
+            _bmp.MakeTransparent();
+            GraphicsContext.DrawImage(_bmp,  0, 0);
 
 
             if (Input.Down.Pushed || Input.Up.Pushed)
@@ -93,8 +94,8 @@ namespace HackTheWorld
             }
 
             //背景を透明にする
-            bmp.MakeTransparent();
-            GraphicsContext.DrawImage(bmp, 0, 0);
+            _bmp.MakeTransparent();
+            GraphicsContext.DrawImage(_bmp, 0, 0);
 
             foreach (var item in _menuItem)
             {
