@@ -1127,7 +1127,7 @@ namespace HackTheWorld
         #endregion
 
         #region 使ってない
-
+        //消すのが惜しかった
         public static int CountChar(string s,char c)
         {
             return s.Length - s.Replace(c.ToString(),"").Length;
@@ -1147,8 +1147,6 @@ namespace HackTheWorld
             return false;
         }
         #endregion
-
-       
 
     }
 }
