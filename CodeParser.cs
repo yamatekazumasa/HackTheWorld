@@ -280,6 +280,16 @@ namespace HackTheWorld
         //四則演算を行う
         public static string FourOperations(string s)
         {
+            //Pow（累乗）をする
+            while(System.Text.RegularExpressions.Regex.IsMatch(s,@"[\d|\(|\)|\-]+\^[\d|\(|\)|\-]+"))
+            {
+                Regex reg = new Regex(@"(?<left_hand>[\d|\(|\)|\-]+)\^(?<right_hand>[\d|\(|\)|\-]+)");
+                Match mat = reg.Match(s);
+                double left = Convert.ToDouble(FourOperations(mat.Groups["left_hand"].ToString()));
+                double right = Convert.ToDouble(FourOperations(mat.Groups["right_hand"].ToString()));
+                string ans = Math.Pow(left,right).ToString();
+                s = reg.Replace(s,ans,1);
+            }
             if(System.Text.RegularExpressions.Regex.IsMatch(s,@"\d+|[\+|\-|\*|\/]+") && !s.StartsWith(@"[\+|\-|\*|\/]") && !s.EndsWith(@"[\+|\-|\*|\/]") && !s.Contains(@"[\+\+|\-\-|\*\*|\/\/]"))
             {
                 //ここで計算
@@ -526,7 +536,7 @@ namespace HackTheWorld
                 //右辺に今までハッシュに登録されていない文字がいる
                 if(str1.Contains(@"\w+")) return;
 
-                reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[\d+|\+|\-|\*|\/|\.]+)\s*");
+                reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[\d+|\+|\-|\*|\/|\.|\%|\^|\,|\(|\)]+)\s*");
                 mat = reg.Match(s);
                 str2 = mat.Groups["right_hand"].Value;
                 //右辺の文字は数字に置換されたはずなので四則演算の関数に入れてよい
@@ -573,6 +583,7 @@ namespace HackTheWorld
                 hash[str1] = Convert.ToInt32(hash[str1]) - int.Parse(str2);
                 return;
             }
+
 
         }
 
@@ -836,6 +847,8 @@ namespace HackTheWorld
 
             //条件を抜き出してarraylistへ
             string s = (string)sArray[home];
+
+
             Regex reg = new Regex(@"(?<condition>\w+\s*(<|>|(<=)|(>=)|(==))\s*\d+)");
             Match m = reg.Match(s);
             tArray.Add(m.Value);
@@ -855,7 +868,7 @@ namespace HackTheWorld
                     {
                         case 1:
                             For(sArray,result,home + i,hash);
-                            i = EndOfFunction(sArray,home+i);
+                            i = EndOfFunction(sArray,home + i);
                             break;
                         case 2:
                             If(sArray,result,home + i,hash);
@@ -899,7 +912,7 @@ namespace HackTheWorld
                     {
                         case 1:
                             For(sArray,result,home + i,hash);
-                            i = EndOfFunction(sArray,home+i);
+                            i = EndOfFunction(sArray,home + i);
                             break;
                         case 2:
                             If(sArray,result,home + i,hash);
@@ -962,7 +975,7 @@ namespace HackTheWorld
                         {
                             case 1:
                                 For(sArray,result,home + i,hash);
-                                i = EndOfFunction(sArray,home+i);
+                                i = EndOfFunction(sArray,home + i);
                                 break;
                             case 2:
                                 If(sArray,result,home + i,hash);
