@@ -8,6 +8,7 @@ namespace HackTheWorld
 {
     public static class CodeParser
     {
+        //つらを
         #region メイン
         public static ArrayList ConvertCodebox(string originStr)
         {
