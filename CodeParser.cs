@@ -855,9 +855,9 @@ namespace HackTheWorld
             string s = (string)sArray[home];
 
 
-            Regex reg = new Regex(@"(?<condition>\w+\s*(<|>|(<=)|(>=)|(==))\s*\d+)");
+            Regex reg = new Regex(@"^if\((?<condition>.+)\)$");
             Match m = reg.Match(s);
-            tArray.Add(m.Value);
+            tArray.Add(m.Groups["condition"].Value);
             AssignmentHashValue(tArray,0,hash);
 
 
@@ -1088,6 +1088,11 @@ namespace HackTheWorld
         //ifのための判定群
         public static bool SizeComparing(string s)
         {
+            //大小を比較している部分すべてに「true」[false」を叩き込む
+            //かっこを先に抜き出して、かつの判定をすべて行ったのちまたはの判定をおこなう
+            //かっこがおわったら別のかっこをさがす、なかったらかつ→または
+            //＆と棒がなくなったらおわり
+
             //大小判定したい
             Regex reg1 = new Regex(@"(?<left_hand>\d+)\s*<\s*(?<right_hand>\d+)");
             Match m1 = reg1.Match(s);
