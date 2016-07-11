@@ -84,6 +84,10 @@ namespace HackTheWorld
                         break;
                 }
             }
+            for(int i = 0;i < resultArray.Count;i++)
+            {
+                resultArray[i]=SearchAndAssignment((string)resultArray[i]);
+            }
             //「3=3」や「4++」を消したい
             ArrayList resultArray2 = new ArrayList();
             for(int i = 0;i < resultArray.Count;i++)
@@ -655,6 +659,7 @@ namespace HackTheWorld
                             {
                                 result += cList[i];
                             }
+
                             //hashの値を代入した後の文に差し替える
                             sArray[x] = result;
                         }
@@ -1160,5 +1165,17 @@ namespace HackTheWorld
         }
         #endregion
 
+        static string SearchAndAssignment(string s)
+        {
+            Regex reg = new Regex(@"\d+[\+|\-|\*|\/]+[\d+|\+|\-|\*|\/]*\d+");
+            Match mat = reg.Match(s);
+            while(mat.Length > 0)
+            {
+                string ans = FourOperations(mat.Value);
+                s = reg.Replace(s,ans,1);
+                mat = reg.Match(s);
+            }
+            return s;
+        }
     }
 }
