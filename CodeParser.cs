@@ -86,7 +86,7 @@ namespace HackTheWorld
             }
             for(int i = 0;i < resultArray.Count;i++)
             {
-                resultArray[i]=SearchAndAssignment((string)resultArray[i]);
+                resultArray[i] = SearchAndAssignment((string)resultArray[i]);
             }
             //「3=3」や「4++」を消したい
             ArrayList resultArray2 = new ArrayList();
@@ -154,14 +154,14 @@ namespace HackTheWorld
                         if(FirstEnd(sArray,j)) count--;
                         if(count == 0)
                         {
-                            if(!isIf(sArray,i))
-                            {
-                                //WindowContext.Invoke((Action)(() => {
-                                //    Console.WriteLine("ifとendはいるみたいだけど\n文の中身が違う");
-                                //}));
-                                Console.WriteLine("ifとendはいるみたいだけど\n文の中身が違う");
-                                return false;
-                            }
+                            //if(!isIf(sArray,i))
+                            //{
+                            //    //WindowContext.Invoke((Action)(() => {
+                            //    //    Console.WriteLine("ifとendはいるみたいだけど\n文の中身が違う");
+                            //    //}));
+                            //    Console.WriteLine("ifとendはいるみたいだけど\n文の中身が違う");
+                            //    return false;
+                            //}
                             countFunction--;
                             break;
                         }
@@ -1086,14 +1086,30 @@ namespace HackTheWorld
         }
 
         //ifのための判定群
-        public static bool SizeComparing(string s)
+        static bool SizeComparing(string s)
+        {
+            string result = SizeComparingMain(s);
+            if(result == "true") return true;
+            else return false;
+        }
+        public static string SizeComparingMain(string s)
         {
             //大小を比較している部分すべてに「true」[false」を叩き込む
             //かっこを先に抜き出して、かつの判定をすべて行ったのちまたはの判定をおこなう
             //かっこがおわったら別のかっこをさがす、なかったらかつ→または
             //＆と棒がなくなったらおわり
+            Regex reg = new Regex(@"\d+[\d|\+|\-|\*|\/]+\d+");
+            Match mat = reg.Match(s);
+            while(mat.Length > 0)
+            {
+                string ans = FourOperations(mat.Value);
+                s = reg.Replace(s,ans,1);
+                mat = reg.Match(s);
+            }
 
+            string TrueOrFalse = "";
             //大小判定したい
+
             Regex reg1 = new Regex(@"(?<left_hand>\d+)\s*<\s*(?<right_hand>\d+)");
             Match m1 = reg1.Match(s);
 
@@ -1109,42 +1125,101 @@ namespace HackTheWorld
             Regex reg5 = new Regex(@"(?<left_hand>\d+)\s*=\s*=\s*(?<right_hand>\d+)");
             Match m5 = reg5.Match(s);
 
-            if(m1.Length > 0)
+            while(m1.Length > 0 || m2.Length > 0 || m3.Length > 0 || m4.Length > 0 || m5.Length > 0)
             {
-                int left_hand = int.Parse(m1.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m1.Groups["right_hand"].Value);
-                if(left_hand < right_hand) return true;
-                else return false;
+                if(m1.Length > 0)
+                {
+                    int left_hand = int.Parse(m1.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m1.Groups["right_hand"].Value);
+                    if(left_hand < right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg1.Replace(s,TrueOrFalse,1);
+                    m1 = reg1.Match(s);
+                }
+                if(m2.Length > 0)
+                {
+                    int left_hand = int.Parse(m2.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m2.Groups["right_hand"].Value);
+                    if(left_hand > right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg2.Replace(s,TrueOrFalse,1);
+                    m2 = reg2.Match(s);
+                }
+                if(m3.Length > 0)
+                {
+                    int left_hand = int.Parse(m3.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m3.Groups["right_hand"].Value);
+                    if(left_hand <= right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg3.Replace(s,TrueOrFalse,1);
+                    m3 = reg3.Match(s);
+                }
+                if(m4.Length > 0)
+                {
+                    int left_hand = int.Parse(m4.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m4.Groups["right_hand"].Value);
+                    if(left_hand >= right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg4.Replace(s,TrueOrFalse,1);
+                    m4 = reg4.Match(s);
+                }
+                if(m5.Length > 0)
+                {
+                    int left_hand = int.Parse(m5.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m5.Groups["right_hand"].Value);
+                    if(left_hand == right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg5.Replace(s,TrueOrFalse,1);
+                    m5 = reg5.Match(s);
+                }
             }
-            if(m2.Length > 0)
+            reg = new Regex(@"\((?<result>true|false)\)");
+            mat = reg.Match(s);
+            while(mat.Length > 0)
             {
-                int left_hand = int.Parse(m2.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m2.Groups["right_hand"].Value);
-                if(left_hand > right_hand) return true;
-                else return false;
+                s = reg.Replace(s,mat.Groups["result"].Value,1);
+                mat = reg.Match(s);
             }
-            if(m3.Length > 0)
+
+            reg = new Regex(@"\(.+\)");
+            mat = reg.Match(s);
+            while(mat.Length > 0)
             {
-                int left_hand = int.Parse(m3.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m3.Groups["right_hand"].Value);
-                if(left_hand <= right_hand) return true;
-                else return false;
+                string insideParentheses = FourOperations(mat.Value);
+                SizeComparing(insideParentheses);
+                mat = reg.Match(s);
             }
-            if(m4.Length > 0)
+
+            //「かつ」優先
+            reg = new Regex(@"(?<left>true|false)\&\&(?<right>true|false)");
+            mat = reg.Match(s);
+            while(mat.Length > 0)
             {
-                int left_hand = int.Parse(m4.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m4.Groups["right_hand"].Value);
-                if(left_hand >= right_hand) return true;
-                else return false;
+                string result = "";
+                if(mat.Groups["left"].Value == "true" && mat.Groups["right"].Value == "true") result = "true";
+                else result = "false";
+                s = reg.Replace(s,result,1);
+                mat = reg.Match(s);
             }
-            if(m5.Length > 0)
+            //「または」
+            reg = new Regex(@"(?<left>true|false)\|\|(?<right>true|false)");
+            mat = reg.Match(s);
+            while(mat.Length > 0)
             {
-                int left_hand = int.Parse(m5.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m5.Groups["right_hand"].Value);
-                if(left_hand == right_hand) return true;
-                else return false;
+                string result = "";
+                if(mat.Groups["left"].Value == "true" || mat.Groups["right"].Value == "true") result = "true";
+                else result = "false";
+                s = reg.Replace(s,result,1);
+                mat = reg.Match(s);
             }
-            return false;
+            //おわり
+            reg = new Regex(@"^true|false$");
+            mat = reg.Match(s);
+            if(mat.Length > 0)
+            {
+                return mat.Value;
+            }
+            return "false";
         }
         #endregion
 
