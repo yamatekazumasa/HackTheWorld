@@ -8,6 +8,7 @@ namespace HackTheWorld
 {
     public static class CodeParser
     {
+        //つらを
         #region メイン
         public static ArrayList ConvertCodebox(string originStr)
         {
@@ -61,7 +62,6 @@ namespace HackTheWorld
         {
             for(int i = 0;i < sArray.Count;i++)
             {
-                UpdateHash(sArray,i,hash);
                 //i行目が関数で始まってるかどうか
                 switch(ReadSentenceHead(sArray,i))
                 {
@@ -78,10 +78,15 @@ namespace HackTheWorld
                         i = EndOfFunction(sArray,i);
                         break;
                     default:
+                        UpdateHash(sArray,i,hash);
                         AssignmentHashValue(sArray,i,hash);
                         resultArray.Add(sArray[i]);
                         break;
                 }
+            }
+            for(int i = 0;i < resultArray.Count;i++)
+            {
+                resultArray[i] = SearchAndAssignment((string)resultArray[i]);
             }
             //「3=3」や「4++」を消したい
             ArrayList resultArray2 = new ArrayList();
@@ -149,14 +154,14 @@ namespace HackTheWorld
                         if(FirstEnd(sArray,j)) count--;
                         if(count == 0)
                         {
-                            if(!isIf(sArray,i))
-                            {
-                                //WindowContext.Invoke((Action)(() => {
-                                //    Console.WriteLine("ifとendはいるみたいだけど\n文の中身が違う");
-                                //}));
-                                Console.WriteLine("ifとendはいるみたいだけど\n文の中身が違う");
-                                return false;
-                            }
+                            //if(!isIf(sArray,i))
+                            //{
+                            //    //WindowContext.Invoke((Action)(() => {
+                            //    //    Console.WriteLine("ifとendはいるみたいだけど\n文の中身が違う");
+                            //    //}));
+                            //    Console.WriteLine("ifとendはいるみたいだけど\n文の中身が違う");
+                            //    return false;
+                            //}
                             countFunction--;
                             break;
                         }
@@ -194,7 +199,7 @@ namespace HackTheWorld
             string msg = "";
             string s = "";
             int count = 0;
-            int size = 14;
+            int size = 16;
             //意味ない言葉が混ざっていないか見たい
             //"size,1,1", "wait,1", "move,1,1,2"
             Regex[] reg = new Regex[size];
@@ -212,6 +217,9 @@ namespace HackTheWorld
             reg[11] = new Regex(@"while");
             reg[12] = new Regex(@"end");
             reg[13] = new Regex(@"else");
+            reg[14] = new Regex(@"break");
+            reg[15] = new Regex(@"ontop");
+       
 
             Match[] mat = new Match[size];
 
@@ -278,7 +286,17 @@ namespace HackTheWorld
         //四則演算を行う
         public static string FourOperations(string s)
         {
-            if(Regex.IsMatch(s,@"\d+|[\+|\-|\*|\/]+") && !s.StartsWith(@"[\+|\-|\*|\/]") && !s.EndsWith(@"[\+|\-|\*|\/]") && !s.Contains(@"[\+\+|\-\-|\*\*|\/\/]"))
+            //Pow（累乗）をする
+            while(System.Text.RegularExpressions.Regex.IsMatch(s,@"[\d|\(|\)|\-]+\^[\d|\(|\)|\-]+"))
+            {
+                Regex reg = new Regex(@"(?<left_hand>[\d|\(|\)|\-]+)\^(?<right_hand>[\d|\(|\)|\-]+)");
+                Match mat = reg.Match(s);
+                double left = Convert.ToDouble(FourOperations(mat.Groups["left_hand"].ToString()));
+                double right = Convert.ToDouble(FourOperations(mat.Groups["right_hand"].ToString()));
+                string ans = Math.Pow(left,right).ToString();
+                s = reg.Replace(s,ans,1);
+            }
+            if(System.Text.RegularExpressions.Regex.IsMatch(s,@"\d+|[\+|\-|\*|\/]+") && !s.StartsWith(@"[\+|\-|\*|\/]") && !s.EndsWith(@"[\+|\-|\*|\/]") && !s.Contains(@"[\+\+|\-\-|\*\*|\/\/]"))
             {
                 //ここで計算
                 DataTable dt = new DataTable();
@@ -513,18 +531,23 @@ namespace HackTheWorld
                 foreach(string k in keycall)
                 {
                     //右辺にすでにハッシュに入れたものがいる
-                    if(str1.Contains(k))
+                    while(str1.Contains(k))
                     {
                         string pattern = k;
                         string replacement = hash[k].ToString();
                         Regex r = new Regex(pattern);
                         s = r.Replace(s,replacement);
+                        mat = reg.Match(s);
+                        str1 = mat.Groups["right_hand"].Value;
                     }
                 }
                 //右辺に今までハッシュに登録されていない文字がいる
-                if(str1.Contains(@"\w+")) return;
-
-                reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[\d+|\+|\-|\*|\/|\.]+)\s*");
+                if(str1.Contains(@"\w+"))
+                {
+                    Console.WriteLine("ここ");
+                    return;
+                }
+                reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[\d+|\+|\-|\*|\/|\.|\%|\^|\,|\(|\)]+)\s*");
                 mat = reg.Match(s);
                 str2 = mat.Groups["right_hand"].Value;
                 //右辺の文字は数字に置換されたはずなので四則演算の関数に入れてよい
@@ -571,6 +594,7 @@ namespace HackTheWorld
                 hash[str1] = Convert.ToInt32(hash[str1]) - int.Parse(str2);
             }
 
+
         }
 
         public static void AssignmentHashValue(ArrayList sArray,int x,Hashtable hash)
@@ -596,8 +620,9 @@ namespace HackTheWorld
                             s = input.Substring(foundIndex,key.Length + 1);
                             if(Regex.IsMatch(s,@"[a-zA-Z]$")) canAssignment = false;
                         }
-                        else if(foundIndex != input.Length - 1)
+                        else if(input.Length>=foundIndex+key.Length+1)
                         {
+                            //abcde
                             s = input.Substring(foundIndex - 1,key.Length + 2);
                             if(Regex.IsMatch(s,@"^[a-zA-Z]") || Regex.IsMatch(s,@"[a-zA-Z]$")) canAssignment = false;
                         }
@@ -640,6 +665,7 @@ namespace HackTheWorld
                             {
                                 result += cList[i];
                             }
+
                             //hashの値を代入した後の文に差し替える
                             sArray[x] = result;
                         }
@@ -693,9 +719,6 @@ namespace HackTheWorld
                     ArrayList uArray = new ArrayList();
                     bool breakIsExists = false;
 
-                    //homeまで読む(条件取り終わったから)
-                    UpdateHash(sArray,home,hash);
-
                     //初期条件を別のArrayListに入れ、hashを更新する
                     tArray.Add(m1_1.Groups["start"].Value);
                     UpdateHash(tArray,0,hash);
@@ -715,9 +738,7 @@ namespace HackTheWorld
                         {
                             while(!FirstEnd(tArray,i))
                             {
-                                UpdateHash(tArray,i,hash);
-
-                                switch(ReadSentenceHead(tArray,i))
+                            switch(ReadSentenceHead(tArray,i))
                                 {
                                     case 1:
                                         For(tArray,result,i,hash);
@@ -732,6 +753,7 @@ namespace HackTheWorld
                                         i = EndOfFunction(tArray,i) + 1;
                                         break;
                                     default:
+                                        UpdateHash(tArray,i,hash);
                                         AssignmentHashValue(tArray,i,hash);
                                         result.Add(tArray[i]);
                                         i++;
@@ -833,10 +855,12 @@ namespace HackTheWorld
 
             //条件を抜き出してarraylistへ
             string s = (string)sArray[home];
-            Regex reg = new Regex(@"(?<condition>\w+\s*(<|>|(<=)|(>=)|(==))\s*\d+)");
+
+            Regex reg = new Regex(@"^if\((?<condition>.+)\)$");
             Match m = reg.Match(s);
-            tArray.Add(m.Value);
+            tArray.Add(m.Groups["condition"].Value);
             AssignmentHashValue(tArray,0,hash);
+            tArray[0] = SearchAndAssignment((string)tArray[0]);
 
 
             if(SizeComparing((string)tArray[0]))
@@ -852,7 +876,7 @@ namespace HackTheWorld
                     {
                         case 1:
                             For(sArray,result,home + i,hash);
-                            i = EndOfFunction(sArray,home+i);
+                            i = EndOfFunction(sArray,home + i);
                             break;
                         case 2:
                             If(sArray,result,home + i,hash);
@@ -896,7 +920,7 @@ namespace HackTheWorld
                     {
                         case 1:
                             For(sArray,result,home + i,hash);
-                            i = EndOfFunction(sArray,home+i);
+                            i = EndOfFunction(sArray,home + i);
                             break;
                         case 2:
                             If(sArray,result,home + i,hash);
@@ -958,7 +982,7 @@ namespace HackTheWorld
                         {
                             case 1:
                                 For(sArray,result,home + i,hash);
-                                i = EndOfFunction(sArray,home+i);
+                                i = EndOfFunction(sArray,home + i);
                                 break;
                             case 2:
                                 If(sArray,result,home + i,hash);
@@ -1063,9 +1087,33 @@ namespace HackTheWorld
         }
 
         //ifのための判定群
-        public static bool SizeComparing(string s)
+        static bool SizeComparing(string s)
         {
+            string result = SizeComparingMain(s);
+            if(result == "true") return true;
+            else return false;
+        }
+        public static string SizeComparingMain(string s)
+        {
+            //大小を比較している部分すべてに「true」[false」を叩き込む
+            //かっこを先に抜き出して、かつの判定をすべて行ったのちまたはの判定をおこなう
+            //かっこがおわったら別のかっこをさがす、なかったらかつ→または
+            //＆と棒がなくなったらおわり
+            Regex reg = new Regex(@"\d+[\d|\+|\-|\*|\/]+\d+");
+            Match mat = reg.Match(s);
+            Regex onlyNumber = new Regex(@"^\d+$");
+            Match matchNumber = onlyNumber.Match(mat.Value);
+            while(mat.Length > 0&&matchNumber.Length==0)
+            {
+                string ans = FourOperations(mat.Value);
+                s = reg.Replace(s,ans,1);
+                mat = reg.Match(s);
+                matchNumber = onlyNumber.Match(mat.Value);
+            }
+
+            string TrueOrFalse = "";
             //大小判定したい
+
             Regex reg1 = new Regex(@"(?<left_hand>\d+)\s*<\s*(?<right_hand>\d+)");
             Match m1 = reg1.Match(s);
 
@@ -1081,42 +1129,101 @@ namespace HackTheWorld
             Regex reg5 = new Regex(@"(?<left_hand>\d+)\s*=\s*=\s*(?<right_hand>\d+)");
             Match m5 = reg5.Match(s);
 
-            if(m1.Length > 0)
+            while(m1.Length > 0 || m2.Length > 0 || m3.Length > 0 || m4.Length > 0 || m5.Length > 0)
             {
-                int left_hand = int.Parse(m1.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m1.Groups["right_hand"].Value);
-                if(left_hand < right_hand) return true;
-                return false;
+                if(m1.Length > 0)
+                {
+                    int left_hand = int.Parse(m1.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m1.Groups["right_hand"].Value);
+                    if(left_hand < right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg1.Replace(s,TrueOrFalse,1);
+                    m1 = reg1.Match(s);
+                }
+                if(m2.Length > 0)
+                {
+                    int left_hand = int.Parse(m2.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m2.Groups["right_hand"].Value);
+                    if(left_hand > right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg2.Replace(s,TrueOrFalse,1);
+                    m2 = reg2.Match(s);
+                }
+                if(m3.Length > 0)
+                {
+                    int left_hand = int.Parse(m3.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m3.Groups["right_hand"].Value);
+                    if(left_hand <= right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg3.Replace(s,TrueOrFalse,1);
+                    m3 = reg3.Match(s);
+                }
+                if(m4.Length > 0)
+                {
+                    int left_hand = int.Parse(m4.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m4.Groups["right_hand"].Value);
+                    if(left_hand >= right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg4.Replace(s,TrueOrFalse,1);
+                    m4 = reg4.Match(s);
+                }
+                if(m5.Length > 0)
+                {
+                    int left_hand = int.Parse(m5.Groups["left_hand"].Value);
+                    int right_hand = int.Parse(m5.Groups["right_hand"].Value);
+                    if(left_hand == right_hand) TrueOrFalse = "true";
+                    else TrueOrFalse = "false";
+                    s = reg5.Replace(s,TrueOrFalse,1);
+                    m5 = reg5.Match(s);
+                }
             }
-            if(m2.Length > 0)
+            reg = new Regex(@"\((?<result>true|false)\)");
+            mat = reg.Match(s);
+            while(mat.Length > 0)
             {
-                int left_hand = int.Parse(m2.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m2.Groups["right_hand"].Value);
-                if(left_hand > right_hand) return true;
-                return false;
+                s = reg.Replace(s,mat.Groups["result"].Value,1);
+                mat = reg.Match(s);
             }
-            if(m3.Length > 0)
+
+            reg = new Regex(@"\(.+\)");
+            mat = reg.Match(s);
+            while(mat.Length > 0)
             {
-                int left_hand = int.Parse(m3.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m3.Groups["right_hand"].Value);
-                if(left_hand <= right_hand) return true;
-                return false;
+                string insideParentheses = FourOperations(mat.Value);
+                SizeComparing(insideParentheses);
+                mat = reg.Match(s);
             }
-            if(m4.Length > 0)
+
+            //「かつ」優先
+            reg = new Regex(@"(?<left>true|false)\&\&(?<right>true|false)");
+            mat = reg.Match(s);
+            while(mat.Length > 0)
             {
-                int left_hand = int.Parse(m4.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m4.Groups["right_hand"].Value);
-                if(left_hand >= right_hand) return true;
-                return false;
+                string result = "";
+                if(mat.Groups["left"].Value == "true" && mat.Groups["right"].Value == "true") result = "true";
+                else result = "false";
+                s = reg.Replace(s,result,1);
+                mat = reg.Match(s);
             }
-            if(m5.Length > 0)
+            //「または」
+            reg = new Regex(@"(?<left>true|false)\|\|(?<right>true|false)");
+            mat = reg.Match(s);
+            while(mat.Length > 0)
             {
-                int left_hand = int.Parse(m5.Groups["left_hand"].Value);
-                int right_hand = int.Parse(m5.Groups["right_hand"].Value);
-                if(left_hand == right_hand) return true;
-                return false;
+                string result = "";
+                if(mat.Groups["left"].Value == "true" || mat.Groups["right"].Value == "true") result = "true";
+                else result = "false";
+                s = reg.Replace(s,result,1);
+                mat = reg.Match(s);
             }
-            return false;
+            //おわり
+            reg = new Regex(@"^true|false$");
+            mat = reg.Match(s);
+            if(mat.Length > 0)
+            {
+                return mat.Value;
+            }
+            return "false";
         }
         #endregion
 
@@ -1142,5 +1249,17 @@ namespace HackTheWorld
         }
         #endregion
 
+        static string SearchAndAssignment(string s)
+        {
+            Regex reg = new Regex(@"\d+[\+|\-|\*|\/|\%]+[\d+|\+|\-|\*|\/|\%]*\d+");
+            Match mat = reg.Match(s);
+            while(mat.Length > 0)
+            {
+                string ans = FourOperations(mat.Value);
+                s = reg.Replace(s,ans,1);
+                mat = reg.Match(s);
+            }
+            return s;
+        }
     }
 }
