@@ -100,6 +100,7 @@ namespace HackTheWorld
             {
                 resultArray.Add(resultArray2[i]);
             }
+            ConvertForYokouchi(resultArray);
         }
         #endregion
 
@@ -203,9 +204,9 @@ namespace HackTheWorld
             //意味ない言葉が混ざっていないか見たい
             //"size,1,1", "wait,1", "move,1,1,2"
             Regex[] reg = new Regex[size];
-            reg[0] = new Regex(@"\s*size\s*,\s*[\w+|\+|\-|\*|\/]+\s*,\s*[\w+|\+|\-|\*|\/]+");
-            reg[1] = new Regex(@"\s*wait\s*,\s*\w+");
-            reg[2] = new Regex(@"\s*move\s*,\s*[\w+|\+|\-|\*|\/]+\s*,\s*[\w+|\+|\-|\*|\/]+,\s*[\w+|\+|\-|\*|\/]+");
+            reg[0] = new Regex(@"\s*size\s*\(\s*[\w+|\+|\-|\*|\/]+\s*,\s*[\w+|\+|\-|\*|\/]+\)");
+            reg[1] = new Regex(@"\s*wait\s*\(\s*[\w+|\+|\-|\*|\/]+\)");
+            reg[2] = new Regex(@"\s*move\s*\(\s*[\w+|\+|\-|\*|\/]+\s*,\s*[\w+|\+|\-|\*|\/]+,\s*[\w+|\+|\-|\*|\/]+\)");
             reg[3] = new Regex(@"\s*\w+\s*=\s*[\w+|\+|\-|\*|\/]+\s*");
             reg[4] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*=");
             reg[5] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\+\+");
@@ -357,6 +358,34 @@ namespace HackTheWorld
                 i++;
             }
             return tArray;
+        }
+        static void ConvertForYokouchi(ArrayList sArray)
+        {
+            for(int i = 0;i < sArray.Count;i++)
+            {
+                string s = (string)sArray[i];
+                if(s.StartsWith(@"size"))
+                {
+                    Regex reg = new Regex(@"\s*size\s*\(\s*(?<a>\d+)\s*,\s*(?<b>\d+)\)");
+                    Match mat = reg.Match(s);
+                    string result = "size,"+mat.Groups["a"].Value+","+mat.Groups["b"].Value;
+                    sArray[i] = result;
+                }
+                if(s.StartsWith(@"wait"))
+                {
+                    Regex reg = new Regex(@"\s*wait\s*\(\s*(?<a>\d+)\s*\)");
+                    Match mat = reg.Match(s);
+                    string result = "wait," + mat.Groups["a"].Value;
+                    sArray[i] = result;
+                }
+                if(s.StartsWith(@"move"))
+                {
+                    Regex reg = new Regex(@"\s*move\s*\(\s*(?<a>\d+)\s*,\s*(?<b>\d+),\s*(?<c>\d+)");
+                    Match mat = reg.Match(s);
+                    string result = "move," + mat.Groups["a"].Value + "," + mat.Groups["b"].Value + "," + mat.Groups["c"].Value;
+                    sArray[i] = result;
+                }
+            }
         }
         #endregion
 
