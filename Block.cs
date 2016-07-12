@@ -20,14 +20,12 @@ namespace HackTheWorld
         public override void Initialize()
         {
             base.Initialize();
-            Image = Image.FromFile(@"image\masato1.jpg");
+            Image = Image.FromFile(@"image\block.png");
         }
 
         public override void Draw()
         {
             ((IDrawable) this).Draw();
-//            GraphicsContext.FillRectangle(Brushes.Brown, X, Y, Width, Height);
-//            GraphicsContext.DrawRectangle(Pens.Black   , X, Y, Width, Height);
         }
 
     }
