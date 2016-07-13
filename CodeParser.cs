@@ -366,26 +366,38 @@ namespace HackTheWorld
                 string s = (string)sArray[i];
                 if(s.StartsWith(@"size"))
                 {
-                    Regex reg = new Regex(@"\s*size\s*\(\s*(?<a>\d+)\s*,\s*(?<b>\d+)\)");
+                    Regex reg = new Regex(@"\s*size\s*\(\s*(?<a>[\d|\.]+)\s*,\s*(?<b>[\d|\.]+)\)");
                     Match mat = reg.Match(s);
                     string result = "size,"+mat.Groups["a"].Value+","+mat.Groups["b"].Value;
                     sArray[i] = result;
                 }
                 if(s.StartsWith(@"wait"))
                 {
-                    Regex reg = new Regex(@"\s*wait\s*\(\s*(?<a>\d+)\s*\)");
+                    Regex reg = new Regex(@"\s*wait\s*\(\s*(?<a>[\d|\.]+)\s*\)");
                     Match mat = reg.Match(s);
                     string result = "wait," + mat.Groups["a"].Value;
                     sArray[i] = result;
                 }
                 if(s.StartsWith(@"move"))
                 {
-                    Regex reg = new Regex(@"\s*move\s*\(\s*(?<a>\d+)\s*,\s*(?<b>\d+),\s*(?<c>\d+)");
+                    Regex reg = new Regex(@"\s*move\s*\(\s*(?<a>[\-|\d|\.]+)\s*,\s*(?<b>[\-|\d|\.]+),\s*(?<c>[\d|\.]+)");
                     Match mat = reg.Match(s);
                     string result = "move," + mat.Groups["a"].Value + "," + mat.Groups["b"].Value + "," + mat.Groups["c"].Value;
                     sArray[i] = result;
                 }
             }
+        }
+        static string SearchAndAssignment(string s)
+        {
+            Regex reg = new Regex(@"\d+[\+|\-|\*|\/|\%]+[\d+|\+|\-|\*|\/|\%]*\d+");
+            Match mat = reg.Match(s);
+            while(mat.Length > 0)
+            {
+                string ans = FourOperations(mat.Value);
+                s = reg.Replace(s,ans,1);
+                mat = reg.Match(s);
+            }
+            return s;
         }
         #endregion
 
@@ -1278,17 +1290,6 @@ namespace HackTheWorld
         }
         #endregion
 
-        static string SearchAndAssignment(string s)
-        {
-            Regex reg = new Regex(@"\d+[\+|\-|\*|\/|\%]+[\d+|\+|\-|\*|\/|\%]*\d+");
-            Match mat = reg.Match(s);
-            while(mat.Length > 0)
-            {
-                string ans = FourOperations(mat.Value);
-                s = reg.Replace(s,ans,1);
-                mat = reg.Match(s);
-            }
-            return s;
-        }
+ 
     }
 }
