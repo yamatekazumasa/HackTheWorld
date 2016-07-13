@@ -12,6 +12,7 @@ namespace HackTheWorld
         #region メイン
         public static ArrayList ConvertCodebox(string originStr)
         {
+
             Hashtable hash = new Hashtable();
 
             ICollection valuecall = hash.Values;
@@ -56,6 +57,7 @@ namespace HackTheWorld
             strResult = ConvertArrayToString(resultArray);
             Console.WriteLine(strResult);
             return resultArray;
+
         }
 
         public static void JumpToFunction(ArrayList sArray,ArrayList resultArray,Hashtable hash)
@@ -220,7 +222,7 @@ namespace HackTheWorld
             reg[13] = new Regex(@"else");
             reg[14] = new Regex(@"break");
             reg[15] = new Regex(@"ontop");
-       
+
 
             Match[] mat = new Match[size];
 
@@ -368,7 +370,7 @@ namespace HackTheWorld
                 {
                     Regex reg = new Regex(@"\s*size\s*\(\s*(?<a>[\d|\.]+)\s*,\s*(?<b>[\d|\.]+)\)");
                     Match mat = reg.Match(s);
-                    string result = "size,"+mat.Groups["a"].Value+","+mat.Groups["b"].Value;
+                    string result = "size," + mat.Groups["a"].Value + "," + mat.Groups["b"].Value;
                     sArray[i] = result;
                 }
                 if(s.StartsWith(@"wait"))
@@ -561,80 +563,102 @@ namespace HackTheWorld
         {
             string str1, str2, str3;
             ICollection keycall = hash.Keys;
+            string input = (string)sArray[i];
+            Regex equals = new Regex(@"\=|\+\=|\-\=|\+\+|\-\-");
+            Match equalsMatch = equals.Match(input);
 
-            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[(?<value>\w+)|\+|\-|\*|\/|\.]+)\s*"))
+            Regex[] regSeparate = new Regex[5];
+            regSeparate[0] = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[(?<value>\w+)|\+|\-|\*|\/|\.]+)\s*");
+            regSeparate[1] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\+\+");
+            regSeparate[2] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\-\-");
+            regSeparate[3] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)");
+            regSeparate[4] = new Regex(@"\s*(?<name>[a-zA-z]+)\s*\-\=\s*(?<value>\d+)");
+
+            int stepforward = 0;
+
+            while(0 != equalsMatch.Length)
             {
-                string s = (string)sArray[i];
-                Regex reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<right_hand>.*)");
-                Match mat = reg.Match(s);
-                str1 = mat.Groups["right_hand"].Value;
-
-                foreach(string k in keycall)
+                if(regSeparate[0].IsMatch(input,stepforward))
                 {
-                    //右辺にすでにハッシュに入れたものがいる
-                    while(str1.Contains(k))
+                    Regex reg = new Regex(@"(?<name>\w+)\s*=\s*(?<right_hand>[\d|\w|\+|\-|\*|\/|\.]+)");
+                    Match mat = reg.Match(input,stepforward);
+                    str1 = mat.Groups["right_hand"].Value;
+
+                    foreach(string k in keycall)
                     {
-                        string pattern = k;
-                        string replacement = hash[k].ToString();
-                        Regex r = new Regex(pattern);
-                        s = r.Replace(s,replacement);
-                        mat = reg.Match(s);
-                        str1 = mat.Groups["right_hand"].Value;
+                        //右辺にすでにハッシュに入れたものがいる
+                        while(str1.Contains(k))
+                        {
+                            string pattern = k;
+                            string replacement = hash[k].ToString();
+                            Regex r = new Regex(pattern);
+                            input = r.Replace(input,replacement);
+                            mat = reg.Match(input);
+                            str1 = mat.Groups["right_hand"].Value;
+                        }
                     }
+                    //右辺に今までハッシュに登録されていない文字がいる
+                    if(str1.Contains(@"\w+"))
+                    {
+                        Console.WriteLine("ここ");
+                        return;
+                    }
+                    reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[\d+|\+|\-|\*|\/|\.|\%|\^|\,|\(|\)]+)\s*");
+                    mat = reg.Match(input,stepforward);
+                    str2 = mat.Groups["right_hand"].Value;
+                    //右辺の文字は数字に置換されたはずなので四則演算の関数に入れてよい
+                    str2 = FourOperations(str2);
+
+                    //hashへの登録
+                    str3 = mat.Groups["name"].Value;
+                    hash[str3] = str2;
+
                 }
-                //右辺に今までハッシュに登録されていない文字がいる
-                if(str1.Contains(@"\w+"))
+                //ここから＋＋とか＋＝とかの部分
+                if(regSeparate[1].IsMatch(input,stepforward))
                 {
-                    Console.WriteLine("ここ");
-                    return;
+                    Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\+\+");
+                    Match m = r.Match(input,stepforward);
+                    str1 = m.Groups["name"].Value;
+                    hash[str1] = Convert.ToInt32(hash[str1]) + 1;
                 }
-                reg = new Regex(@"\s*(?<name>\w+)\s*=\s*(?<right_hand>[\d+|\+|\-|\*|\/|\.|\%|\^|\,|\(|\)]+)\s*");
-                mat = reg.Match(s);
-                str2 = mat.Groups["right_hand"].Value;
-                //右辺の文字は数字に置換されたはずなので四則演算の関数に入れてよい
-                str2 = FourOperations(str2);
+                if(regSeparate[2].IsMatch(input,stepforward))
+                {
+                    Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\-\-");
+                    Match m = r.Match(input,stepforward);
+                    str1 = m.Groups["name"].Value;
+                    hash[str1] = Convert.ToInt32(hash[str1]) - 1;
+                }
+                if(regSeparate[3].IsMatch(input,stepforward))
+                {
+                    Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)");
+                    Match m = r.Match(input,stepforward);
+                    str1 = m.Groups["name"].Value;
+                    str2 = m.Groups["value"].Value;
+                    hash[str1] = Convert.ToInt32(hash[str1]) + int.Parse(str2);
+                }
+                if(regSeparate[4].IsMatch(input,stepforward))
+                {
+                    Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)");
+                    Match m = r.Match(input,stepforward);
+                    str1 = m.Groups["name"].Value;
+                    str2 = m.Groups["value"].Value;
+                    hash[str1] = Convert.ToInt32(hash[str1]) - int.Parse(str2);
+                }
 
-                //hashへの登録
-                str3 = mat.Groups["name"].Value;
-                hash[str3] = str2;
-                return;
-
+                int nextIndex = equalsMatch.Index + equalsMatch.Value.Length;
+                if(nextIndex < input.Length)
+                {
+                    //次の位置を探す
+                    equalsMatch = equals.Match(input,nextIndex);
+                    stepforward = equalsMatch.Index-2;
+                }
+                else
+                {
+                    //最後まで検索したので終わる
+                    break;
+                }
             }
-            //ここから＋＋とか＋＝とかの部分
-            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\+"))
-            {
-                Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\+\+");
-                Match m = r.Match((string)sArray[i]);
-                str1 = m.Groups["name"].Value;
-                hash[str1] = Convert.ToInt32(hash[str1]) + 1;
-                return;
-            }
-            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\-"))
-            {
-                Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\-\-");
-                Match m = r.Match((string)sArray[i]);
-                str1 = m.Groups["name"].Value;
-                hash[str1] = Convert.ToInt32(hash[str1]) - 1;
-                return;
-            }
-            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)"))
-            {
-                Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)");
-                Match m = r.Match((string)sArray[i]);
-                str1 = m.Groups["name"].Value;
-                str2 = m.Groups["value"].Value;
-                hash[str1] = Convert.ToInt32(hash[str1]) + int.Parse(str2);
-                return;
-            }
-            if(Regex.IsMatch((string)sArray[i],@"\s*(?<name>[a-zA-z]+)\s*\-\=\s*(?<value>\d+)"))
-            {
-                Regex r = new Regex(@"(?<name>[a-zA-z]+)\s*\+\=\s*(?<value>\d+)");
-                Match m = r.Match((string)sArray[i]);
-                str1 = m.Groups["name"].Value;
-                str2 = m.Groups["value"].Value;
-                hash[str1] = Convert.ToInt32(hash[str1]) - int.Parse(str2);
-            }
-
 
         }
 
@@ -661,7 +685,7 @@ namespace HackTheWorld
                             s = input.Substring(foundIndex,key.Length + 1);
                             if(Regex.IsMatch(s,@"[a-zA-Z]$")) canAssignment = false;
                         }
-                        else if(input.Length>=foundIndex+key.Length+1)
+                        else if(input.Length > foundIndex + key.Length + 1)
                         {
                             //abcde
                             s = input.Substring(foundIndex - 1,key.Length + 2);
@@ -713,7 +737,7 @@ namespace HackTheWorld
 
                         //次の検索開始位置を決める
                         input = (string)sArray[x];
-                        int nextIndex = foundIndex + key.Length;
+                        int nextIndex = foundIndex + key.Length - 1;
                         if(nextIndex < input.Length)
                         {
                             //次の位置を探す
@@ -779,7 +803,7 @@ namespace HackTheWorld
                         {
                             while(!FirstEnd(tArray,i))
                             {
-                            switch(ReadSentenceHead(tArray,i))
+                                switch(ReadSentenceHead(tArray,i))
                                 {
                                     case 1:
                                         For(tArray,result,i,hash);
@@ -1144,7 +1168,7 @@ namespace HackTheWorld
             Match mat = reg.Match(s);
             Regex onlyNumber = new Regex(@"^\d+$");
             Match matchNumber = onlyNumber.Match(mat.Value);
-            while(mat.Length > 0&&matchNumber.Length==0)
+            while(mat.Length > 0 && matchNumber.Length == 0)
             {
                 string ans = FourOperations(mat.Value);
                 s = reg.Replace(s,ans,1);
@@ -1290,6 +1314,6 @@ namespace HackTheWorld
         }
         #endregion
 
- 
+
     }
 }
