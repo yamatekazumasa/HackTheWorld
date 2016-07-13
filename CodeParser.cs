@@ -650,8 +650,11 @@ namespace HackTheWorld
                 if(nextIndex < input.Length)
                 {
                     //次の位置を探す
+                    
+                    Regex blanc = new Regex(@"\s");
+                    Match matchBlanc = blanc.Match(input,nextIndex);
+                    stepforward = matchBlanc.Index;
                     equalsMatch = equals.Match(input,nextIndex);
-                    stepforward = equalsMatch.Index-2;
                 }
                 else
                 {
