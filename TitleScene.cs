@@ -75,7 +75,7 @@ namespace HackTheWorld
                 switch (_cursor)
                 {
                     case 0:
-                        Scene.Push(new GameScene(Stage.Load("stage_1_1.json")));
+                        Scene.Push(new StageSelectScene());
                         break;
                     case 1:
                         Scene.Push(new EditMapScene());
@@ -84,7 +84,7 @@ namespace HackTheWorld
                         Scene.Push(new EditScene(Stage.Load("stage_1_1.json")));
                         break;
                     case 3:
-                        Scene.Push(new EditScene(Stage.Load("stage_1_1.json")));
+                        Scene.Push(new GameScene(Stage.Load("stage_1_1.json")));
                         break;
                     case 4:
                         Application.Exit();
