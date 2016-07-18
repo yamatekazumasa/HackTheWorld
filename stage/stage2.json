@@ -3,15 +3,6 @@
   "cols": 10,
   "objects": [
     {
-      "type": "HackTheWorld.Player, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "x": 0.0,
-      "y": 300.0,
-      "vx": 0.0,
-      "vy": 0.0,
-      "width": 42.0,
-      "height": 54.0
-    },
-    {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 0.0,
       "y": 540.0,
@@ -21,24 +12,6 @@
       "height": 60.0
     },
     {
-      "type": "HackTheWorld.Player, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "x": 60.0,
-      "y": 300.0,
-      "vx": 0.0,
-      "vy": 0.0,
-      "width": 42.0,
-      "height": 54.0
-    },
-    {
-      "type": "HackTheWorld.Player, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "x": 60.0,
-      "y": 360.0,
-      "vx": 0.0,
-      "vy": 0.0,
-      "width": 42.0,
-      "height": 54.0
-    },
-    {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 60.0,
       "y": 540.0,
@@ -46,15 +19,6 @@
       "vy": 0.0,
       "width": 60.0,
       "height": 60.0
-    },
-    {
-      "type": "HackTheWorld.Player, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "x": 120.0,
-      "y": 360.0,
-      "vx": 0.0,
-      "vy": 0.0,
-      "width": 42.0,
-      "height": 54.0
     },
     {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -111,18 +75,20 @@
       "height": 60.0
     },
     {
-      "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "type": "HackTheWorld.EditableBlock, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 480.0,
       "y": 540.0,
       "vx": 0.0,
       "vy": 0.0,
       "width": 60.0,
-      "height": 60.0
+      "height": 60.0,
+      "name": "Block",
+      "code": ""
     },
     {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 540.0,
-      "y": 540.0,
+      "y": 120.0,
       "vx": 0.0,
       "vy": 0.0,
       "width": 60.0,
@@ -131,7 +97,7 @@
     {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 600.0,
-      "y": 540.0,
+      "y": 120.0,
       "vx": 0.0,
       "vy": 0.0,
       "width": 60.0,
@@ -140,7 +106,7 @@
     {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 660.0,
-      "y": 540.0,
+      "y": 120.0,
       "vx": 0.0,
       "vy": 0.0,
       "width": 60.0,
@@ -149,7 +115,7 @@
     {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 720.0,
-      "y": 540.0,
+      "y": 120.0,
       "vx": 0.0,
       "vy": 0.0,
       "width": 60.0,
@@ -158,7 +124,7 @@
     {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 780.0,
-      "y": 540.0,
+      "y": 120.0,
       "vx": 0.0,
       "vy": 0.0,
       "width": 60.0,
@@ -167,7 +133,7 @@
     {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 840.0,
-      "y": 540.0,
+      "y": 120.0,
       "vx": 0.0,
       "vy": 0.0,
       "width": 60.0,
@@ -176,7 +142,7 @@
     {
       "type": "HackTheWorld.Block, HackTheWorld, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "x": 900.0,
-      "y": 540.0,
+      "y": 120.0,
       "vx": 0.0,
       "vy": 0.0,
       "width": 60.0,
