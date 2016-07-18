@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System;
 using Newtonsoft.Json;
 using static HackTheWorld.Constants;
 
@@ -156,7 +157,7 @@ namespace HackTheWorld
                 //基本関数でなければ特殊処理
                 if (tmp[0] != "size" && tmp[0] != "wait" && tmp[0] != "move") //基本動作を例外として弾く
                 {
-                    //条件達成時に行われるべき配列ctmpを作る
+                    //条件達成時に行われるべき動作を記述した配列ctmpを作る
                     List<string> listtmp = new List<string>();
                     listtmp.AddRange(tmp);
                     listtmp.RemoveAt(0);
@@ -198,7 +199,7 @@ namespace HackTheWorld
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
                                         obj.VX = CellSize * float.Parse(ctmp[1]);
-                                        obj.VY = CellSize * float.Parse(ctmp[2]);
+                                        obj.VY = -CellSize * float.Parse(ctmp[2]);
                                     }));
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
@@ -225,12 +226,6 @@ namespace HackTheWorld
                         #region オブジェクトに乗った時の判定
                         case "ontop":
 
-                            //オブジェクト上部に判定エリアをつける
-                            var judge_area = new GameObject();
-                            judge_area.MidX = self.MidX;
-                            judge_area.MidY = self.Y - CellSize / 8.0f;
-                            judge_area.W = self.W;
-                            judge_area.H = CellSize / 8.0f;
 
                             //判定エリアにいるかどうかで処理するかを決める
                             switch (ctmp[0])
@@ -261,6 +256,7 @@ namespace HackTheWorld
                                         if (obj.StandOn(stage.Player))
                                         {
                                             obj.Move(dt);
+
                                         }
                                     }, float.Parse(ctmp[1])));
                                     break;
@@ -270,12 +266,14 @@ namespace HackTheWorld
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
                                         obj.VX = CellSize * float.Parse(ctmp[1]);
-                                        obj.VY = CellSize * float.Parse(ctmp[2]);
+                                        obj.VY = -CellSize * float.Parse(ctmp[2]);
                                     }));
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
                                         if (obj.StandOn(stage.Player))
+                                        {
                                             obj.Move(dt);
+                                        }
                                     }, float.Parse(ctmp[3])));
 
                                     //最後に自身の速度をゼロに戻しておく
@@ -287,6 +285,15 @@ namespace HackTheWorld
 
                                     break;
 
+                                case "jump":
+                                    self.AddProcess(new Process((obj, dt) =>
+                                    {
+                                        if (obj.StandOn(stage.Player))
+                                            stage.Player.VY = -CellSize * float.Parse(ctmp[1]);
+                                    }));
+                                    break;
+
+
                                 default:
                                     break;
                             }
@@ -294,7 +301,6 @@ namespace HackTheWorld
                             break;
                         #endregion
 
-                        //プロジェクトバージョンが古すぎて近づいた判定が使えない
                         #region オブジェクトに近づいた時の判定
 
 
@@ -336,7 +342,7 @@ namespace HackTheWorld
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
                                         obj.VX = CellSize * float.Parse(ctmp[1]);
-                                        obj.VY = CellSize * float.Parse(ctmp[2]);
+                                        obj.VY = -CellSize * float.Parse(ctmp[2]);
                                     }));
                                     self.AddProcess(new Process((obj, dt) =>
                                     {
@@ -359,8 +365,8 @@ namespace HackTheWorld
                                         if (obj.Nearby(stage.Player))
                                         {
 
-                                        //Bulletクラス追加
-                                        var b = new Bullet(self.X, self.MidY, -50, 0, 10, 10);
+                                            //Bulletクラス追加
+                                            var b = new Bullet(self.X, self.MidY, -50, 0, 10, 10);
                                             stage.Bullets.Add(b);
                                             stage.Objects.Add(b);
 
@@ -411,7 +417,7 @@ namespace HackTheWorld
                         self.AddProcess(new Process((obj, dt) =>
                         {
                             obj.VX = CellSize * float.Parse(tmp[1]);
-                            obj.VY = CellSize * float.Parse(tmp[2]);
+                            obj.VY = -CellSize * float.Parse(tmp[2]);
                         }));
                         self.AddProcess(new Process((obj, dt) => { obj.Move(dt); }, float.Parse(tmp[3])));
                         self.AddProcess(new Process((obj, dt) =>
