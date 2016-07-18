@@ -9,7 +9,7 @@ namespace HackTheWorld
     /// ゲーム内のオブジェクト大体全部の基底オブジェクト
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class GameObject
+    public abstract class GameObject
     {
         private int _x;
         private int _y;
